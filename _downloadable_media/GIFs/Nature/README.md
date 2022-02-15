@@ -4,8 +4,8 @@
 
 ## Flowers
 
-[view GIFs](https://github.com/qzpimae/Animations/tree/main/GIFs/Nature/Flowers#readme)
+[view GIFs](https://github.com/qzpimae/Animations/tree/main/_downloadable_media/GIFs/Nature/Flowers/#readme)
 
 ## Trees
 
-[view GIFs](https://github.com/qzpimae/Animations/tree/main/GIFs/Nature/Trees#readme)
+[view GIFs](https://github.com/qzpimae/Animations/tree/main/_downloadable_media/GIFs/Nature/Trees#readme)
