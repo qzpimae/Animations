@@ -60,6 +60,65 @@ class Entity {
     }
 
 
+            // stroke(color(177, 87, 100, globalLineAlpha)); //teal
+            // stroke(color(309, 34, 95, globalLineAlpha));  //pink
+            // stroke(333, 33, 100, globalLineAlpha); //pink 2
+            // stroke(color(123, 72, 93, globalLineAlpha));  //emerald
+            // stroke(color(159, 69, 93, globalLineAlpha));  //teal
+            // stroke(color(222, 79, 93, globalLineAlpha));  //blue
+
+
+    void setStrokeColor () { 
+        if (colorMode == 1) {
+          
+            //background(333, 22, 12, 0);           
+        } else if (colorMode == 2){
+            stroke(color(0,0,70, globalLineAlpha));
+            // background(globalLineHue, 44, 100);
+            // stroke(globalBgHue, 20, 17); 
+        } else {
+            // background(177, 22, 12, 0);
+            // stroke(177, 87, 100, globalLineAlpha);
+        }
+
+        noFill();
+
+        strokeWeight(globalLineWidth > 0 ? globalLineWidth : .001);
+    }
+
+    void setShapeStroke(PShape tempShape) {
+        // stroke(360);
+        //green
+        // stroke(177, 87, 100); //teal
+        // stroke(309, 34, 95); //pink
+        // stroke(360, 100, 100);
+        if (colorMode == 1) {
+            // background(177, 22, 12, 0); 
+            //tempShape.setStroke(color(309, 39, 93, globalLineAlpha));
+            // background(333, 22, 12, 0); 
+            tempShape.setStroke(color(159, 39, 93, globalLineAlpha));
+        } else if (colorMode == 2){
+             background(globalLineHue, 44, 100);
+            tempShape.setStroke(color(globalBgHue, 20, 17)); 
+        } else {
+            // background(177, 22, 12, 0); 
+            tempShape.setStroke(color(177, 33, 100, globalLineAlpha));
+        }
+
+        // tempShape.noFill();
+
+        tempShape.setStrokeWeight(globalLineWidth > 0 ? globalLineWidth : .001);
+    }
+
+    void setShapeStroke(PShape tempShape, float colorVal) {
+        tempShape.setStroke(color(colorVal+159%360, 100, 100, globalLineAlpha));
+
+        // tempShape.noFill();
+
+        tempShape.setStrokeWeight(globalLineWidth > 0 ? globalLineWidth : .001);
+    }
+
+
     void renderAtom () {
         shape(atom);
         
@@ -102,7 +161,7 @@ class Entity {
             vec2.rotate(map(curSide, 0, sides, 0, TWO_PI));
            
             PShape atomLine = createShape(LINE, vec1.x, vec1.y, vec2.x, vec2.y);    
-            // setShapeStroke(atomLine);
+            setShapeStroke(atomLine, map(i, 0, lines, 0, 360));
             atom.addChild(atomLine);
         }
     }
@@ -223,45 +282,4 @@ class Entity {
 
     }
 
-    void setStrokeColor () { 
-        if (colorMode == 1) {
-          
-            //background(333, 22, 12, 0); 
-            stroke(color(159, 39, 93, globalLineAlpha));
-        } else if (colorMode == 2){
-            // background(globalLineHue, 44, 100);
-            stroke(globalBgHue, 20, 17); 
-        } else {
-            // background(177, 22, 12, 0); 
-            stroke(177, 87, 100, globalLineAlpha);
-        }
-
-        noFill();
-
-        strokeWeight(globalLineWidth > 0 ? globalLineWidth : .001);
-    }
-
-    void setShapeStroke(PShape tempShape) {
-        // stroke(360);
-        //green
-        // stroke(177, 87, 100); //teal
-        // stroke(309, 34, 95); //pink
-        // stroke(360, 100, 100);
-        if (colorMode == 1) {
-            // background(177, 22, 12, 0); 
-            //tempShape.setStroke(color(309, 39, 93, globalLineAlpha));
-            background(333, 22, 12, 0); 
-            tempShape.setStroke(color(159, 39, 93, globalLineAlpha));
-        } else if (colorMode == 2){
-             background(globalLineHue, 44, 100);
-            tempShape.setStroke(color(globalBgHue, 20, 17)); 
-        } else {
-            // background(177, 22, 12, 0); 
-            tempShape.setStroke(color(177, 87, 100, globalLineAlpha));
-        }
-
-        // tempShape.noFill();
-
-        tempShape.setStrokeWeight(globalLineWidth > 0 ? globalLineWidth : .001);
-    }
 }

@@ -1,7 +1,7 @@
 
 const Noise = toxi.math.noise.simplexNoise.noise;
-let seed1 = Math.random()*100;
-let seed2 = Math.random()*100;
+let seed1 = Math.random()*-1111+3141;
+let seed2 = Math.random()*-1111+2141;
 
 console.log(`seed 1: ${seed1}\nseed 2: ${seed2}\n`);
 
@@ -39,11 +39,10 @@ canvas.style = `display: block;
                 position: static;
                 top: 0px;
                 left: 0px;
-                // cursor: none;
+                cursor: none;
                 margin:auto;
                 background-color: black`;
 
-document.body.style = `margin: 0`;
 
 document.body.appendChild(canvas)
 
@@ -73,7 +72,7 @@ function userInputEvent(input) {
 }
 
 //SET THE CANVAS ORIGIN TO THE MIDDLE OF THE WINDOW
-      context.translate(width/4, height/2)   
+    context.translate(width/4, height/2)   
     context.rotate(Math.PI/2)
 
 //ANIMAITON CYCLE

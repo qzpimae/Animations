@@ -21,7 +21,7 @@ let canvas = document.createElement('canvas'),
 
       strokeW = 1,
 
-      speed = .05,
+      speed = .5,
 
       clearScreen = true,
       
@@ -62,7 +62,7 @@ function userInputEvent(input) {
             }
         break;
         case 'ArrowUp':
-            speed = speed < 1 ? speed+.1 : 1;
+            speed = speed < 5 ? speed+.1 : 5;
         break;
         case "ArrowDown":
             speed = speed > .2 ? speed-.1 : .2;

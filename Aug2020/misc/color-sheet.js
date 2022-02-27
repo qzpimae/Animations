@@ -1,5 +1,5 @@
 //this file uses the simplex noise algorithm from a library
-alert('CONTROLS\nPress S to toggle frame screen clear\nPress Space to ( Pause / Play ) animation\nUse O & L to toggle displaying of lines/dots\nUse Up and Down Arrow Keys to change speed of animation')
+// alert('CONTROLS\nPress S to toggle frame screen clear\nPress Space to ( Pause / Play ) animation\nUse O & L to toggle displaying of lines/dots\nUse Up and Down Arrow Keys to change speed of animation')
 const Noise = toxi.math.noise.simplexNoise.noise,
       pi = Math.PI,
       sqrt = Math.sqrt,
@@ -18,17 +18,26 @@ let canvas = document.createElement('canvas'),
       time = 0,
       timeMax = Infinity,
       timeForward = true,
-      speed = 1,
+      speed = .5,
       clearScreen = true,
       pauseAnimation = false,
       showLines = true,
       showDots = true,
-      isInColor = true;
+      isInColor = true,
+      noiseAmt = 1,
+      scaleSz = 20;
+
+const limits = {
+    sX: 16,
+    eX: 55,
+    sY: 5,
+    eY: 40,
+};
 
 context.strokeStyle = 'white';
 context.fillStyle = 'white';
 
-context.lineWidth = .5;
+context.lineWidth = .25;
 
 canvas.style = `display: block;
                 position: static;
@@ -61,6 +70,19 @@ function userInputEvent(input) {
         case "ArrowDown":
             speed = speed > .1 ? speed-.1 : .1;
         break;
+
+        case 'KeyZ':
+            speed = speed < 1000 ? speed+.1 : 1000;
+        break;
+        case "KeyX":
+            speed = speed > .1 ? speed-.1 : .1;
+        break;
+        case 'ArrowLeft':
+            noiseAmt = noiseAmt < 1000 ? noiseAmt+.1 : 100;
+        break;
+        case "ArrowRight":
+            noiseAmt = noiseAmt > -10 ? noiseAmt-.1 : -10;
+        break;
         case "KeyL":
             showLines = !showLines;
             if (!showDots && !showLines) showDots = true
@@ -74,6 +96,18 @@ function userInputEvent(input) {
         break;
         case "KeyC":
             isInColor = !isInColor;
+        break;
+        case "KeyU":
+            limits.eY+=5;
+        break;
+        case "KeyJ":
+            limits.eY-=5;
+        break;
+        case "KeyH":
+            limits.eX+=5;
+        break;
+        case "KeyK":
+            limits.eX-=5;
         break;
         }
         
@@ -107,18 +141,12 @@ function userInputEvent(input) {
         createImg(time)
         
         if (!pauseAnimation) {
-            setTimeout(window.requestAnimationFrame, 10, render)
+            setTimeout(window.requestAnimationFrame, 0, render)
         }
       }
 
 function createImg(s) { 
 
-    const limits = {
-        sX: 12,
-        eX: 55,
-        sY: 5,
-        eY: 40,
-    },
     
     points = [];
 
@@ -129,14 +157,14 @@ function createImg(s) {
             for (let y = limits.sY; y < limits.eY; y++) {
 
                 const
-                distance = sqrt( pow((x*20)-(mosPos.x), 2) + pow((y*20)-(mosPos.y), 2) ),
-                noiseX = (x/20 + seed ) - s/120-(pow(distance,2)/9999999), 
-                noiseY = (y/20 + seed ) + s/120+(pow(distance,2)/9999999),
+                distance = sqrt( pow((x*scaleSz)-(mosPos.x), 2) + pow((y*scaleSz)-(mosPos.y), 2) ),
+                noiseX = (x/scaleSz + seed ) - s/120-(pow(distance,2)/999999*noiseAmt), 
+                noiseY = (y/scaleSz + seed ) + s/120+(pow(distance,2)/999999*noiseAmt),
                 N1 = Noise(noiseX, noiseY),
                 N2 = Noise(noiseY, noiseX),
-                radius = 2+N1+N2 > 1 ? 2+N1+N2 : 1,
-                X = x*20 + (N1*20-N2*20),
-                Y = y*20 + (N1*20+N2*20),
+                radius = .5+N1+N2 > .3 ? .5+N1+N2 : .3,
+                X = x*scaleSz + (N1*scaleSz-N2*scaleSz),
+                Y = y*scaleSz + (N1*scaleSz+N2*scaleSz),
 
                 point = {x: X, y: Y, r: radius, dis: distance };
 
@@ -159,7 +187,7 @@ function renderMouse() {
 
 function renderPoints(arr) {
 
-    // const t = Math.ceil(time/20)
+    // const t = Math.ceil(time/scaleSz)
     const saturation = isInColor ? 100 : 0;
 
     for (let i = 0; i < arr.length; i++) {

@@ -1,7 +1,8 @@
 
+import processing.sound.*;
 
-final int W = 3840;//(8K) 7680// (4K) 3840;//(UHD)2560 // (HD) 1920 //(Square HD) 1280 //(SD) 1280 //1680 //2560
-final int H = 2160;//(8K) 4320// (4K) 2160;//(UHD)1440 //(HD) 1080 //(Square HD) 1024//(SD) 720 //1050 //1600
+final int W = 3840;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
+final int H = 2160;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
 boolean isPaused = true;
 float frames;
 int time; 
@@ -14,17 +15,17 @@ boolean entityUpdated = true;
 
 //41214142
 
-float globalLines = 12;
-float globalSides = 4;
-float globalDimensions = 14;
-float globalHigherDimensions = 14;
-float globalDeityNum = 2;
-float globalDeityHigherNum = 4;
+float globalLines = 8;
+float globalSides = 8;
+float globalDimensions = 8;
+float globalHigherDimensions = 8;
+float globalDeityNum = 8;
+float globalDeityHigherNum = 8;
 
 float globalAngle = 0;
 float globalHDAngle = 0;
 float globalDeityAngle = 0;
-float globalRndrScl = 222;
+float globalRndrScl = 177;
 float globalLineWidth = .3;
 float globalLineAlpha = 10;
 float incrementer = 1;
@@ -33,7 +34,7 @@ int colorMode = 1;
 int globalLineHue = 177;
 int globalBgHue = 339;
 
-int renderOption = 5;
+int renderOption = 3;
 boolean toggle1 = true;
 boolean isShowingVars = false;
 
@@ -73,6 +74,8 @@ void setup() {
 void draw() {
   
   if (renderToggle) space.renderScene(renderOption);
+
+  // convolutionMask4(0xfffffff);
  
   if (!isPaused) {
     
@@ -458,14 +461,17 @@ void saveScreenShot () {
     if (renderOption>2) code+="-"+(int)globalHigherDimensions;
     if (renderOption>3) code+="-"+(int)globalDeityNum;
     if (renderOption>4) code+="-"+(int)globalDeityHigherNum;
-    if (globalAngle % 360 != 0) code+="-1Agl"+(int)globalDeityHigherNum;
-    if (globalDeityAngle % 360 != 0) code+="-3Agl"+(int)globalDeityHigherNum;
+    if (globalAngle % 360 != 0) code+="-1Agl"+(int)globalAngle;
     if (globalHDAngle % 360 != 0) code+="-2Agl"+(int)globalDeityHigherNum;
+    if (globalDeityAngle % 360 != 0) code+="-3Agl"+(int)globalDeityAngle;
     code += "-type"+entitiyType;
-    code += "-size"+globalRndrScl;
+    code += "-size"+(int)globalRndrScl;
     
-    saveFrame("../../../renderScreenShot/entity_"+code+"_######.png");
-    // saveTransparentCanvas(-1, "screenshot_");
+    if (toggle1) {
+      saveFrame("../../../renderScreenShot/entity_"+code+"_######.png");
+     } else {
+      saveTransparentCanvas(-1, "screenshot_");
+     } 
 }
 
 void saveTransparentCanvas(final color bg, final String name) {
@@ -477,4 +483,17 @@ void saveTransparentCanvas(final color bg, final String name) {
 
   canvas.updatePixels();
   canvas.save(dataPath(name + nf(frameCount, 4) + ".png"));
+}
+
+void convolutionMask4(int maskVal){
+  loadPixels();
+  int[] pixelArray = pixels;
+  for(int i = 1; i < height-1; i++){
+    int yStart=i*width+1;
+    int yFinish=i*width+(width-1);
+    for(int j = yStart; j < yFinish; j++) {
+      pixelArray[j]=((pixelArray[j-width] & maskVal) + (pixelArray[j+width] & maskVal) + (pixelArray[j-1] & maskVal) + (pixelArray[j+1] & maskVal)) >> 2;
+    }
+  }
+  updatePixels();
 }
