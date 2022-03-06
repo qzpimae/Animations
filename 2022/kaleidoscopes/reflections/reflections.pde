@@ -1,7 +1,4 @@
 
-
-/** show debug messages */
-static final boolean DEBUG = false;
 /** side length of usable square in full screen */
 
 final int W = 1920;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
@@ -36,7 +33,7 @@ void setup() {
     frameRate(10);
     noCursor();
 
-    controller = new KaleidoscopeController(starterSegments, radius, 1, false, DEBUG);
+    controller = new KaleidoscopeController(starterSegments, radius, 1, false);
 
     controller.changeImg(imgChoice);
 }

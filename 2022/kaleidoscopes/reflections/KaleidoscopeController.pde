@@ -39,7 +39,7 @@ class KaleidoscopeController {
     /** current file name, to use with snapshot saving */
     String imagename;
 
-    public KaleidoscopeController(int segments, int screenradius, int scalefactor, boolean canSave, boolean debug) {
+    public KaleidoscopeController(int segments, int screenradius, int scalefactor, boolean canSave) {
         this.screenradius = screenradius;
         this.scalefactor = scalefactor;
         this.canSave = canSave;
