@@ -1,16 +1,16 @@
 
 /** side length of usable square in full screen */
 
-final int W = 1920;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
-final int H = 1080;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
+final int W = 2560;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
+final int H = 1440;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
 int radius = H;//(int)(H*1.02);
 
 KaleidoscopeController controller;
 
 float frames = 0;
 float renderSpeed = 1;
-int imgChoice = 19;
-int IMAGE_NUM_MAX = 19;
+int imgChoice = 1;
+int IMAGE_NUM_MAX = 56;
 int starterSegments = 12;
 int dragType = 1;
 int DRAG_TYPE_MAX = 3;
@@ -103,7 +103,7 @@ void keyPressed() {
                 controller.changeKaleidoscope();
                 break;
             case 'a':
-                renderSpeed = renderSpeed > .1 ? renderSpeed-.1 : .1;
+                renderSpeed = renderSpeed > -10 ? renderSpeed-.1 : -10;
                 break;
             case 's':
                 renderSpeed = renderSpeed < 10 ? renderSpeed+.1 : 10;
