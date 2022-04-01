@@ -4,22 +4,25 @@ public class NoiseController  {
         loadPixels(); // load pixels needs to be ran to modify pixels array and changePixels()
         
         //iterate seed values so animati60on image moves
-        advanceTime();
+        if (renderAdvanceToggle) advanceTime();
         
         //itterate through all pixels/Points
         for ( int i = 0; i < allPixs.length; i++) {  
 
-        //get pixel number of current pixel    
-        int pxNum = allPixs[i].pixelNum;
+            //get pixel number of current pixel    
+            int pxNum = allPixs[i].pixelNum;
 
-        float[] pxColorArr = allPixs[i].calcColor( frames );
-        
-        //modify the individual pixel
-        pixels[pxNum] = color(pxColorArr[0], pxColorArr[1], pxColorArr[2]);
+            float[] pxColorArr = allPixs[i].calcColor( (int)frames );
+            
+            //modify the individual pixel
+            float hue = (float) ((invertHue ? 180 : 0) + pxColorArr[0]) % 360;
+
+            A[pxNum] = color(hue, pxColorArr[1], pxColorArr[2]);
         
         } 
         
         //update the pixel info
+        arrayCopy(A,pixels);
         updatePixels();
     }
 

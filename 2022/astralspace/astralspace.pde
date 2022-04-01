@@ -1,9 +1,9 @@
 //IMPORTS
 boolean isPaused = false;
-float globalXScale = 999;
-double globalYScale = 22;
+float globalXScale = 777;
+float globalYScale = 777;
 float globalDimensions = 6;
-float renderSpeed = .5;
+float renderSpeed = 14;
 float globalDeityNum = 6;
 
 float globalRndrScl = 333;
@@ -11,19 +11,19 @@ float globalRndrScl = 333;
 float globalAngle = 0;
 float globalHDAngle = 0;
 float globalDeityAngle = 0;
-float globalLineWidth = .1;
-float incrementer = 1;
+float noiseVar1 = 1;
+float incrementer = 6;
 
 int colorMode = 1;
 int globalLineHue = 177;
 int globalBgHue = 339;
 
-int renderOption = 4;
-boolean zoomedIn = false;
+int renderOption = 8;
+boolean invertHue = false;
 boolean isShowingVars = false;
 
-boolean invertLightness = false;
-boolean leafSymmetry = true;
+boolean invertLight = true;
+boolean renderAdvanceToggle = true;
 boolean toggle1 = true;
 boolean toggle2 = true;
 
@@ -34,20 +34,26 @@ float yOffset = 0;
 float transX = 0;
 float transY = 0;
 
+//Created for preformance boost
+PImage a;
+color [] A;
+
+
 //GLOBAL VARS
   //Noise algorithm that produces values used in this animation, not made by me
 OpenSimplex2S noise;
 NoiseController noiseController;
+NoiseMult nMult;
 //seeds for noise algorithm, can be randomized for unique image every render
 NoiseSeed nSeedX1 = new NoiseSeed((float) Math.random()*1000 + 417.3939);
 NoiseSeed nSeedX2 = new NoiseSeed((float) Math.random()*1000 + 777.777);
 NoiseSeed nSeedY1 = new NoiseSeed((float) Math.random()*1000 + 3939.719);
 NoiseSeed nSeedY2 = new NoiseSeed((float) Math.random()*1000 + 3141.5826);
 //width and height of canvas
-int WIDTH = 1680;//800;//1024;//1504//3840; //1920//1360 //1680
-int HEIGHT = 1050;//600;//640;//846//2160; //1080//768 //1050
+int WIDTH = 1024;//800;//1024;//1504//3840; //1920//1360 //1680 //1504
+int HEIGHT = 640;//600;//640;//846//2160; //1080//768 //1050  //846
 //tracker for how many frames have elapsed
-int frames = 0;
+float frames = 0;
 //array of Points to keep track of quadrent information and x/y position aswell as pixel index
 Point[] allPixs = new Point[WIDTH*HEIGHT];
 
@@ -60,8 +66,11 @@ double yStatic;
 
 void settings() {
   //set canvas size
+  //
   fullScreen();
-  size(WIDTH, HEIGHT); //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 // height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720
+  //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 
+  //height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720
+  size(WIDTH, HEIGHT); 
 
 }
 
@@ -71,8 +80,11 @@ void setup() {
   //create instance of the simplex noise class
   noise = new OpenSimplex2S( 3141592 );
   noiseController = new NoiseController();
+  nMult = new NoiseMult();
   //run function to fill allPixs array
   noiseController.initalizePixels();
+  nMult.initalize();
+   noCursor();
     //noLoop(); //uncomment to only render one frame
 }
 
@@ -89,7 +101,20 @@ void draw() {
     background(0); // reset screen
     
     frames++; //iterate frame tracker
-    noiseController.displayNoise();
+
+    switch (renderOption) {
+      case 1: noiseController.displayNoise(); break;
+      case 2: nMult.renderNoise1(); break;
+      case 3: nMult.renderNoise2(); break;
+      case 4: nMult.renderNoise3(); break;
+      case 5: nMult.renderNoise4(); break;
+      case 6: nMult.renderNoise5(); break;
+      case 7: nMult.renderNoise6(); break;
+      case 8: nMult.renderNoise7(); break;
+      case 9: nMult.renderNoise4(); break;
+      case 10: nMult.renderNoise4(); break;
+      
+    }
 
     // saveFrame("../../../render11522/img_#####.png");
     if (isShowingVars) displayVars();
@@ -108,21 +133,21 @@ void displayVars() {
   textSize(30);
   fill(360);
   text("frames: " + frames, 50, 30);
-  text("lines(q/w): " + globalXScale, 50, 70);
-  text("sides(a/s): " + globalYScale, 50, 110 );
+  text("XScale(q/w): " + globalXScale, 50, 70);
+  text("YScale(a/s): " + globalYScale, 50, 110 );
   text("dim(d/f): " + globalDimensions, 50, 150 );
-  text("higDm(c/v): " + renderSpeed, 50, 190 );
+  text("renderSpeed(c/v): " + renderSpeed, 50, 190 );
   text("deityNum(g/h): " + globalDeityNum, 50, 230 );
   text("scl(z/x): " + globalRndrScl, 50, 300 );
-  text("lw(e/r): " + globalLineWidth, 50, 350 );
+  text("lw(e/r): " + noiseVar1, 50, 350 );
   text("inc(t/y): " + incrementer, 50, 400 );
   text("rndOpt(#): " + renderOption, 50, 450 );
   text("2X scl(n)", 50, 500 );
   text("/2 scl(b)", 50, 550 );
   text("screenshot(=)", 50, 600 );
   text("toggleDis(m): "+(isShowingVars?"on":"off") , 50, 650 );
-  text("toggleZoom(,): "+(zoomedIn?"on":"off"), 50, 700 );
-  text("invertLightness(.): "+(invertLightness?"on":"off"), 50, 750 );
+  text("invertHue(,): "+(invertHue?"on":"off"), 50, 700 );
+  text("invertLight(.): "+(invertLight?"on":"off"), 50, 750 );
   text("colorMode(/): "+colorMode, 50, 800 );
   text("transX: "+transX, 50, 850 );
   text("transY: "+transY, 50, 900 );
@@ -132,7 +157,7 @@ void displayVars() {
   text("HD-angle( u/i ):" + globalHDAngle, 50, 1100 );
   text("HD-rotate(j):"+(toggle1?"on":"off"), 50, 1150 );
   text("D-rotate(k):"+(toggle2?"on":"off"), 50, 1200 );
-  text("leaftType(l):"+(leafSymmetry?"0":"1"), 50, 1250 );
+  text("leaftType(l):"+(renderAdvanceToggle?"0":"1"), 50, 1250 );
   text("Colors( ' ) bg:"+globalBgHue+" ln:"+globalLineHue, 50, 1300 );
   text("incrementAll(-)", 50, 1350 );
 }
@@ -141,7 +166,7 @@ void displayVars() {
 void keyPressed() {
   switch (key) {
     case ',':
-      zoomedIn = !zoomedIn;
+      invertHue = !invertHue;
       break;
     //VAR 1 - line num
     case 'q': 
@@ -191,12 +216,12 @@ void keyPressed() {
       break;
     //VAR 4 - line width
     case 'e': 
-      globalLineWidth-=.010;
-      if (globalLineWidth <= 0) globalLineWidth = .001;
+      noiseVar1-=.010;
+      if (noiseVar1 <= 0) noiseVar1 = .001;
       
       break;
     case 'r': 
-      globalLineWidth+=.010;
+      noiseVar1+=.010;
       break;
     //VAR 5 - incrementer
     case 't': 
@@ -220,7 +245,7 @@ void keyPressed() {
       toggle2 = !toggle2;
       break;
     case 'l': 
-      leafSymmetry = !leafSymmetry;
+      renderAdvanceToggle = !renderAdvanceToggle;
       break;
     case 'b': 
       globalRndrScl = globalRndrScl/2;
@@ -243,14 +268,14 @@ void keyPressed() {
       globalYScale = 1;
       globalXScale = 1;
       globalDeityNum = 1;
-      globalLineWidth = .01;
+      noiseVar1 = .01;
       globalRndrScl = 272; 
       transX = 0;
       transY = 0;
-      invertLightness = false;
+      invertLight = false;
     break;
     case '.':
-      invertLightness = !invertLightness;
+      invertLight = !invertLight;
     break;
     case '/':
       colorMode = colorMode < 3 ? colorMode+1 : 1;
@@ -302,6 +327,21 @@ void keyPressed() {
     case '5': 
       renderOption = 5;
       break;
+    case '6': 
+      renderOption = 6;
+      break;
+    case '7': 
+      renderOption = 7;
+      break;
+    case '8': 
+      renderOption = 8;
+      break;
+    case '9': 
+      renderOption = 9;
+      break;
+    case '0': 
+      renderOption = 10;
+      break;
   }
 
   if (key == CODED) {
@@ -346,11 +386,14 @@ void mouseReleased() {
 }
 
 void mouseWheel(MouseEvent event) {
-  if (globalRndrScl > 10) {
-    float sclChange = globalRndrScl - event.getCount() * incrementer * 2 * (1+mouseX/100);
-    globalRndrScl = sclChange > 0 ? sclChange : 1;
+  if (globalXScale > 1) {
+    float sclChangeX = globalXScale + (event.getCount() * incrementer);
+    globalXScale = sclChangeX > 1 ? sclChangeX : 3;
+
+    float sclChangeY = globalYScale + (event.getCount() * incrementer);
+    globalYScale = sclChangeY > 1 ? sclChangeY : 3;
   }else {
-    globalRndrScl = 10;
+    globalXScale = 1;
   }
   //  else if ( globalRndrScl == 10 && event.getCount() == 1) {
   //   globalRndrScl = 10 * 2;

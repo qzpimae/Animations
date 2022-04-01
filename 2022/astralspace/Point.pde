@@ -166,8 +166,8 @@ class Point {
         convertedSaturation = 0;
     }
     
-    convertedBrightness = map(convertedSaturation, 0, invertLightness?50:100, 100, lightness);//90-convertedSaturation + 
-    if (invertLightness) convertedBrightness = 100 - convertedBrightness;
+    convertedBrightness = map(convertedSaturation, 0, invertLight?50:100, 100, lightness);//90-convertedSaturation + 
+    if (invertLight) convertedBrightness = 100 - convertedBrightness;
     return new float[] { hue, convertedSaturation, convertedBrightness };
   } 
 
