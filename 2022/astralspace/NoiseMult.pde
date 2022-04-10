@@ -21,8 +21,8 @@ class NoiseMult {
         for  (int x=0;x<a.width;x++){
             for (int y=0;y<a.height;y++){
 
-                float xScl = (float)WIDTH/100 * (1 + globalXScale/10);// xScl = 769;
-                float yScl = (float)HEIGHT/100 * (1 + globalYScale/10);// yScl = 69;
+                float xScl = random(1) * (float)WIDTH/100 * (1 + globalXScale/10);// xScl = 769;
+                float yScl = random(1) * (float)HEIGHT/100 * (1 + globalYScale/10);// yScl = 69;
 
                 float tSX = 16666 + ( renderAdvanceToggle ? ((frames*renderSpeed)/3000) : -transX/22 );
                 float tSY = 15555 - ( renderAdvanceToggle ? (frames*renderSpeed/10000) : transY/22 );

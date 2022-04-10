@@ -4,7 +4,7 @@ class Space  {
 
         if (clearScreen) {
             clear();
-            background(0);
+            // background(333, 50, 5);
         }
 
         if (entityUpdated) {

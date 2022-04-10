@@ -3,7 +3,7 @@ boolean isPaused = false;
 float globalXScale = 777;
 float globalYScale = 777;
 float globalDimensions = 6;
-float renderSpeed = 14;
+float renderSpeed = 1;
 float globalDeityNum = 6;
 
 float globalRndrScl = 333;
@@ -18,7 +18,7 @@ int colorMode = 1;
 int globalLineHue = 177;
 int globalBgHue = 339;
 
-int renderOption = 8;
+int renderOption = 1;
 boolean invertHue = false;
 boolean isShowingVars = false;
 
@@ -50,8 +50,8 @@ NoiseSeed nSeedX2 = new NoiseSeed((float) Math.random()*1000 + 777.777);
 NoiseSeed nSeedY1 = new NoiseSeed((float) Math.random()*1000 + 3939.719);
 NoiseSeed nSeedY2 = new NoiseSeed((float) Math.random()*1000 + 3141.5826);
 //width and height of canvas
-int WIDTH = 1024;//800;//1024;//1504//3840; //1920//1360 //1680 //1504
-int HEIGHT = 640;//600;//640;//846//2160; //1080//768 //1050  //846
+int WIDTH = 1680;//800;//1024;//1504//3840; //1920//1360 //1680 //1504
+int HEIGHT = 1050;//600;//640;//846//2160; //1080//768 //1050  //846
 //tracker for how many frames have elapsed
 float frames = 0;
 //array of Points to keep track of quadrent information and x/y position aswell as pixel index
@@ -75,6 +75,8 @@ void settings() {
 }
 
 void setup() {
+  frameRate(1);
+  
   //set canvas size
   colorMode(HSB, 360, 100, 100);
   //create instance of the simplex noise class
@@ -116,7 +118,7 @@ void draw() {
       
     }
 
-    // saveFrame("../../../render11522/img_#####.png");
+    // saveFrame("../../../static/noise_#####.png");
     if (isShowingVars) displayVars();
 
   }

@@ -150,8 +150,8 @@ class KaleidoscopeController {
         }
     }
 
-    public void calculateDrag () {
-float dragRadius = radius/globalDragRadMult;
+public void calculateDrag () {
+    float dragRadius = radius/globalDragRadMult;
 
         if (autoMoveDrag) {
 

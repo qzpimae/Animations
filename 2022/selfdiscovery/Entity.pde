@@ -46,11 +46,7 @@ class Entity {
         for (int i = 0; i < sides; i++) {
             
             if (entitiyType == 4) {
-                PVector a = getVector(i);
-                PVector b = getVector(i * lines);
-                PShape atomLine = createShape(LINE, a.x, a.y, b.x, b.y);    
-                // setShapeStroke(atomLine);
-                atom.addChild(atomLine);
+                generateCardioid(i);
             } else {
                 generateLeaf(i);
             }    
@@ -111,8 +107,31 @@ class Entity {
     }
 
     void setShapeStroke(PShape tempShape, float colorVal) {
-        tempShape.setStroke(color(colorVal+159%360, 100, 100, globalLineAlpha));
 
+
+
+        if (!toggle1) {
+            float hue = map(colorVal, 0, 360, 267, 333);
+            float sat = map (hue, 277, 323, 95, 80);
+
+            tempShape.setStroke(color(hue, sat, 100, globalLineAlpha));
+
+        } else {
+
+
+            // float hue = map(colorVal, 0, 360, 157, 222);
+
+            float hue = (int)colorVal == 0 ? 333 : (int)colorVal == 120 ? 333 : 177;
+            // else hue = 159;
+
+            println(hue);
+
+            float sat = map (hue, 159, 333, 100, 80);
+            if (colorVal == 120) sat = 70;
+            tempShape.setStroke(color(hue, sat, 100, globalLineAlpha));
+            // float hue = colorVal+159%360;
+            // tempShape.setStroke(color(hue, 100, 100, globalLineAlpha));
+        }
         // tempShape.noFill();
 
         tempShape.setStrokeWeight(globalLineWidth > 0 ? globalLineWidth : .001);
@@ -164,6 +183,14 @@ class Entity {
             setShapeStroke(atomLine, map(i, 0, lines, 0, 360));
             atom.addChild(atomLine);
         }
+    }
+
+    void generateCardioid (int i) {
+        PVector a = getVector(i);
+        PVector b = getVector(i * lines);
+        PShape atomLine = createShape(LINE, a.x, a.y, b.x, b.y);    
+        setShapeStroke(atomLine, map(i, 0, lines, 0, 360));
+        atom.addChild(atomLine);
     }
     
     PVector getVector ( float index ) {

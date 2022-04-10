@@ -1,8 +1,10 @@
 
 import processing.sound.*;
 
-final int W = 3840;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
-final int H = 2160;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
+int testImgNum;
+
+final int W = 1680;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
+final int H = 1050;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
 boolean isPaused = true;
 float frames;
 int time; 
@@ -13,28 +15,31 @@ float renderSpeed = 1;
 Entity renderingEntity;
 boolean entityUpdated = true; 
 
+//Debuging var
+boolean flag = false;
+
 //41214142
 
-float globalLines = 8;
-float globalSides = 8;
-float globalDimensions = 8;
-float globalHigherDimensions = 8;
-float globalDeityNum = 8;
+float globalLines = 3;
+float globalSides = 317;
+float globalDimensions = 21;
+float globalHigherDimensions = 10;
+float globalDeityNum = 10;
 float globalDeityHigherNum = 8;
 
-float globalAngle = 0;
+float globalAngle = 90;
 float globalHDAngle = 0;
 float globalDeityAngle = 0;
-float globalRndrScl = 177;
-float globalLineWidth = .3;
-float globalLineAlpha = 10;
-float incrementer = 1;
+float globalRndrScl = 5069;
+float globalLineWidth = .2;
+float globalLineAlpha = 15;
+float incrementer = 10;
 
 int colorMode = 1;
 int globalLineHue = 177;
 int globalBgHue = 339;
 
-int renderOption = 3;
+int renderOption = 2;
 boolean toggle1 = true;
 boolean isShowingVars = false;
 
@@ -62,10 +67,13 @@ void settings() {
 
 void setup() {
   //set colormode
+  frameRate(10);
   colorMode(HSB, 360, 100, 100, 100);
   // noLoop();
   // noCursor();
   space = new Space();
+
+  testImgNum = parseInt(loadStrings("./testimgnum.txt")[0]);
 
   //background(0);
 }
@@ -197,8 +205,12 @@ void displayVars() {
 
 void keyPressed() {
   switch (key) {
+    case 'l':
+      println(flag);
+      break;
     case ',':
       toggle1 = !toggle1;
+      entityUpdated=true;
       break;
     //VAR 1 - line num
     case 'q': 
@@ -467,8 +479,16 @@ void saveScreenShot () {
     code += "-type"+entitiyType;
     code += "-size"+(int)globalRndrScl;
     
-    if (toggle1) {
+    if (true) { //CHANGE IF CONTROL IS NEEDED
+
+      //SAVE IN REGULAR SS DIR
       saveFrame("../../../renderScreenShot/entity_"+code+"_######.png");
+
+      //SAVING TEST IMGS
+      saveFrame("../kaleidoscopes/testimgs/testimg"+ (testImgNum++) + ".png"); 
+      saveStrings("./testimgnum.txt", new String[]{testImgNum+""});
+     
+     
      } else {
       saveTransparentCanvas(-1, "screenshot_");
      } 

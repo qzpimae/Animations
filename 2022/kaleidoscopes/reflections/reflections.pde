@@ -1,8 +1,8 @@
 
 /** side length of usable square in full screen */
 
-final int W = 2560;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
-final int H = 1440;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
+final int W = 1680;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
+final int H = 1050;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
 int radius = H;//(int)(H*1.02);
 
 KaleidoscopeController controller;
@@ -10,7 +10,7 @@ KaleidoscopeController controller;
 float frames = 0;
 float renderSpeed = 1;
 int imgChoice = 1;
-int IMAGE_NUM_MAX = 56;
+int IMAGE_NUM_MAX = 60;
 int starterSegments = 12;
 int dragType = 1;
 int DRAG_TYPE_MAX = 3;
@@ -71,10 +71,10 @@ void keyPressed() {
                 dragType = dragType < DRAG_TYPE_MAX ? dragType+1 : DRAG_TYPE_MAX;
                 break;
             case 'b':
-                globalDragRadMult = globalDragRadMult > 1 ? globalDragRadMult-1 : 1;
+                globalDragRadMult = globalDragRadMult > .1 ? globalDragRadMult-.1 : .1;
                 break;
             case 'n':
-                globalDragRadMult = globalDragRadMult < DRAG_MULT_MAX ? globalDragRadMult+1 : DRAG_MULT_MAX;
+                globalDragRadMult = globalDragRadMult < DRAG_MULT_MAX ? globalDragRadMult+.1 : DRAG_MULT_MAX;
                 break;
             case 'p':
                 println("- dragType: " + dragType + "- rotation: " + controller.rotateKal + "- imgChoice: " + imgChoice + "- segments: " + controller.segments + "- renderSpeed: " + renderSpeed);
