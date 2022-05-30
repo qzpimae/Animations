@@ -10,33 +10,35 @@ class NoiseMult {
 
     public void renderNoise7 () {
 
-        float n1 = (float) noise.noise2(1000+(frames*renderSpeed)/3000, 2000+(frames*renderSpeed)/3000 );
+        float n1 = (float) noise.noise2(1000+(frames*renderSpeed)/4000, 2000+(frames*renderSpeed)/3000 );
         float noiseDiv1 = map(n1, -1, 1, .1, .001);
 
         float min = 100;
         float max = 0;
 
+        // println("N1: " + n1);//xStatic,yStatic,
+    
+
 
         loadPixels();
-        for  (int x=0;x<a.width;x++){
-            for (int y=0;y<a.height;y++){
 
-                float xScl = random(1) * (float)WIDTH/100 * (1 + globalXScale/10);// xScl = 769;
-                float yScl = random(1) * (float)HEIGHT/100 * (1 + globalYScale/10);// yScl = 69;
+    for (int i = 0; i < 4; i++ ) {
+        
+        for  (int x=0;x<a.width/2;x++){
+            for (int y=0;y<a.height/2;y++){
 
-                float tSX = 16666 + ( renderAdvanceToggle ? ((frames*renderSpeed)/3000) : -transX/22 );
-                float tSY = 15555 - ( renderAdvanceToggle ? (frames*renderSpeed/10000) : transY/22 );
+                float xScl =  (float)WIDTH/100 * (1 + globalXScale/10);// xScl = 769;
+                float yScl = (float)HEIGHT/100 * (1 + globalYScale/10);// yScl = 69;
 
-                float noise1 =  (float) noise.noise2(   (x/xScl)+tSX,    (y/yScl)+tSY     ) * 2;
-                float noise2 =  (float) noise.noise2(   (x/xScl*2)+tSX+12, (y/yScl)/noiseDiv1+(tSY+21)  );
-                float noise3 =  (float) noise.noise2(   (x/xScl*5)+tSX/2, (y/yScl*4)+(tSY/2)  );
-                float noise4 =  (float) noise.noise2(   (x/xScl*2)+tSX, (y/yScl*3)+tSY  );
+                float tSX = (12314 + ( renderAdvanceToggle ? (noiseDiv1) : -transX/22 ))/10;
+                float tSY = (5323 + ( renderAdvanceToggle ? (noiseDiv1) : transY/22 ))/10;
+
+                float noise1 =  (float) noise.noise2(   (x/xScl)+tSX,    (y/yScl)+tSY  ); //random(-1, 1);//
+                float noise2 =  (float) noise.noise2(   (x/xScl*3)+tSX+214, (y*yScl)/noiseDiv1  ); //random(-1, 1);//
+                float noise3 =  (float) noise.noise2(   (x/xScl*3)+tSX/232, (y/yScl*4)+(tSY/2)  ); //random(-1, 1);//
+                float noise4 =  (float) noise.noise2(   (x/xScl*7)+tSX, (y/yScl*3)+tSY  ); //random(-1, 1);//
                 
-                float finalNoise = ((noise3/noise1+noise2*noise4)/2);
-                
-                // float hue = (float) ((invertHue ? 180 : 0) + (float) abs(map(finalNoise, -1, 1, 339, 159))) % 360;
-                // float sat = (float) abs(map(finalNoise, 0, 1, -100, 100));
-                // float brt = (float) ((invertLight ? 50 : 0) + (float) abs(map(finalNoise, -1, 1, -100, 100))) % 100;
+                float finalNoise = ((noise3/noise1*noise2*noise4)*globalNoiseMult);
                 
                 float hue = (float) ((invertHue ? 180 : 0) + (float) abs(map(finalNoise, -1, 1, 339, 159))) % 360;
                 // hue = (hue + cos(frames*renderSpeed/10)*60) % 360;
@@ -45,7 +47,6 @@ class NoiseMult {
 
                 float sat = (float) abs(map(finalNoise, -1, 1, 0, 66.6));
 
-
                 if (sat < min) min = sat;
                 if (sat > max) max = sat;
 
@@ -53,11 +54,30 @@ class NoiseMult {
 
                 if (invertLight) brt = brt > 50 ? map(brt, 50, 100, 50, 0) : map(brt, 50, 0, 50, 100); 
                 
-                int pos = x+a.width*y;
+                int pos = 0;
+
+                switch (i) {
+                    case 0: 
+                        pos = x+a.width*y;
+                    break;
+                    case 1: 
+                        int mapX = (int)map(x,0, a.width/2, a.width/2, 0);
+                        int mapY = (int)map(y,0, a.height/2, a.height/2, 0);
+                        pos = mapX+a.width*(mapY);
+                    break;
+                    case 2: 
+                        // pos = x+a.width*y;
+                    break;
+                    case 3: 
+                        // pos = x+a.width*y;
+                    break;
+                }
+                
                 A[pos] = color (hue, sat, brt);
             }
         }
 
+    }
         // println(min);
         // println(max);
         arrayCopy(A,pixels);

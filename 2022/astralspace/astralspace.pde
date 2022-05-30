@@ -1,10 +1,10 @@
 //IMPORTS
 boolean isPaused = false;
-float globalXScale = 777;
-float globalYScale = 777;
+float globalXScale = 333;
+float globalYScale = 333;
 float globalDimensions = 6;
-float renderSpeed = 1;
-float globalDeityNum = 6;
+float renderSpeed = .1;
+float globalNoiseMult = 17;
 
 float globalRndrScl = 333;
 
@@ -18,11 +18,11 @@ int colorMode = 1;
 int globalLineHue = 177;
 int globalBgHue = 339;
 
-int renderOption = 1;
+int renderOption = 8;
 boolean invertHue = false;
-boolean isShowingVars = false;
-
 boolean invertLight = true;
+
+boolean isShowingVars = false;
 boolean renderAdvanceToggle = true;
 boolean toggle1 = true;
 boolean toggle2 = true;
@@ -95,12 +95,12 @@ void draw() {
 
 
   if (!isPaused) {
-    
+    // isPaused = true;
     
     // xStatic -= .1;
     // yStatic -= .1;
     // println(globalXScale,globalYScale,globalRndrScl);//xStatic,yStatic,
-    background(0); // reset screen
+    // background(0); // reset screen
     
     frames++; //iterate frame tracker
 
@@ -139,7 +139,7 @@ void displayVars() {
   text("YScale(a/s): " + globalYScale, 50, 110 );
   text("dim(d/f): " + globalDimensions, 50, 150 );
   text("renderSpeed(c/v): " + renderSpeed, 50, 190 );
-  text("deityNum(g/h): " + globalDeityNum, 50, 230 );
+  text("deityNum(g/h): " + globalNoiseMult, 50, 230 );
   text("scl(z/x): " + globalRndrScl, 50, 300 );
   text("lw(e/r): " + noiseVar1, 50, 350 );
   text("inc(t/y): " + incrementer, 50, 400 );
@@ -210,11 +210,11 @@ void keyPressed() {
       break;
     //VAR 7 - deitiy dimensions
     case 'g': 
-      globalDeityNum-=incrementer;
-      if (globalDeityNum < 1) globalDeityNum = 1;
+      globalNoiseMult-=incrementer;
+      if (globalNoiseMult < 1) globalNoiseMult = 1;
       break;
     case 'h': 
-      globalDeityNum+=incrementer;
+      globalNoiseMult+=incrementer;
       break;
     //VAR 4 - line width
     case 'e': 
@@ -269,7 +269,7 @@ void keyPressed() {
       renderSpeed = 1;
       globalYScale = 1;
       globalXScale = 1;
-      globalDeityNum = 1;
+      globalNoiseMult = 1;
       noiseVar1 = .01;
       globalRndrScl = 272; 
       transX = 0;
