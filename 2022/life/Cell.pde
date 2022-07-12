@@ -49,14 +49,14 @@ class Cell {
       square(posX, posY, cellSize);
 
     // -------------------------------
-      // int hue = Math.abs(333-age*4)%323;
-      // int sat = (100-age)%100;
-      // int brt = (100-age)%100;
+      // float hue = Math.abs(360-age*7+frames*22)%323;
+      // float sat = (100-age)%100;
+      // float brt = (100-age)%100;
       // if (brt < 10) brt = 10;
       // fill(hue, sat, brt);
       // stroke(hue, sat, brt);
-      // square(posX, posY, cellSize);
-    // -------------------------------
+      // square(posX, posY, (int)(cellSize/2));
+    // // -------------------------------
       // int hue = Math.abs(333-age*4)%323;
       // int sat = (90-age)%100;
       // int brt = (100-age)%100;
@@ -64,6 +64,21 @@ class Cell {
       // fill(hue, sat, brt);
       // stroke(hue, sat, brt);
       // square(posX, posY, cellSize);
+
+    // // -------------------------------
+      // int hue = Math.abs(333-age*4)%323;
+      // int sat = (90-age)%100;
+      // int brt = (100-age)%100;
+      // if (brt < 10) brt = 10;
+      // fill(hue, sat, brt);
+      // stroke(hue, sat, brt);
+      // square(posX, posY, cellSize);
+
+
+
+
+
+      //End of isAlive / ignore alive
     }
 
 

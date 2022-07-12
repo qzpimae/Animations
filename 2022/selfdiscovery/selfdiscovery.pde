@@ -1,16 +1,22 @@
 
 import processing.sound.*;
+import java.util.Arrays; 
+//TODO
+/* 
+  save settings button that will carry through each reboot
+
+*/
 
 int testImgNum;
 
-final int W = 1680;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
-final int H = 1050;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
+final int W = 3840;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int H = 2160;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 boolean isPaused = true;
 float frames;
-int time; 
+float time; 
 boolean timeForward = true;
 
-float renderSpeed = 1;
+float renderSpeed = .1;
 
 Entity renderingEntity;
 boolean entityUpdated = true; 
@@ -19,32 +25,44 @@ boolean entityUpdated = true;
 boolean flag = false;
 
 //41214142
+//3-318-8-22
 
-float globalLines = 3;
-float globalSides = 317;
-float globalDimensions = 21;
-float globalHigherDimensions = 10;
-float globalDeityNum = 10;
-float globalDeityHigherNum = 8;
+float globalLines = 4;
+float globalSides = 4;
+float globalDimensions = 4;
+float globalHigherDimensions = 2;
+float globalDeityNum = 4;  
+float globalDeityHigherNum = 4;
 
-float globalAngle = 90;
+int seriesIdx = 0;
+boolean seriesFinished = false;
+int seriesMax = 10; 
+int seriesMin = 1; 
+int seriesMult = 2; 
+int seriesDelay = 5; 
+int[][] series = new int[(int)pow(seriesMax-seriesMin+1,3)][3];
+
+float globalAngle = 0;
 float globalHDAngle = 0;
 float globalDeityAngle = 0;
-float globalRndrScl = 5069;
-float globalLineWidth = .2;
-float globalLineAlpha = 15;
-float incrementer = 10;
+float globalRndrScl = 140;
+float globalLineWidth = .4;
+float globalLineAlpha = 100;
+float incrementer = 1;
 
-int colorMode = 1;
-int globalLineHue = 177;
-int globalBgHue = 339;
+int colorMode = 7;
+int COLOR_MODE_MAX = 8;
 
-int renderOption = 2;
+float globalLineHue = 177;
+float globalBgHue = 339;
+
+int MAX_RENDER_OPTION = 7;
+int renderOption = 3;
 boolean toggle1 = true;
 boolean isShowingVars = false;
 
 int entitiyType = 1;
-int MAX_ENTITIY_TYPE = 4;
+int MAX_ENTITIY_TYPE = 5;
 
 boolean clearScreen = true;
 boolean renderToggle = true;
@@ -60,7 +78,8 @@ Space space;
 void settings() {
   //set canvas size
    fullScreen();
-  size(W, H); //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 // height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720
+   size(W, H); // slow
+  //  size(W, H, P2D); // fast  
 
 }
 
@@ -70,11 +89,12 @@ void setup() {
   frameRate(10);
   colorMode(HSB, 360, 100, 100, 100);
   // noLoop();
-  // noCursor();
+  noCursor();
   space = new Space();
 
   testImgNum = parseInt(loadStrings("./testimgnum.txt")[0]);
-
+  createSeries();
+  
   //background(0);
 }
 
@@ -83,17 +103,68 @@ void draw() {
   
   if (renderToggle) space.renderScene(renderOption);
 
+  // convolutionMask4((int)((0xfffffff/(1+(frames/10000000)))));
   // convolutionMask4(0xfffffff);
  
   if (!isPaused) {
     
     // INCREMENT NUMBERS
-    timedIncrement ();
+    seriesIcrement();
+    // timedIncrement();
+
     // saveFrame("../../../newrender2822/img_######.png");
   
   }
 
 }
+
+void createSeries () {
+  int count = 0;
+  for (int i = seriesMin; i <= seriesMax; ++i) {
+    for (int j = seriesMin; j <= seriesMax; ++j) {
+      for (int k = seriesMin; k <= seriesMax; ++k) {
+        series[count++] = new int[]{i*seriesMult, j*seriesMult, k*seriesMult};
+      }
+    }
+  }
+  // println(count);
+  // for (int i = 0; i < series.length; ++i) {
+  //   print(Arrays.toString(series[i]));
+  // }
+  
+}
+
+void seriesIcrement () {
+  
+// float globalLines = 2;
+// float globalSides = 2;
+// float globalDimensions = 2;
+  time++;
+  // println(time);
+  if (time % seriesDelay == 0) {
+
+    String code = genCode();
+    if (seriesIdx >= series.length) {
+      if (!seriesFinished) {
+          // saveFrame("../../../renderScreenShot/series78222/entity_"+code+"_######.png");
+          seriesFinished = true;
+      }
+      return;
+    }
+    // saveFrame("../../../renderScreenShot/series78222/entity_"+code+"_######.png");
+
+    int[] seriesSelect = series[seriesIdx++];
+    println("CHANGE\n" + Arrays.toString(seriesSelect));
+    globalLines = seriesSelect[0];
+    globalSides = seriesSelect[1];
+    globalDimensions = seriesSelect[2];
+
+    globalLineAlpha = map(globalLines * globalSides * globalDimensions, 1, 100000, 100, 1);
+
+    entityUpdated = true;
+  }
+}
+
 
 void timedIncrement () {
     frames+=renderSpeed;
@@ -107,8 +178,8 @@ void timedIncrement () {
       // ranIncrement();
     }
 
-    globalHDAngle = timeForward ? globalHDAngle - .5 : globalHDAngle + .5;
-    globalAngle = timeForward ? globalAngle + .5 : globalAngle - .5;
+    globalHDAngle = timeForward ? globalHDAngle - .5*renderSpeed : globalHDAngle + .5*renderSpeed;
+    globalAngle = timeForward ? globalAngle + .5*renderSpeed : globalAngle - .5*renderSpeed;
     entityUpdated = true;
     // globalLines+=.05;
     // globalSides+=.05;
@@ -174,19 +245,25 @@ void displayVars() {
   textSize(30);
   fill(360);
   text("frames: " + frames + " - time: " + time, 50, 30);
+  fill(120);
   text("lines(q/w): " + globalLines, 50, 70);
   text("sides(a/s): " + globalSides, 50, 110 );
+  fill(renderOption>1 ? 120 : 0, 50, 100);
   text("dim(d/f): " + globalDimensions, 50, 150 );
+  fill(renderOption>2 ? 120 : 0, 50, 100);
   text("higDm(c/v): " + globalHigherDimensions, 50, 190 );
+  fill(renderOption>3 ? 120 : 0, 50, 100);
   text("deityNum(g/h): " + globalDeityNum, 50, 230 );
+  fill(renderOption>4 ? 120 : 0, 50, 100);
   text("deityHigNum(j/k): " + globalDeityHigherNum, 50, 300 );
+  fill(360);
   text("inc(t/y): " + incrementer + " lw(e/r): " + globalLineWidth + " la(;/'): " + globalLineAlpha, 50, 400 );
   text("rndOpt(#): " + renderOption, 50, 450 );
   text("2X scl(n)", 50, 500 );
   text("/2 scl(b)", 50, 550 );
   text("screenshot(=)", 50, 600 );
   text("toggleDis(m): "+(isShowingVars?"on":"off") , 50, 650 );
-  text("toggle1(,): "+(toggle1?"on":"off"), 50, 700 );
+  text("toggle1(`): "+(toggle1?"on":"off"), 50, 700 );
   text("entitiyType(.): "+entitiyType, 50, 750 );
   text("colorMode(/): "+colorMode, 50, 800 );
   text("transX: "+transX + " - transY: "+transY, 50, 850 );
@@ -196,19 +273,17 @@ void displayVars() {
   text("D-angle( o/p ):" + globalDeityAngle, 50, 1050 );
   text("HD-angle( u/i ):" + globalHDAngle, 50, 1100 );
   text("clearScreen(0):"+(clearScreen?"on":"off"), 50, 1150 );
-  text("D-rotate(k):"+(renderToggle?"on":"off"), 50, 1200 );
+  text("renderToggle(9):"+(renderToggle?"on":"off"), 50, 1200 );
   text("leaftType(l): REPLACE", 50, 1250 );
-  text("Colors( ' ) bg:"+globalBgHue+" ln:"+globalLineHue, 50, 1300 );
+  text("Colors(l/,) bg:"+globalBgHue+" ln:"+globalLineHue, 50, 1300 );
   text("incrementAll(-)", 50, 1350 );
+  text("switch l&s(TAB)", 50, 1400 );
 }
 
 
 void keyPressed() {
   switch (key) {
-    case 'l':
-      println(flag);
-      break;
-    case ',':
+   case '`':
       toggle1 = !toggle1;
       entityUpdated=true;
       break;
@@ -307,9 +382,6 @@ void keyPressed() {
     case 'm': 
       isShowingVars = !isShowingVars;
       break;
-    case '8': 
-      entityUpdated=true;
-      break;
     case '9': 
       renderToggle = !renderToggle;
       break;
@@ -344,7 +416,7 @@ void keyPressed() {
       globalDeityNum = 2;
       globalDeityHigherNum = 2;
       globalLineWidth = .3;
-      globalLineAlpha = 10;
+      globalLineAlpha = 50;
       globalRndrScl = 177; 
       transX = 0;
       transY = 0;
@@ -356,7 +428,7 @@ void keyPressed() {
       entityUpdated = true;
     break;
     case '/':
-      colorMode = colorMode < 3 ? colorMode+1 : 1;
+      colorMode = colorMode < COLOR_MODE_MAX ? colorMode+1 : 1;
       println("colormode: " + colorMode);
       entityUpdated = true;
     break;
@@ -392,13 +464,22 @@ void keyPressed() {
         globalLineAlpha = globalLineAlpha < 100 ? globalLineAlpha+incrementer/10 : globalLineAlpha;
         entityUpdated = true;
     break;
+    case 'l':
+        globalLineHue = (globalLineHue+incrementer/10 )% 360;
+        entityUpdated = true;
+    break;
+    case ',':
+        float newHue = globalLineHue-incrementer/10;
+        globalLineHue = newHue > 0 ? newHue : 360 - newHue;
+        entityUpdated = true;
+    break;
 
       //RENDER OPTIONS 
     case '1': 
-      renderOption = 1;
+      renderOption = renderOption > 1 ? renderOption-1 : MAX_RENDER_OPTION;
       break;
     case '2': 
-      renderOption = 2;
+      renderOption = renderOption < MAX_RENDER_OPTION ? renderOption+1 : 1;
       break;
     case '3': 
       renderOption = 3;
@@ -412,6 +493,13 @@ void keyPressed() {
     case '6': 
       renderOption = 6;
       break;
+    case '7': 
+      renderSpeed -= .005;
+      break;
+    case '8': 
+      renderSpeed += .005;
+      break;
+    
   }
 
   if (key == CODED) {
@@ -428,8 +516,18 @@ void keyPressed() {
       break;
       case RIGHT:
         transX -= incrementer/10;
-
       break;
+     
+    }
+  } else {
+    switch (keyCode) {
+       case TAB:
+        float temp = globalLines;
+        globalLines = globalSides;
+        globalSides = temp;
+        entityUpdated = true;
+      break;
+      
     }
   }
 
@@ -466,9 +564,8 @@ void mouseWheel(MouseEvent event) {
   entityUpdated = true;
 }
 
-void saveScreenShot () {
-
-    String code = (int)globalSides+"-"+(int)globalLines;
+String genCode () {
+  String code = (int)globalSides+"-"+(int)globalLines;
     if (renderOption>1) code+="-"+(int)globalDimensions;
     if (renderOption>2) code+="-"+(int)globalHigherDimensions;
     if (renderOption>3) code+="-"+(int)globalDeityNum;
@@ -478,6 +575,12 @@ void saveScreenShot () {
     if (globalDeityAngle % 360 != 0) code+="-3Agl"+(int)globalDeityAngle;
     code += "-type"+entitiyType;
     code += "-size"+(int)globalRndrScl;
+  return code;
+}
+
+void saveScreenShot () {
+
+    String code = genCode();
     
     if (true) { //CHANGE IF CONTROL IS NEEDED
 

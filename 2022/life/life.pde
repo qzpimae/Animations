@@ -26,9 +26,9 @@
   int WIDTH = 1680;//1504//3840; //1920
   int HEIGHT = 1050;//846//2160; //1080
   
-  boolean paused = true;
-  boolean trailToggle = true;
-  boolean ignoreAlive = true;
+  boolean paused = false;
+  boolean trailToggle = false;
+  boolean ignoreAlive = false;
   
   int genType = 3;
   

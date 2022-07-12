@@ -27,8 +27,8 @@ int count;
 
 //width and height of canvas 
 //to change the resolution update both the WIDTH AND HEIGHT also change the values on  line 48
-final int WIDTH = 1280;// (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 //1680
-final int HEIGHT = 720;// (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720 //950
+final int WIDTH = 960;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int HEIGHT = 540;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 final float centerX = WIDTH/2;
 final float centerY = HEIGHT/2;
 final float maxDistance = centerX+centerY;//centerX+centerY;
@@ -48,7 +48,7 @@ SpaceDebris spaceDebris;
 
 void settings() {
   //set canvas size
-  size(720, 480, P3D); //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 // height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720
+  size(WIDTH, HEIGHT, P3D); //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 // height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720
   fullScreen();
 }
 

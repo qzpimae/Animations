@@ -50,8 +50,9 @@ NoiseSeed nSeedX2 = new NoiseSeed((float) Math.random()*1000 + 777.777);
 NoiseSeed nSeedY1 = new NoiseSeed((float) Math.random()*1000 + 3939.719);
 NoiseSeed nSeedY2 = new NoiseSeed((float) Math.random()*1000 + 3141.5826);
 //width and height of canvas
-int WIDTH = 1680;//800;//1024;//1504//3840; //1920//1360 //1680 //1504
-int HEIGHT = 1050;//600;//640;//846//2160; //1080//768 //1050  //846
+
+final int WIDTH = 3576;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int HEIGHT = 2472;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 //tracker for how many frames have elapsed
 float frames = 0;
 //array of Points to keep track of quadrent information and x/y position aswell as pixel index
@@ -67,9 +68,10 @@ double yStatic;
 void settings() {
   //set canvas size
   //
-  fullScreen();
+  // fullScreen();
   //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 
   //height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720
+  // size(WIDTH, HEIGHT, P2D); 
   size(WIDTH, HEIGHT); 
 
 }
