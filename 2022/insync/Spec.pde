@@ -78,6 +78,9 @@ class Spec {
                 case 4: 
                     this.heading = PVector.fromAngle((pos.y-H/2)/H/2*mag); 
                     break;
+                case 5: 
+                    this.heading = PVector.fromAngle(TWO_PI/(float)mod1); 
+                    break;
                 default:
                     this.heading = PVector.fromAngle(0);
                     break;	
@@ -86,26 +89,26 @@ class Spec {
         //MAG OPT
             switch (magOpt) {
                 case 1: 
-                    this.heading.mult(mag/10);
+                    this.heading.mult(mag/100);
                     break;
                 case 2: 
-                    this.heading.mult(1/ (mag)); 
+                    this.heading.mult(.1/ (mag)); 
                     break;
                 case 3: 
-                    this.heading.mult(1/ (mag) * (mag<0?1:-1)) ;
+                    this.heading.mult(.1/ (mag) * (mag<0?1:-1)) ;
                     break;
                 case 4: 
-                    this.heading.mult(1/ sqrt(mag<0?-(mag):(mag)));
+                    this.heading.mult(.1/ sqrt(mag<0?-(mag):(mag)));
                     break;
                 case 5: 
-                    this.heading.mult(1/ sqrt(mag<0?-(mag):(mag)) * (mag<0?1:-1));
+                    this.heading.mult(.1/ sqrt(mag<0?-(mag):(mag)) * (mag<0?1:-1));
                     break;
                 default:
                     // this.heading.mult(mag);
                     break;	
 
             }
-        if (toggle1) this.heading.mult(mag );
+        // if (toggle1) this.heading.mult(mag*.5 );
         if (toggle2) this.heading.mult((mag<0?1:-1)) ;
 
 

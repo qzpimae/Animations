@@ -1,32 +1,33 @@
 
 int testImgNum;
-int renderSpeed = 10;
-float globalMagMin = -200;
-float globalMagMax = 200;
+int renderSpeed = 1;
+float globalMagMin = -100;
+float globalMagMax = 100;
 boolean isPaused = false;
 boolean isFastForwarding = false;
 boolean showOpts = false;
 boolean toggle1 = false;
 boolean toggle2 = false;
 boolean toggle3 = false;
-int MAX_HEADING_OPT = 4;
+int MAX_HEADING_OPT = 5;
 int headingOpt = 3;
 int MAX_MAG_OPT = 5;
 int magOpt = 2;
+int mod1 = 1;
 
 ArrayList<Spec> specs;
 int specCol = 6;
 
-  //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 
-  // height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720
-float W = 3840;
-float H = 2160;
+  //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 //2560 //1440
+  // height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720 //1600 //900
+float W = 2560;
+float H = 1600;
 
 void settings() {
   //set canvas size
    fullScreen();
-  // size((int)W, (int)H); 
-  size((int)W, (int)H, P2D); 
+  size((int)W, (int)H); 
+//   size((int)W, (int)H, P2D); 
 
 }
 
@@ -122,7 +123,7 @@ void draw() {
 
     if (showOpts) {
 
-      String controlData = ("MinMag: " + globalMagMin + "\nMaxMag: " + globalMagMax +"\nSpec Cols: " + specCol+"\nHeadingOpt: " + headingOpt+"\nMagOpt: " + magOpt+"\ntoggle1: " + toggle1+"\ntoggle2: " + toggle2+"\ntoggle3: " + toggle3);
+      String controlData = ("MinMag: " + globalMagMin + "\nMaxMag: " + globalMagMax+ "\nMod-1: " + mod1 +"\nSpec Cols: " + specCol+"\nSpeed: " + renderSpeed+"\nHeadingOpt: " + headingOpt+"\nMagOpt: " + magOpt+"\ntoggle1: " + toggle1+"\ntoggle2: " + toggle2+"\ntoggle3: " + toggle3);
       // println(controlData);
       
       textSize(30);
@@ -136,7 +137,8 @@ void draw() {
 void keyPressed() {
     switch(key) {
         case 'a':
-            if (renderSpeed > 0)renderSpeed--;
+            renderSpeed--;
+            // renderSpeed > 1 ? renderSpeed-- : renderSpeed > 0 ? renderSpeed-=.1 : renderSpeed = .0 ;
             break;
         case 's':
             renderSpeed++;
@@ -152,6 +154,12 @@ void keyPressed() {
             break;
         case 'p':
             if (magOpt < MAX_MAG_OPT) magOpt++;
+            break;
+        case 'f':
+            mod1--;
+            break;
+        case 'g':
+            mod1++;
             break;
         case 'q':
             globalMagMin-=1;
