@@ -1,12 +1,11 @@
 import React from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import SacredGeometryMaker from '../src/SacredGeo/SacredGeometryMaker'
+import SacredGeometryMaker from '../src/components/SacredGeo/SacredGeometryPage'
 
 const Home: NextPage = () => {
   return (
-    <div className={styles.container}>
+    <div className='display'>
       <Head>
         <title>Sacred Geometry Generator</title>
         <meta name="description" content="Sacred Geometry Generator" />
