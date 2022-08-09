@@ -19,9 +19,10 @@ const SacredGeoCanvas = (props: Props) => {
 
 
     const { style, query } = props
-    const {renderScale, hue} = query.sliders
+    const {renderScale, hue, opacity} = query.sliders
     const rndrScl = renderScale.value
     const hueValue = hue.value
+    const opacityValue = opacity.value
 
     const setup = (p5: p5Types, canvasParentRef: Element) => {
         p5.createCanvas(
@@ -35,8 +36,8 @@ const SacredGeoCanvas = (props: Props) => {
 
         p5.background(0);
 
-        p5.stroke(hueValue, 70, 45, 100);
-        p5.strokeWeight(1);
+        p5.stroke(hueValue, 70, 45, opacityValue/5);
+        p5.strokeWeight(.5);
 
         p5.push()
         renderSG(p5, query);

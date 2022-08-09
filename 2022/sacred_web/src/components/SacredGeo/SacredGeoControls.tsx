@@ -6,7 +6,6 @@ const sliderStyle = 'bg-black text-white text-center text-2xl border-black borde
 const inputLabelStyle = 'text-xl mr-3 w-1/12 min-w-fit text-left'
 const inputContainerStyle = 'flex flex-row justify-around items-center mt-2 mx-5 block'
 const controlsContainerStyle = 'flex flex-col border-b-2 pb-3 border-white border-opacity-30'
-const sliderTextInputStyle = 'mx-3 text-lg text-center rounded-lg w-16 px-2'
 
 type Props = {
     style?: React.CSSProperties,
@@ -34,8 +33,13 @@ const SacredGeoControls = (props: Props) => {
     const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         const {value, id} = e.target;
-        const queryId = id.split('-')[id.split('-').length - 1];
-        onUpdate({...query, sliders: {...query.sliders, [queryId]: {...query.sliders[queryId], value: parseInt(value)}}})
+        if (!query.sliders[id]) return
+        
+        const changedSliderQuery = {...query.sliders[id], value: parseInt(value)}
+        const newSliders = {...query.sliders, [id]: {value, min: 0, max: 100}}
+        
+        onUpdate({...query, sliders: {...query.sliders, [id]: {...query.sliders[id], value: parseInt(value)}}})
+        // onUpdate({...query, sliders: newSliders})
     }
 
     const renderBuildingBlocks = () => {
@@ -58,15 +62,7 @@ const SacredGeoControls = (props: Props) => {
                         defaultValue={2}
                         onChange={handleBuildingChange}
                     />
-                    <input 
-                        id={'textInput-'+index}
-                        max={block.max ? block.max : 60}
-                        min={block.min ? block.min : 0}
-                        value={block.count}
-                        className={sliderTextInputStyle}
-                        defaultValue={2}
-                        onChange={handleSliderChange}
-                    />
+                    <p className={'mx-3 text-lg w-1'}>{block.count}</p>
                 </div>
             )
         })
@@ -85,7 +81,7 @@ const SacredGeoControls = (props: Props) => {
                         {sliderName.substring(0, 1).toUpperCase() + sliderName.substring(1).replace('-', ' ')}
                     </label>
                     <input
-                        id={'slider-'+sliderName}
+                        id={sliderName}
                         className={sliderStyle}
                         type='range'
                         max={sliderQuery.max}
@@ -93,14 +89,7 @@ const SacredGeoControls = (props: Props) => {
                         value={sliderQuery.value}
                         onChange={handleSliderChange}
                     />
-                    <input 
-                        id={'textInput-'+sliderName}
-                        className={sliderTextInputStyle}
-                        max={sliderQuery.max}
-                        min={sliderQuery.min}
-                        value={sliderQuery.value}
-                        onChange={handleSliderChange}
-                    />
+                    <p className={'mx-3 text-lg w-1'}>{sliderQuery.value}</p>
                 </div>
             )
         }
