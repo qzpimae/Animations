@@ -1,7 +1,7 @@
 //IMPORTS
 boolean isPaused = false;
-float globalXScale = 333;
-float globalYScale = 333;
+float globalXScale = 121;
+float globalYScale = 121;
 float globalDimensions = 6;
 float renderSpeed = .1;
 float globalNoiseMult = 17;
@@ -18,7 +18,7 @@ int colorMode = 1;
 int globalLineHue = 177;
 int globalBgHue = 339;
 
-int renderOption = 8;
+int renderOption = 3;
 boolean invertHue = false;
 boolean invertLight = true;
 
@@ -51,8 +51,8 @@ NoiseSeed nSeedY1 = new NoiseSeed((float) Math.random()*1000 + 3939.719);
 NoiseSeed nSeedY2 = new NoiseSeed((float) Math.random()*1000 + 3141.5826);
 //width and height of canvas
 
-final int WIDTH = 3576;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
-final int HEIGHT = 2472;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
+final int WIDTH = 2560;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int HEIGHT = 1600;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 //tracker for how many frames have elapsed
 float frames = 0;
 //array of Points to keep track of quadrent information and x/y position aswell as pixel index
@@ -68,8 +68,8 @@ double yStatic;
 void settings() {
   //set canvas size
   //
-  // fullScreen();
-  //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 
+  fullScreen();
+  //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 =
   //height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720
   // size(WIDTH, HEIGHT, P2D); 
   size(WIDTH, HEIGHT); 
@@ -77,7 +77,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(1);
+  frameRate(30);
   
   //set canvas size
   colorMode(HSB, 360, 100, 100);
@@ -99,8 +99,11 @@ void draw() {
   if (!isPaused) {
     // isPaused = true;
     
-    // xStatic -= .1;
-    // yStatic -= .1;
+    // xStatic -= .1 * renderSpeed;
+    // yStatic -= .1 * renderSpeed;
+    globalXScale = globalXScale - .2 * renderSpeed > 0 ? globalXScale - .2 * renderSpeed : globalXScale;
+    globalYScale = globalYScale - .5 * renderSpeed > 0 ? globalYScale - .5 * renderSpeed : globalYScale;
+    renderSpeed += .001;
     // println(globalXScale,globalYScale,globalRndrScl);//xStatic,yStatic,
     // background(0); // reset screen
     
@@ -168,6 +171,8 @@ void displayVars() {
 
 
 void keyPressed() {
+  
+  // print("key");
   switch (key) {
     case ',':
       invertHue = !invertHue;

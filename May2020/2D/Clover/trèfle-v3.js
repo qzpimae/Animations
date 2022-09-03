@@ -9,13 +9,15 @@ let canvas = document.createElement('canvas'),
 
       time = 0,
 
-      minRadius = 7,
+      minRadius = 1,
 
-      radiusSub = 20,
+      radiusSub = 5,
       
       pauseAnimation = false,
 
-      showDot = false;
+      showDot = false,
+
+      renderSpeed = 10;
 
 context.strokeStyle = 'white';
 
@@ -86,6 +88,12 @@ function userInputEvent(input) {
             showDot = !showDot;
 
             break;
+            case 'KeyO':
+                renderSpeed = renderSpeed > 1 ? renderSpeed-1 : 1;
+            break;
+            case 'KeyP':
+                renderSpeed = renderSpeed < 100 ? renderSpeed+1 : 100;
+            break;
     
     }
 
@@ -103,7 +111,7 @@ function userInputEvent(input) {
         function render() {
 
 
-        time = time < width? time+ 1: minRadius;
+        time = time < width? time+ renderSpeed/10: minRadius;
 
         clearFullScreen()
 
@@ -112,7 +120,7 @@ function userInputEvent(input) {
         // context.rotate(.01d)
 
         if (!pauseAnimation) {
-            setTimeout(window.requestAnimationFrame, 10, render)
+            setTimeout(window.requestAnimationFrame, 1, render)
         }
 
       }
@@ -129,7 +137,7 @@ function createClover(d) {
 
         color = (count * 15) +time+144;
 
-        context.fillStyle = count%2==0? 'white' : 'black';
+        context.fillStyle = `hsla(0, ${count%2==0? `0%,100%` : `0%, 0%`}, ${r/(minRadius*1.5)})` ;
 
         context.strokeStyle = `hsl(${color},100%,70%)`;
  

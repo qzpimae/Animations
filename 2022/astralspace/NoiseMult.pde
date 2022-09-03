@@ -272,7 +272,7 @@ class NoiseMult {
                 float tSX = 15666 + ( renderAdvanceToggle ? (frames*renderSpeed/99) : -transX/10 );
                 float tSY = 15639 + ( renderAdvanceToggle ? (frames*renderSpeed/88) :-transY/10 );
                 float noise1 =  (float) noise.noise2(x/xScl+tSX+222, y/yScl+tSY);
-                float hue = (float) abs(map(noise1, -1, 1, 339, 159));
+                float hue = ((float) abs(map(noise1, -1, 1, 339, 159)- frames/5) ) % 360;
                 float sat = (float) abs(map(noise1, 0, 1, -100, 100));
                 float brt = (float) abs(map(noise1, 0, 1, -100, 100));
                 int pos = x+a.width*y;
