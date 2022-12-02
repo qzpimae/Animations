@@ -8,21 +8,22 @@ let canvas = document.createElement('canvas');
 
     width = canvas.width = window.innerWidth,
     height = canvas.height = window.innerHeight,
-
+    
     frames = 0, //keep count of how many render cycles have occured
     time = 0
     speed = 25, //how many times to render per frame
-
+    
     renderPaused = false, //user can toggle animation
     colorBool = false,  //user can toggle colored lines
     
+    pointsNum = 50, //how many points will be used to create the sphere   
     point = { //obj to keep track of points when roating sphere
         x: 0,
         y: 0,
         z: 0
     };
 
-    loopLength = 1180; //how long the animation will take to complete a loop
+    loopLength = 800; //how long the animation will take to complete a loop
 
     //set styling 
 
@@ -59,7 +60,6 @@ let canvas = document.createElement('canvas');
    
    //ANIMATION CYCLE
 
-   let pointsNum = 6; //how many points will be used to create the sphere   
      
      render()
 
@@ -67,10 +67,10 @@ let canvas = document.createElement('canvas');
 
             time++
 
-            standardRender()
-
             // clearFullScreen()
-            // createSphereArt()
+            // standardRender()
+
+            createSphereArt()
 
         
         //user can toggle pausing of animation via 'spacebar'
@@ -99,7 +99,7 @@ let canvas = document.createElement('canvas');
                 frames+=.1
             } else {
                 frames = 0;
-                pointsNum+=2
+                pointsNum+=10
             }
 
          }
@@ -176,7 +176,7 @@ let canvas = document.createElement('canvas');
 
     function renderPoint(origin) {
 
-        context.fillStyle = colorBool ? `hsl(${frames}, 100%, 50%)`: `hsla(0, 100%, 100%, ${(frames/200)})`;//'white';
+        context.fillStyle = colorBool ? `hsl(${frames}, 100%, 50%)`: `hsla(0, 100%, 100%, ${(frames/200 * mapNumber(pointsNum, 1, 100, .5, .01))})`;//'white';
 
         let size = .5;// 2-pointsNum/10 > .7 ? 2-pointsNum/10 : .7;
         
