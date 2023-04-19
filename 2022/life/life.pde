@@ -23,19 +23,19 @@
   //Noise algorithm that produces values used in this animation, not made by me
  OpenSimplex2S noise;
   
-  int WIDTH = 1680;//1504//3840; //1920
-  int HEIGHT = 1050;//846//2160; //1080
+  int WIDTH = 1440;//1504//3840; //1920
+  int HEIGHT = 900;//846//2160; //1080
   
   boolean paused = false;
-  boolean trailToggle = false;
+  boolean trailToggle = true;
   boolean ignoreAlive = false;
   
   int genType = 3;
   
   int frames = 0;
-  float fps = 120;
+  float fps = 17;
   
-  int cellSize =  3;
+  int cellSize =  2;
   int tempCellSize = cellSize;
   int cellCols;
   int cellRows;
@@ -126,7 +126,7 @@
       break;
      
       case '=': 
-        saveFrame("../../../renderScreenShot/life_######.png");
+        saveFrame("../../../renderScreenShot/life/life_######.png");
       break;
     }
     
@@ -157,10 +157,12 @@
   
   //loop function that runs on a loop 
   void draw() {
+    frames++;
+    if (frames % 1500 == 0) initalizeGame();
+    if (frames % 150 == 0 ) trailToggle = !trailToggle;
     
-    //initalizeGame();
-    
-    if (trailToggle) background(0); // reset screen
+    // background((frames*10)%360, 100, 33); // reset screen // uncomment for rainbow strobe ( trail does not work)
+    if (trailToggle) background(0);
     
     //double count = 0;
 
@@ -215,9 +217,10 @@
           case 3:
        
             if (
-              i > (columns/4)+1 
-              && i < (columns *3/4)-1 
-              && j == rows/2
+              // i > (columns/4)+1 
+              // && i < (columns *3/4)-1 
+              //&& 
+              j == rows/2
             ) { startsAlive = true;
             } else startsAlive = false;
           break;
