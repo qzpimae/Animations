@@ -247,7 +247,7 @@ class NoiseMult {
                 float noise3 =  (float) noise.noise2(   x/xScl*10+tSX, y/yScl*10+tSY  );
                 
                 float finalNoise = (noise1+noise3+noise2)/3;
-                float hue = (float) abs(map(finalNoise, -1, 1, 339, 159));
+                float hue = (float) (abs(map(finalNoise, -1, 1, 339, 159))+frames*renderSpeed)%360;
                 float sat = (float) abs(map(finalNoise, 0, 1, -100, 100));
                 float brt = (float) abs(map(finalNoise, 0, 1, -100, 100));
                 int pos = x+a.width*y;
