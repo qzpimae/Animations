@@ -113,7 +113,7 @@ class KaleidoscopeController {
 
 
     void changeImg (int imgNum) {
-        String ext =  imgNum<61 ? "img" : "testimg";
+        String ext = "testimg";
         PImage i = loadImage("../testimgs/"+ext+imgNum+".png");
         // if (i == null) throw new RuntimeException("pattern.jpg not found");
         controller.changeImage(i,true);
