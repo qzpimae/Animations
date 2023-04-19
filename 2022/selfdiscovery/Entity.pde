@@ -135,15 +135,15 @@ class Entity {
 
 
             float hue = (int)colorVal == 0 ? 333 : (int)colorVal == 120 ? 333 : 177;
-            float sat = map (hue, 159, 333, 100, 80);
-            if (colorVal == 120) sat = 70;
+            float sat = map (hue, 159, 333, 90, 75);
+            if (colorVal == 120) sat = 50;
             tempShape.setStroke(color(hue, sat, lightness, globalLineAlpha));
             // float hue = colorVal+159%360;
             // tempShape.setStroke(color(hue, 100, 100, globalLineAlpha));
         } else if (colorMode == 3) {
 
 
-            float hue = ((int)colorVal == 0 ? globalLineHue : (int)colorVal == 120 ? globalLineHue-15 : globalLineHue-30);
+            float hue = ((int)colorVal == 0 ? globalLineHue : (int)colorVal == 120 ? globalLineHue-globalLineHueRange : globalLineHue-globalLineHueRange*2);
             float sat = map (hue, 159, 333, 100, 80);
             tempShape.setStroke(color(hue, sat, lightness, globalLineAlpha));
             // float hue = colorVal+159%360;
@@ -165,7 +165,7 @@ class Entity {
 
         } else if (colorMode == 6 ) {
 
-            tempShape.setStroke(color(60, 100, lightness, globalLineAlpha));
+            tempShape.setStroke(color((frames)%360, 100, lightness, globalLineAlpha));
 
         } else if (colorMode == 7 ) {
 
@@ -177,7 +177,7 @@ class Entity {
             if (hue == 177) sat = 70;
             else if (colorVal == 120 ||colorVal == 180 || colorVal == 240) sat = 0;
 
-            println(colorVal);
+            // println(colorVal);
             tempShape.setStroke(color(hue, sat, lightness, globalLineAlpha));
 
 

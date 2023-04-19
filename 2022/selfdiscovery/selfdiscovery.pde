@@ -9,14 +9,14 @@ import java.util.Arrays;
 
 int testImgNum;
 
-final int W = 3840;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
-final int H = 2160;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
+final int W = 2560;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int H = 1600;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 boolean isPaused = true;
 float frames;
 float time; 
 boolean timeForward = true;
 
-float renderSpeed = .1;
+float renderSpeed = 1;
 
 Entity renderingEntity;
 boolean entityUpdated = true; 
@@ -27,11 +27,11 @@ boolean flag = false;
 //41214142
 //3-318-8-22
 
-float globalLines = 4;
-float globalSides = 4;
-float globalDimensions = 4;
+float globalLines = 6;
+float globalSides = 6;
+float globalDimensions = 2;
 float globalHigherDimensions = 2;
-float globalDeityNum = 4;  
+float globalDeityNum = 2;  
 float globalDeityHigherNum = 4;
 
 int seriesIdx = 0;
@@ -50,14 +50,15 @@ float globalLineWidth = .4;
 float globalLineAlpha = 100;
 float incrementer = 1;
 
-int colorMode = 7;
+int colorMode = 3;
 int COLOR_MODE_MAX = 8;
 
 float globalLineHue = 177;
+float globalLineHueRange = 180;
 float globalBgHue = 339;
 
 int MAX_RENDER_OPTION = 7;
-int renderOption = 3;
+int renderOption = 1;
 boolean toggle1 = true;
 boolean isShowingVars = false;
 
@@ -86,7 +87,7 @@ void settings() {
 
 void setup() {
   //set colormode
-  frameRate(10);
+  frameRate(5);
   colorMode(HSB, 360, 100, 100, 100);
   // noLoop();
   noCursor();
@@ -109,8 +110,8 @@ void draw() {
   if (!isPaused) {
     
     // INCREMENT NUMBERS
-    seriesIcrement();
-    // timedIncrement();
+    // seriesIcrement();
+    timedIncrement();
 
     // saveFrame("../../../newrender2822/img_######.png");
   
@@ -494,10 +495,10 @@ void keyPressed() {
       renderOption = 6;
       break;
     case '7': 
-      renderSpeed -= .005;
+      renderSpeed -= .005 * incrementer;
       break;
     case '8': 
-      renderSpeed += .005;
+      renderSpeed += .005 * incrementer;
       break;
     
   }
@@ -585,7 +586,7 @@ void saveScreenShot () {
     if (true) { //CHANGE IF CONTROL IS NEEDED
 
       //SAVE IN REGULAR SS DIR
-      saveFrame("../../../renderScreenShot/entity_"+code+"_######.png");
+      saveFrame("../../../renderScreenShot/entities/2023/04/entity_"+code+"_######.png");
 
       //SAVING TEST IMGS
       saveFrame("../kaleidoscopes/testimgs/testimg"+ (testImgNum++) + ".png"); 
