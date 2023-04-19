@@ -26,7 +26,7 @@ int C = H;
 int LIM = C - 1;
 int posrange = 100;
 int subrange = 1;
-float globalInc = 10;
+float globalInc = 100;
 
 float angx = 0; // degrees
 float angz = 0; // degrees
@@ -39,7 +39,7 @@ int noiseVar1 = 500;
 int noiseVar2 = 100;
 int noiseVar3 = 1;
 
-float globalMag = 10;
+float globalMag = 1;
 
 int imgChoice = 1;
 int prevImgChoice = -1;
@@ -48,7 +48,7 @@ int frames = 0;
 
 int imgSelections = 1;
 
-boolean autoReset = true;
+boolean autoReset = false;
 
 void settings () {
   
@@ -209,13 +209,13 @@ void keyPressed() {
         }
         break;  
 
-      case 'e':
+      case '2':
         imgChoice++;
         if (imgChoice > IMG_MAX) {
           imgChoice = 0;
         }
         break;
-      case 'd':
+      case '1':
         imgChoice--;
         if (imgChoice < 0) {
           imgChoice = IMG_MAX;
@@ -264,10 +264,10 @@ void keyPressed() {
           println("(u/j) globalInc: "+globalInc);
           println("(q/a) posrange: "+posrange);
           println("(w/s) subrange: "+subrange);
-          println("(e/d) imgChoice: "+imgChoice);
+          println("(1/2) imgChoice: "+imgChoice);
           println("(x)   autoReset: "+(autoReset==true));
           println("(c)   randomizeMag: "+globalMag);
-          println("(v)   randomize range");
+          println("(v/z)   randomize range/noiseVars");
           // println("noiseVar4: "+noiseVar4);
         break;
         case 'u':
