@@ -10,14 +10,16 @@ let canvas = document.createElement('canvas'),
       width = canvas.width = window.innerWidth,
       height = canvas.height = window.innerHeight,
 
-      time = -1,
+      time = -2,
 
-      speed = 1,
+      speed = .9,
+      seedSpeed = .03,
 
       pixSize = 5,
 
       ogTM = width/pixSize/2,
-      timeMax = ogTM/4,
+      tmDiv = 1.5,
+      timeMax = ogTM/tmDiv,
 
       timeForward = false,
 
@@ -29,7 +31,7 @@ let canvas = document.createElement('canvas'),
       pauseAnimation = false,
 
       viewWidth = 1,
-      viewHeight = height/2;
+      viewHeight = height/tmDiv;
 
 context.strokeStyle = 'white';
 context.fillStyle = 'white';
@@ -95,33 +97,35 @@ function userInputEvent(input) {
 
 render()
 
+function renderFrame () {
+
+
+
+    context.save()
+
+    // clearFullScreen()
+
+    context.translate(0,height/2-viewHeight/2)
+    while (time < timeMax) {
+        time += speed;
+        createImg(time)
+    }
+    time = 0;
+    // seed = Math.random()*1000
+    seed += seedSpeed;
+    timeMax = ogTM/tmDiv
+
+    // if(lightMode) clearFullScreen()
+
+    context.restore()
+
+}
+
 function render() {
 
-    if (timeForward && time < timeMax) {
-        time+=speed
-        // console.log('time++', time);
-    } else if (timeForward && time >= timeMax) {
-        timeForward = false;
-        // setTimeout(()=>{timeForward = false;}, 100)
+    renderFrame()
 
-    } else if (!timeForward && time > 0) {
-        time-=speed
-    } else if ( time <= 0){
-
-        timeForward = true;
-        time = .1
-        seed = Math.random()*1000
-
-        // pixSize+=1;
-        timeMax = ogTM
-        // timeMax = width/pixSize/2;
-        
-    }
-
-    if(lightMode) clearFullScreen()
-
-    createImg(time)
-
+    seedSpeed-=.0001
     // return
 
     if (!pauseAnimation) {
@@ -134,8 +138,6 @@ function createImg(s) {
 
     // let mNoise = Noise(seed,seed+.1)*1;
     
-    context.save()
-
     s = -s;
 
     // context.translate(width/2-viewWidth/2,height/2-viewHeight/2)
@@ -144,16 +146,15 @@ function createImg(s) {
     
     const 
         
-        noiseMult = 2,
+        noiseMult = 1.2,
 
         nRes = time/noiseMult,// (time-timeMax/noiseMult)/timeMax*noiseMult;
         transX = 0;// nRes == 77 ? s/30 : 0,
-        offX = (mapNumber(nRes, 3, timeMax, 0, width*4)/nRes)+transX,
-        offY = (mapNumber(nRes, 2, timeMax, 0, height*4)/nRes);
+        offX = (mapNumber(nRes, 2.3, timeMax, 0, width*4)/nRes)+transX,
+        offY = (mapNumber(nRes, 2.1, timeMax, 0, height*4)/nRes);
 
     // console.log(nRes);
 
-    context.translate(0,height/2-viewHeight/2)
 
     // viewWidth = parseInt(mapNumber(abs(s), 0, timeMax, 1, 50))
 
@@ -178,14 +179,14 @@ function createImg(s) {
             // console.log(light);
             context.strokeStyle = `hsl(${color}, 50%, ${light}%)`; //Math.random()*100
 
-            context.lineWidth = pixSize+1;
+            context.lineWidth = pixSize;
            
             // console.log(x, y);
-            const xLeft = s*pixSize+(width/2) + x
+            const xLeft = s*pixSize+(width/2) + x 
             const xRight = -s*pixSize+(width/2) + x
             context.beginPath()
-            context.moveTo(xLeft,y)
-            context.lineTo(xLeft+pixSize,y)
+            context.moveTo(xLeft+pixSize,y)
+            context.lineTo(xLeft+pixSize*2,y)
             context.stroke()
             context.closePath()
 
@@ -204,7 +205,6 @@ function createImg(s) {
         
     }
 
-    context.restore()
 
 
 }

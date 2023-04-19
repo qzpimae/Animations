@@ -8,6 +8,8 @@ let canvas = document.createElement('canvas');
 
     width = canvas.width = window.innerWidth,
     height = canvas.height = window.innerHeight,
+
+    clearScreenBool = true,
     
     frames = 0, //keep count of how many render cycles have occured
     time = 0
@@ -15,8 +17,9 @@ let canvas = document.createElement('canvas');
     
     renderPaused = false, //user can toggle animation
     colorBool = false,  //user can toggle colored lines
-    
-    pointsNum = 50, //how many points will be used to create the sphere   
+    inc = 1, //used to increment control variables
+    pointsNum = 4, //how many points will be used to create the sphere   
+    autoAddPoints = false, //user can toggle auto adding points
     point = { //obj to keep track of points when roating sphere
         x: 0,
         y: 0,
@@ -35,16 +38,31 @@ let canvas = document.createElement('canvas');
     document.addEventListener('keydown', (evn) => {
         
         if (evn.code == 'Space') {
-
             renderPaused = !renderPaused;
-        
             if (!renderPaused) { 
                 render()
             }
             
         } else if (evn.code == 'KeyC') {
             colorBool = !colorBool;
+        } else if (evn.code == 'KeyX') {
+            clearScreenBool = !clearScreenBool;
+        } else if (evn.code == 'KeyZ') {
+            autoAddPoints = !autoAddPoints;
+        } else if (evn.code == 'KeyR') {
+            speed+=inc;
+        } else if (evn.code == 'KeyF') {
+            speed-=inc;
+        } else if (evn.code == 'KeyT') {
+            pointsNum+=inc;
+        } else if (evn.code == 'KeyG') {
+            pointsNum-=inc;
+        } else if (evn.code == 'KeyY') {
+            inc+=1;
+        } else if (evn.code == 'KeyH') {
+            inc-=1;
         }
+
 
     }, false)
 
@@ -63,22 +81,23 @@ let canvas = document.createElement('canvas');
      
      render()
 
-      function render() {
+    function render() {
 
-            time++
+        time++
 
-            // clearFullScreen()
-            // standardRender()
+        console.log(time)
+        if (clearScreenBool) clearFullScreen()
+        standardRender()
 
-            createSphereArt()
+        // createSphereArt()
 
-        
+    
         //user can toggle pausing of animation via 'spacebar'
         if (!renderPaused) {
             setTimeout(window.requestAnimationFrame, 0, render)
         }
 
-      }
+    }
 
     //function used to map numbers from int into a radian range
     function mapNumber (number, min1, max1, min2, max2) {
@@ -92,14 +111,14 @@ let canvas = document.createElement('canvas');
             
             createSphere(circleRadius) //render the sphere
 
-            createCircle(circleRadius) //circle will smoothly transition animation
+            if (autoAddPoints) createCircle(circleRadius) //circle will smoothly transition animation
 
             //counts how many frames have occured
-            if (frames < loopLength) {
+            if (frames < loopLength || !autoAddPoints) {
                 frames+=.1
             } else {
                 frames = 0;
-                pointsNum+=10
+                pointsNum+=1
             }
 
          }
