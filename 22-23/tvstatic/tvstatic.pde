@@ -26,14 +26,15 @@ int C = H;
 int LIM = C - 1;
 int posrange = 100;
 int subrange = 1;
-float globalInc = 100;
+float globalInc = 1;
+float vectorRange = 100;
 
 float angx = 0; // degrees
 float angz = 0; // degrees
 
 PImage img, imgH;
 
-int IMG_MAX = 16;
+int IMG_MAX = 10;
 int NOISE_VAR_MAX = 10000;
 int noiseVar1 = 500;
 int noiseVar2 = 100;
@@ -45,10 +46,13 @@ int imgChoice = 1;
 int prevImgChoice = -1;
 
 int frames = 0;
-
+int fps = 24;
+int resetPeriod = 200;
 int imgSelections = 1;
+int imgFolderSelc = 0;
 
-boolean autoReset = false;
+boolean autoReset = true;
+boolean isInColor = true;
 
 void settings () {
   
@@ -59,19 +63,39 @@ void settings () {
 void setup() {
   
   colorMode(HSB, 360, 100, 100);
-  angx = 321;
-  angz = 280;
-  v = new PVector(-31, -41, 15);
+  initalize();
+  frameRate(12);
+
+  noCursor();
+
+}
+
+void initalize () {
+
+  // angx = 321;
+  // angz = 280;
+
+  // angx = random(360);
+  // angz = random(360);
+
+  // angx = random(360)-120; // degrees
+  // angz = random(360)-120; // degrees
+  
+  angx = random(90)-30; // degrees
+  angz = random(90)-30; // degrees
+
+
+
+  v = new PVector(
+    random(vectorRange)-(vectorRange/2), 
+    random(vectorRange)-(vectorRange/2), 
+    random(vectorRange)-(vectorRange/2));
+  // v = new PVector(-31, -41, 15);
   
   //Using vectors of unit length will let us rotate without changing speed
   rz = new PVector(cos(angx*PI/180), sin(angx*PI/180), 0);
   rx = new PVector(0, sin(angz*PI/180), cos(angz*PI/180));
   p = new PVector(0, 0, 0);
-  
-  frameRate(18);
-
-  noCursor();
-
 }
 
 void resetScreen () {
@@ -82,7 +106,7 @@ void resetScreen () {
     tempImg = (int)random(IMG_MAX);
   }
 
-  println(tempImg);
+  // println(tempImg);
   imgChoice = tempImg;
 
   v.set(random(posrange)-subrange, random(posrange)-subrange, random(posrange)-subrange);
@@ -94,8 +118,6 @@ void resetScreen () {
   float mag = random(globalMag);
   v.setMag(mag);
   
-  angx = random(90)-30; // degrees
-  angz = random(90)-30; // degrees
   
   rz.set(cos(angx*PI/180), sin(angx*PI/180), 0);
   rx.set(0, sin(angz*PI/180), cos(angz*PI/180));
@@ -109,6 +131,7 @@ void resetScreen () {
 }
 
 void mouseClicked() {
+  initalize();
   resetScreen();
 
 }
@@ -133,7 +156,7 @@ void draw() {
 
   frames++;
 
-  if (frames % 500 == 0 && autoReset) resetScreen();
+  if (frames % resetPeriod == 0 && autoReset) resetScreen();
 
 
   if (imgChoice != prevImgChoice) {
@@ -166,7 +189,7 @@ void draw() {
       if (img.pixels[counter] != color( cos(frames/(float)noiseVar1) * (float)noiseVar2)) {
         pixels[counter] = img.pixels[counter];
       } else {
-        pixels[counter] = color(random(360), random(100), random(80)+20);
+        pixels[counter] = color(random(360), isInColor ? random(100) : 0, random(80)+20);
       }
       // pixels[counter] = color(random(360), random(100), random(80)+20);
     }
@@ -208,7 +231,16 @@ void keyPressed() {
           subrange -= 10;
         }
         break;  
-
+      case '5': 
+        resetAll();
+        initalize();
+        break;
+      case '4':
+          autoReset = !autoReset;
+        break;
+      case '3':
+          resetPeriod = 1;
+        break;
       case '2':
         imgChoice++;
         if (imgChoice > IMG_MAX) {
@@ -258,6 +290,9 @@ void keyPressed() {
         }
         break;
         case 'm':
+          println("\n\n");
+          println("frames: "+frames+" (i/k) fps: "+fps);
+          println("angx: "+angx + " angz: "+angz);
           println("(r/f) noiseVar1: "+noiseVar1);
           println("(t/g) noiseVar2: "+noiseVar2);
           println("(y/h) noiseVar3: "+noiseVar3);
@@ -265,16 +300,24 @@ void keyPressed() {
           println("(q/a) posrange: "+posrange);
           println("(w/s) subrange: "+subrange);
           println("(1/2) imgChoice: "+imgChoice);
-          println("(x)   autoReset: "+(autoReset==true));
+          println("(4)   autoReset: "+(autoReset==true));
           println("(c)   randomizeMag: "+globalMag);
           println("(v/z)   randomize range/noiseVars");
+          println("(e/d)   resetPeriod: "+resetPeriod);
+          println("(?)   isInColor: "+isInColor);
+          
           // println("noiseVar4: "+noiseVar4);
         break;
+
+        case '/':
+          isInColor = !isInColor;
+        break;
+      
         case 'u':
           globalInc+=1;
           break;
         case 'j':
-          globalInc-=1;
+          globalInc=globalInc>1?globalInc-1:1;
           break;
         case 'z':
           noiseVar1 = (int) random(NOISE_VAR_MAX);
@@ -282,7 +325,11 @@ void keyPressed() {
           noiseVar3 = (int) random(NOISE_VAR_MAX);
         break;
         case 'x':
-          autoReset = !autoReset;
+          angx = (int) random(360);
+          angz = (int) random(360);
+          rz = new PVector(cos(angx*PI/180), sin(angx*PI/180), 0);
+          rx = new PVector(0, sin(angz*PI/180), cos(angz*PI/180));
+          p = new PVector(0, 0, 0);
         break;
         case 'c':
           globalMag = random(100);
@@ -291,9 +338,60 @@ void keyPressed() {
           posrange = (int) random(500);
           subrange = (int) random(500);
         break;
+        case 'e':
+          resetPeriod += globalInc;
+        break;
+        case 'd':
+          resetPeriod -= globalInc;
+          resetPeriod=resetPeriod>1?resetPeriod:1;
+        break;
+        case 'i':
+          fps = fps < 60 ? fps+1 : 60;
+          frameRate(fps);
+        break;
+        case 'k':
+          fps = fps > 1 ? fps-1 : 1;
+          frameRate(fps);
+        break;
+        case '0':
+          imgFolderSelc = 0;
+        break;
+        case '9':
+          imgChoice = 99;
+        break;
+        case '8':
+          imgChoice = 88;
+        break;
+        case '7':
+          imgChoice = 77;
+        break;
+        case '6':
+          imgChoice = 66;
+        break;
+        // case '5':
+        //   imgChoice = 55;
+        // break;
+        // case '6':
+        //   imgSelections = 4;
+        // break;
+
 
     }
-  }
+}
+
+void resetAll() {
+    angx = 90;
+    angz = -90;
+    posrange = 100;
+    subrange = 1;
+    globalInc = 1;
+    vectorRange = 100;
+    noiseVar1 = 500;
+    noiseVar2 = 100;
+    noiseVar3 = 1;
+    globalMag = 1;
+    resetPeriod = 200;
+}
 
 void convolutionMask4(int maskVal){
   loadPixels();
