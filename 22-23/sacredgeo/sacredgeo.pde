@@ -9,8 +9,8 @@ import java.util.Arrays;
 
 int testImgNum;
 
-final int W = 2560;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
-final int H = 1600;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
+final int W = 1400;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int H = 900;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 boolean isPaused = true;
 float frames;
 float time; 
@@ -586,7 +586,7 @@ void saveScreenShot () {
     if (true) { //CHANGE IF CONTROL IS NEEDED
 
       //SAVE IN REGULAR SS DIR
-      saveFrame("../../../renderScreenShot/entities/2023/04/entity_"+code+"_######.png");
+      saveFrame("../../../renderScreenShot/entities/2023/05/entity_"+code+"_######.png");
 
       //SAVING TEST IMGS
       saveFrame("../kaleidoscopes/testimgs/testimg"+ (testImgNum++) + ".png"); 
@@ -620,4 +620,4 @@ void convolutionMask4(int maskVal){
     }
   }
   updatePixels();
-}
+} 
