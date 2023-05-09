@@ -6,7 +6,7 @@ import controlP5. *;
 OpenSimplex2S noise;
 
 //TEST VARS
-final boolean isTesting = false;
+boolean isTesting = false;
 boolean keepPrinting = true;
 int printCount = 0;
 int printLim = 100;
@@ -17,7 +17,7 @@ ControlP5 controller;
 ControlGroup gui;
 
 final float fps = 60;
-float renderSpeed = 35.5;
+float renderSpeed = 10;
 
 //tracker for how many frames have elapsed
 boolean isPaused = false;
@@ -85,7 +85,7 @@ void setup() {
   if (isTesting) {
     gui.show();
   } else {
-    noCursor();
+    noCursor(); //commented for live testing
     gui.hide();
   }
   // noLoop(); ///uncomment to only render one frame
@@ -211,6 +211,9 @@ void keyPressed() {
 
     case 'p': 
       println(camTiltX, camTiltY);
+      break;
+    case 'm':
+      isTesting = !isTesting;
       break;
       
   }
