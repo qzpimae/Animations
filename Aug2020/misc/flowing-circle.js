@@ -15,7 +15,10 @@ let canvas = document.createElement('canvas'),
       timeForward = true,
       speed = .37,
       clearScreen = true,
-      pauseAnimation = false;
+      pauseAnimation = false,
+      szMlt = 1;
+      layers = 2;
+      layerMult = 1;
 
 context.strokeStyle = 'white';
 context.fillStyle = 'white';
@@ -39,6 +42,7 @@ document.addEventListener('keydown', userInputEvent, false);
 
 //USER INPUT LOGIC
 function userInputEvent(input) {
+    console.log(input.code);
     switch (input.code) {
         case 'Space':
             pauseAnimation = !pauseAnimation;
@@ -47,10 +51,69 @@ function userInputEvent(input) {
             }
         break;
         case 'ArrowUp':
-            speed = speed < 1 ? speed+.1 : 1;
+            speed = speed < 10 ? speed+.01 : 10;
         break;
         case "ArrowDown":
-            speed = speed > .2 ? speed-.1 : .2;
+            speed = speed > .002 ? speed-.01 : .002;
+        break;
+        case 'KeyQ':
+            layerMult = layerMult < 50 ? layerMult+.01 : 50;
+        break;
+        case "KeyA":
+            layerMult = layerMult > .005 ? layerMult-.01 : .005;
+        break;
+        case 'KeyO':
+            layers = layers < 100 ? layers+1 : 100;
+        break;
+        case 'KeyL':
+            layers = layers > 1 ? layers-1 : 1;
+        break;
+        case 'KeyT':
+            speed = speed < 10 ? speed+.1 : 10;
+        break;
+        case 'KeyG':
+            speed = speed > .002 ? speed-.1 : .002;
+        break;
+        case 'KeyD':
+            szMlt = szMlt < 10 ? szMlt+.1 : 10;
+        break;
+        case 'KeyC':
+            szMlt = szMlt > .002 ? szMlt-.1 : .002;
+        break;
+        case 'KeyM': 
+            console.log(`
+            case 'ArrowUp':
+            speed = speed < 10 ? speed+.01 : 10;
+        break;
+        case "ArrowDown":
+            speed = speed > .002 ? speed-.01 : .002;
+        break;
+        case 'KeyQ':
+            layerMult = layerMult < 50 ? layerMult+.01 : 50;
+        break;
+        case "KeyA":
+            layerMult = layerMult > .005 ? layerMult-.01 : .005;
+        break;
+        case 'KeyO':
+            layers = layers < 100 ? layers+1 : 100;
+        break;
+        case 'KeyL':
+            layers = layers > 1 ? layers-1 : 1;
+        break;
+        case 'KeyT':
+            speed = speed < 10 ? speed+.1 : 10;
+        break;
+        case 'KeyG':
+            speed = speed > .002 ? speed-.1 : .002;
+        break;
+        case 'KeyD':
+            szMlt = szMlt < 10 ? szMlt+.1 : 10;
+        break;
+        case 'KeyC':
+            szMlt = szMlt > .002 ? szMlt-.1 : .002;
+        break;
+    }
+            `);
     }
 }
 
@@ -77,8 +140,10 @@ function userInputEvent(input) {
 
         if(clearScreen) clearFullScreen()
             
-        createImg(time)
-        
+        for (let i = 0; i < layers; i++) {
+           createImg(time+(i*layerMult))
+            
+        }
         if (!pauseAnimation) {
             setTimeout(window.requestAnimationFrame, 0, render)
         }
@@ -104,7 +169,7 @@ function createImg(s) {
 
                 context.fillStyle = `hsl(0, 0%, ${100-distance/5}%)`;
                 context.beginPath()
-                context.arc(X, Y, Math.abs(radius), 0, pi*2)
+                context.arc(X, Y, Math.abs(radius*szMlt), 0, pi*2)
                 context.fill()
                         
             }

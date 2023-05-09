@@ -1,5 +1,5 @@
 console.log('Controls:\nSpace - Pause/Play animation\nLeft Arrow - decrease size between clovers\nRight Arrow - increase size between clovers\nUp Arrow - increase min. size of clover\nDown Arrow - decrease min. size of clover\n\'D\' - Show/Hide center "focus" dot' );
-alert('Look in dev console for animation controls')
+// alert('Look in dev console for animation controls')
 //VARS FOR CANVAS AND TIMING EVENTS
 let canvas = document.createElement('canvas'),
       context = canvas.getContext('2d'),

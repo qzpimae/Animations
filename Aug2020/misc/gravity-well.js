@@ -4,7 +4,7 @@ const Noise = toxi.math.noise.simplexNoise.noise,
       pi = Math.PI,
       sqrt = Math.sqrt,
       pow = Math.pow,
-      blockSize = 23,
+      blockSize = 30,
       width = window.innerWidth,
       height = window.innerHeight,
       limits = {
@@ -32,7 +32,7 @@ let canvas = document.createElement('canvas'),
       showLines = true,
       showDots = true,
       isInColor = true,
-      colorMult = 1.79;
+      colorMult = 2.79;
 
       
     canvas.width = width;
@@ -148,7 +148,7 @@ function createImg(s) {
                 N2 = Noise(noiseY+seed,noiseX)*(3.5 -pow(distance,.77)/28),
                 X = x*blockSize+ N1*20+N2*20,
                 Y = y*blockSize+ N1*20-N2*20,
-                noise = Math.abs(N1 + N2)/2 +( 1 * distance/7000),
+                noise = Math.abs(N1 + N2)/2 +( 1 * distance/300),
                 point = {x: X, y: Y, n: noise, d: distance};
 
                 points[x-limits.sX].push(point)

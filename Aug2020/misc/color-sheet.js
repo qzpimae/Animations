@@ -24,13 +24,22 @@ let canvas = document.createElement('canvas'),
       showLines = true,
       showDots = true,
       isInColor = true,
-      noiseAmt = 1,
+      noiseAmt = 10,
       scaleSz = 20;
 
+      // square in middle
+// const limits = {
+//     sX: 16,
+//     eX: 55,
+//     sY: 5,
+//     eY: 40,
+// };
+
+// corner to corner
 const limits = {
-    sX: 16,
-    eX: 55,
-    sY: 5,
+    sX: 0,
+    eX: 65,
+    sY: 0,
     eY: 40,
 };
 
@@ -136,7 +145,7 @@ function userInputEvent(input) {
 
         if(clearScreen) clearFullScreen()
 
-        renderMouse()
+        // renderMouse()
             
         createImg(time)
         

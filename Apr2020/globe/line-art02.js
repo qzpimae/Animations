@@ -11,7 +11,7 @@ let canvas = document.createElement('canvas');
 
     frames = 0, //keep count of how many render cycles have occured
 
-    renderPaused = true, //user can toggle animation
+    renderPaused = false, //user can toggle animation
     colorBool = false,  //user can toggle colored lines
     
     point = { //obj to keep track of points when roating sphere
@@ -70,7 +70,7 @@ let canvas = document.createElement('canvas');
             frames++
         } else {
             frames = 0;
-            pointsNum+=2
+            pointsNum+=1
         }
 
         //user can toggle pausing of animation via 'spacebar'
