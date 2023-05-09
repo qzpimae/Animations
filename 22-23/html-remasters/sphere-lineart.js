@@ -9,7 +9,7 @@ let canvas = document.createElement('canvas');
     width = canvas.width = window.innerWidth,
     height = canvas.height = window.innerHeight,
 
-    clearScreenBool = true,
+    clearScreenBool = false,
     
     frames = 0, //keep count of how many render cycles have occured
     time = 0
@@ -26,7 +26,7 @@ let canvas = document.createElement('canvas');
         z: 0
     };
 
-    loopLength = 800; //how long the animation will take to complete a loop
+    loopLength = 80; //how long the animation will take to complete a loop
 
     //set styling 
 
@@ -136,7 +136,7 @@ let canvas = document.createElement('canvas');
             
                 createSphere(circleRadius) //render the sphere
 
-                // createCircle(circleRadius) //circle will smoothly transition animation
+                createCircle(circleRadius) //circle will smoothly transition animation
             }
         }
 
