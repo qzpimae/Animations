@@ -9,7 +9,7 @@ KaleidoscopeController controller;
 
 float frames = 0;
 float renderSpeed = 1;
-int imgChoice = 1;
+int imgChoice = 13;
 int IMAGE_NUM_MAX = 367;
 int starterSegments = 12;
 int dragType = 1;
