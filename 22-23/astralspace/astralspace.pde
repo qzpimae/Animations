@@ -3,7 +3,7 @@ boolean isPaused = false;
 float globalXScale = 121;
 float globalYScale = 121;
 float globalDimensions = 6;
-float renderSpeed = .1;
+float renderSpeed = .15;
 float globalNoiseMult = 17;
 
 float globalRndrScl = 333;
@@ -12,13 +12,13 @@ float globalAngle = 0;
 float globalHDAngle = 0;
 float globalDeityAngle = 0;
 float noiseVar1 = 1;
-float incrementer = 6;
+float incrementer = 1;
 
 int colorMode = 1;
 int globalLineHue = 177;
 int globalBgHue = 339;
 
-int renderOption = 3;
+int renderOption = 9;
 boolean invertHue = false;
 boolean invertLight = true;
 
@@ -51,8 +51,8 @@ NoiseSeed nSeedY1 = new NoiseSeed((float) Math.random()*1000 + 3939.719);
 NoiseSeed nSeedY2 = new NoiseSeed((float) Math.random()*1000 + 3141.5826);
 //width and height of canvas
 
-final int WIDTH = 1440;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
-final int HEIGHT = 900;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
+final int WIDTH =   1280;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int HEIGHT = 720;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 //tracker for how many frames have elapsed
 float frames = 0;
 //array of Points to keep track of quadrent information and x/y position aswell as pixel index
@@ -76,7 +76,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(30);
+  frameRate(24);
   
   //set canvas size
   colorMode(HSB, 360, 100, 100);
@@ -100,9 +100,9 @@ void draw() {
     
     // xStatic -= .1 * renderSpeed;
     // yStatic -= .1 * renderSpeed;
-    globalXScale = globalXScale - .2 * renderSpeed > 0 ? globalXScale - .2 * renderSpeed : globalXScale;
-    globalYScale = globalYScale - .5 * renderSpeed > 0 ? globalYScale - .5 * renderSpeed : globalYScale;
-    renderSpeed += .001;
+    // globalXScale = globalXScale - .2 * renderSpeed > 0 ? globalXScale - .2 * renderSpeed : globalXScale;
+    // globalYScale = globalYScale - .5 * renderSpeed > 0 ? globalYScale - .5 * renderSpeed : globalYScale;
+    // renderSpeed += .001;
     // println(globalXScale,globalYScale,globalRndrScl);//xStatic,yStatic,
     // background(0); // reset screen
     
@@ -116,8 +116,8 @@ void draw() {
       case 5: nMult.renderNoise4(); break;
       case 6: nMult.renderNoise5(); break;
       case 7: nMult.renderNoise6(); break;
-      case 8: nMult.renderNoise7(); break;
-      case 9: nMult.renderNoise4(); break;
+      case 8: nMult.renderNoise7(); break;      
+      case 9: nMult.renderNoise8(); break;
       case 10: nMult.renderNoise4(); break;
       
     }
@@ -209,10 +209,10 @@ void keyPressed() {
       break;
     //VAR 6 - higher dimensions
     case 'c': 
-      renderSpeed = renderSpeed-incrementer/10 > 0 ? renderSpeed-incrementer/10 : .01;
+      renderSpeed = renderSpeed-incrementer/100 > 0 ? renderSpeed-incrementer/100 : .01;
       break;
     case 'v': 
-      renderSpeed+=incrementer/10;
+      renderSpeed+=incrementer/100;
       break;
     //VAR 7 - deitiy dimensions
     case 'g': 

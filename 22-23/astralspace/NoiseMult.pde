@@ -7,6 +7,64 @@ class NoiseMult {
         A= a.pixels;
     }
 
+    public void renderNoise8 () {
+
+        float noiseDiv1 = .001;
+
+        float min = 100;
+        float max = 0;
+
+
+        loadPixels();
+        for  (int x=0;x<a.width;x+=2){
+            for (int y=0;y<a.height;y+=2){
+
+                float xScl = (float)WIDTH/10 * (1 + globalXScale/10);// xScl = 769;
+                float yScl = (float)HEIGHT/10 * (1 + globalYScale/10);// yScl = 69;
+
+                float tSX = 16666 + ( renderAdvanceToggle ? ((frames*renderSpeed)/100) : -transX/22 );
+                float tSY = 15555;// - ( renderAdvanceToggle ? (frames*renderSpeed/111) : transY/22 );
+
+                float noise1 =  (float) noise.noise2(   (x/xScl)+tSX,    (y/yScl)+tSY     ) * 2;
+                float noise2 =  (float) noise.noise2(   (x/xScl*12)+tSX+12, (y/yScl)/noiseDiv1+(tSY+21)  );
+                float noise3 =  (float) noise.noise2(   (x/xScl*3)+tSX/2, (y/yScl*2)+(tSY/2)  );
+                float noise4 =  (float) noise.noise2(   (x/xScl*2)+tSX, (y/yScl*2)+tSY  );
+                
+                float finalNoise = ((noise3/noise1+noise2/noise4)/2);
+                
+                // float hue = (float) ((invertHue ? 180 : 0) + (float) abs(map(finalNoise, -1, 1, 339, 159))) % 360;
+                // float sat = (float) abs(map(finalNoise, 0, 1, -100, 100));
+                // float brt = (float) ((invertLight ? 50 : 0) + (float) abs(map(finalNoise, -1, 1, -100, 100))) % 100;
+                
+                float hue = (float) ((invertHue ? 180 : 0) + (float) abs(map(finalNoise, -1, 1, 339, 159))) % 360;
+                float sat = 50;//(float) abs(map(finalNoise, -10, 10, 0, 100));
+
+
+                // if (finalNoise < min) min = finalNoise;
+                // if (finalNoise > max) max = finalNoise;
+
+                float brt = (float) abs(map(finalNoise, -10, 10, -100, 100));
+                // println(brt);
+                if ( !invertLight) brt = brt %100;
+                
+                int pos1 = x+a.width*y;
+                int pos2 = (x+1)+a.width*y;
+                int pos3 = x+a.width*(y+1);
+                int pos4 = (x+1)+a.width*(y+1);
+                A[pos1] = color (hue, sat, brt);
+                A[pos2] = color (hue, sat, brt);
+                A[pos3] = color (hue, sat, brt);
+                A[pos4] = color (hue, sat, brt);
+            }
+        }
+
+        // println(min);
+        // println(max);
+        arrayCopy(A,pixels);
+        updatePixels();
+
+    }
+
 
     public void renderNoise7 () {
 
@@ -22,7 +80,7 @@ class NoiseMult {
 
         loadPixels();
 
-    for (int i = 0; i < 4; i++ ) {
+      for (int i = 0; i < 4; i++ ) {
         
         for  (int x=0;x<a.width/2;x++){
             for (int y=0;y<a.height/2;y++){
@@ -143,7 +201,6 @@ class NoiseMult {
     }
 
     public void renderNoise5 () {
-
 
         float noiseDiv1 = .001;
 
