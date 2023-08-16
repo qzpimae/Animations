@@ -425,12 +425,12 @@ void keyPressed() {
     break;
     case '.':
       entitiyType = entitiyType < MAX_ENTITIY_TYPE ? entitiyType+1 : 1;
-      println("entitiyType: " + entitiyType);
+      // println("entitiyType: " + entitiyType);
       entityUpdated = true;
     break;
     case '/':
       colorMode = colorMode < COLOR_MODE_MAX ? colorMode+1 : 1;
-      println("colormode: " + colorMode);
+      // println("colormode: " + colorMode);
       entityUpdated = true;
     break;
     case '[':
@@ -478,9 +478,16 @@ void keyPressed() {
       //RENDER OPTIONS 
     case '1': 
       renderOption = renderOption > 1 ? renderOption-1 : MAX_RENDER_OPTION;
+      if (renderOption > MAX_RENDER_OPTION-2 && entitiyType == 4) {
+        renderOption = MAX_RENDER_OPTION-2;
+      }
+
       break;
     case '2': 
       renderOption = renderOption < MAX_RENDER_OPTION ? renderOption+1 : 1;
+      if (renderOption > MAX_RENDER_OPTION-2 && entitiyType == 4) {
+        renderOption = 1;
+      }
       break;
     case '3': 
       renderOption = 3;
@@ -586,7 +593,7 @@ void saveScreenShot () {
     if (true) { //CHANGE IF CONTROL IS NEEDED
 
       //SAVE IN REGULAR SS DIR
-      saveFrame("../../../renderScreenShot/entities/2023/05/entity_"+code+"_######.png");
+      saveFrame("../../../renderScreenShot/entities/2023/08/entity_"+code+"_######.png");
 
       //SAVING TEST IMGS
       saveFrame("../kaleidoscopes/testimgs/testimg"+ (testImgNum++) + ".png"); 

@@ -109,8 +109,8 @@ class Space  {
 
         float extraRoom = ((W - (H - enitiySz*3)) / (enitiySz*3)); 
         int extraLines = (int) Math.ceil((W - (H - enitiySz*3)) / (enitiySz*3));
-        println(W - (enitiySz*3 * maxNum));
-        println(enitiySz/extraRoom*2);
+        // println(W - (enitiySz*3 * maxNum));
+        // println(enitiySz/extraRoom*2);
 
         push();
         // translate(W - (enitiySz*1.5 * maxNum), 0);
