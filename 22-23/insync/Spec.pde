@@ -52,11 +52,13 @@ class Spec {
         // x += mag;
     }
 
-    void draw() {
-        hue = ((abs(pos.y-H/2) + abs(pos.x-W/2)) %360 );
+    void draw(int idx) {
+        // hue = ((abs(pos.y-H/2) + abs(pos.x-W/2)) %360 );
         // hue=159;
-        stroke(hue, 30, 100);
-        strokeWeight(2);
+        // stroke(hue, 30, 100);
+        if (strokeToggle) idx++; //quick fix to toggle stroke
+        stroke(idx % 2 == 0 ? 300 : 0);
+        strokeWeight(sW);
         point(pos.x, pos.y);
         // fill(360);
         // square(pos.x, pos.y, 1);

@@ -1,27 +1,32 @@
 
 int testImgNum;
-int renderSpeed = 1;
+int frames = 0;
+float renderSpeed = .1;
 float globalMagMin = -100;
 float globalMagMax = 100;
+float sW = 1;
 boolean isPaused = false;
 boolean isFastForwarding = false;
 boolean showOpts = false;
+boolean tenXSpeed = true;
+boolean trailToggle = false;
+boolean strokeToggle = false;
 boolean toggle1 = false;
 boolean toggle2 = false;
 boolean toggle3 = false;
 int MAX_HEADING_OPT = 5;
-int headingOpt = 3;
+int headingOpt = 2;
 int MAX_MAG_OPT = 5;
 int magOpt = 2;
-int mod1 = 1;
+int mod1 = 10;
 
 ArrayList<Spec> specs;
-int specCol = 6;
+int specCol = 30;
 
   //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 //2560 //1440
   // height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720 //1600 //900
-float W = 2560;
-float H = 1600;
+float W = 1440;
+float H = 900;
 
 void settings() {
   //set canvas size
@@ -60,7 +65,7 @@ void setup() {
 
 void fastForward () {
   //FAST FORWARD
-  for (int k = 0; k < 22222; ++k) {
+  for (int k = 0; k < 222; ++k) {
     for (int i = 0; i < specs.size(); ++i) {
             // specs[i][j].draw();
             specs.get(i).move();
@@ -100,20 +105,30 @@ void initalize () {
 
 void draw() {
   
+    frames++;
+
     
     if (!isPaused) {
-        background(0);
+        if (
+            !trailToggle
+            //  || 
+            // frames % 100 == 0
+        ) background(0);
+        boolean tempTrailToggle = trailToggle;
+
         
         for (int i = 0; i < specs.size(); ++i) {
             // for (int j = 0; j < specCol; ++j) {
-                specs.get(i).draw();
-                for (int k = 0; k < renderSpeed; ++k) {
+                specs.get(i).draw(i);
+                for (int k = 0; k < (tenXSpeed ? renderSpeed * 10 : renderSpeed); ++k) {
                   specs.get(i).move();
                 }
                 
             // }
             
         }
+
+        trailToggle = tempTrailToggle;
 
         // fill(360);
         // circle((W/2), H/2, renderSpeed);
@@ -123,7 +138,7 @@ void draw() {
 
     if (showOpts) {
 
-      String controlData = ("MinMag: " + globalMagMin + "\nMaxMag: " + globalMagMax+ "\nMod-1: " + mod1 +"\nSpec Cols: " + specCol+"\nSpeed: " + renderSpeed+"\nHeadingOpt: " + headingOpt+"\nMagOpt: " + magOpt+"\ntoggle1: " + toggle1+"\ntoggle2: " + toggle2+"\ntoggle3: " + toggle3);
+      String controlData = ("MinMag: " + globalMagMin + "\nMaxMag: " + globalMagMax+ "\nMod-1: " + mod1 +"\nSpec Cols: " + specCol+"\nSpeed: " + renderSpeed+"\nHeadingOpt: " + headingOpt+"\nMagOpt: " + magOpt+"\n10x Speed: " + tenXSpeed+"\ntoggle1: " + toggle1+"\ntoggle2: " + toggle2+"\ntoggle3: " + toggle3);
       // println(controlData);
       
       textSize(30);
@@ -136,12 +151,25 @@ void draw() {
 
 void keyPressed() {
     switch(key) {
+        case 'b':
+            sW = sW > 0.1 ? sW-.1 : .1;
+            break;
+        case 'n':
+            sW+=.1;
+            break;
         case 'a':
-            renderSpeed--;
-            // renderSpeed > 1 ? renderSpeed-- : renderSpeed > 0 ? renderSpeed-=.1 : renderSpeed = .0 ;
+            // renderSpeed--;
+            renderSpeed = renderSpeed > 0.1 ? renderSpeed-.1 : .05;
             break;
         case 's':
-            renderSpeed++;
+            renderSpeed+=.1;
+            break;
+        case 'z':
+            // renderSpeed--;
+            renderSpeed = renderSpeed > 1 ? renderSpeed-1 : .5;
+            break;
+        case 'x':
+            renderSpeed+=1;
             break;
         case 'u':
             if (headingOpt > 1) headingOpt--;
@@ -197,9 +225,27 @@ void keyPressed() {
         case '\\':
             toggle3 = !toggle3;
             break;
+        case '\t':
+            tenXSpeed = !tenXSpeed;
+            break;
+        case '`':
+            trailToggle = !trailToggle;
+            break;
+        case '1':
+            strokeToggle = !strokeToggle;
+            break;
+        case ';':
+            trailToggle = !trailToggle;
+            break;
+        case '\'':
+            strokeToggle = !strokeToggle;
+            break;
         case '/':
             println("\nMinMag: " + globalMagMin + "\nMaxMag: " + globalMagMax +"\nSpec Cols: " + specCol+"\nHeadingOpt: " + headingOpt+"\nMagOpt: " + magOpt);
             initalize();
+            break;
+        case '=': 
+            saveFrame("../../../renderScreenShot/insync/insync_######.png");
             break;
     }
 }
