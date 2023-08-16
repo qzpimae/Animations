@@ -12,7 +12,10 @@
 
  */
 
+// import java.util.Arrays;
+// import processing.video.*;
 
+// Movie movie;
 
 int W = 1440;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
 int H = 900;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
@@ -33,6 +36,7 @@ float angx = 0; // degrees
 float angz = 0; // degrees
 
 PImage img, imgH;
+color[] imgPix;
 
 int IMG_MAX = 10;
 int NOISE_VAR_MAX = 10000;
@@ -46,13 +50,15 @@ int imgChoice = 1;
 int prevImgChoice = -1;
 
 int frames = 0;
-int fps = 24;
+int fps = 15;
 int resetPeriod = 200;
 int imgSelections = 1;
 int imgFolderSelc = 0;
 
+int hueShift = 180;
+
 boolean autoReset = true;
-boolean isInColor = true;
+boolean isInColor = false;
 
 void settings () {
   
@@ -62,11 +68,16 @@ void settings () {
 }
 void setup() {
   
-  colorMode(HSB, 360, 100, 100);
+  colorMode(HSB, 360, 100, 100, 1);
   initalize();
-  frameRate(12);
+  frameRate(fps);
 
   noCursor();
+
+  // movie = new Movie(this, "testmovie.mov");
+
+  
+  // movie.loop();
 
 }
 
@@ -164,7 +175,13 @@ void draw() {
     img.resize(W, H);
     img.loadPixels();
     prevImgChoice = imgChoice;
+    imgPix = img.pixels;
   }
+  
+  // ArrayList<Integer> imgPixList = new ArrayList<Integer>(Arrays.asList(imgPix));
+ 
+  // Collections.rotate(imgPixList, 1);
+
   
   for (int i=0; pixels.length>i; i++)  {
 
@@ -185,9 +202,18 @@ void draw() {
     
     //map x,y,z to somewhere in x,y only
     int counter = (int(p.z) << 12) | (int(p.y) << 6) | int(p.x);
+
     if ( (counter < pixels.length) && (counter >= 0)) {
-      if (img.pixels[counter] != color( cos(frames/(float)noiseVar1) * (float)noiseVar2)) {
-        pixels[counter] = img.pixels[counter];
+      if (imgPix[counter] != color( cos(frames/(float)noiseVar1) * (float)noiseVar2)) {
+        // pixels[counter] = imgPix[counter];
+        color orgImgPix = imgPix[counter];
+        pixels[counter] = color(
+          isInColor ?(((orgImgPix >> 0) & 0xFF) + hueShift) % 360 : 0,//hue
+          isInColor ? ((orgImgPix >> 8) & 0xFF)/2 : 0,//sat
+          (orgImgPix >> 16) & 0xFF//brigh
+        );
+        // println((orgImgPix >> 8) & 0xFF);
+        // println((imgPix[counter] >> 8) & 0xFF);
       } else {
         pixels[counter] = color(random(360), isInColor ? random(100) : 0, random(80)+20);
       }
@@ -213,7 +239,7 @@ void draw() {
 void keyPressed() {
     switch(key) {
       case '=':
-        saveFrame("frame-####.png");
+        saveFrame("cap/frame-####.png");
         break;       
       case 'q':
         posrange += 10;
@@ -346,11 +372,11 @@ void keyPressed() {
           resetPeriod=resetPeriod>1?resetPeriod:1;
         break;
         case 'i':
-          fps = fps < 60 ? fps+1 : 60;
+          fps = fps < 60 ? fps+2 : 60;
           frameRate(fps);
         break;
         case 'k':
-          fps = fps > 1 ? fps-1 : 1;
+          fps = fps > 1 ? fps-2 : 1;
           frameRate(fps);
         break;
         case '0':
