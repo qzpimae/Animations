@@ -29,6 +29,8 @@
   boolean paused = false;
   boolean trailToggle = true;
   boolean ignoreAlive = false;
+  boolean isInColor = true;
+  boolean inLoopMode = true;
   
   int genType = 3;
   
@@ -158,9 +160,10 @@
   //loop function that runs on a loop 
   void draw() {
     frames++;
-    if (frames % 1500 == 0) initalizeGame();
-    if (frames % 150 == 0 ) trailToggle = !trailToggle;
-    
+    if (inLoopMode) {
+      if (frames % 1500 == 0) initalizeGame();
+      // if (frames % 150 == 0 ) trailToggle = !trailToggle;
+    }
     // background((frames*10)%360, 100, 33); // reset screen // uncomment for rainbow strobe ( trail does not work)
     if (trailToggle) background(0);
     

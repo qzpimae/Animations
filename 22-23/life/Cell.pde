@@ -29,6 +29,7 @@ class Cell {
     //println(alive);
     
     if (alive || ignoreAlive) {
+
       
       // int hue = (333-age*11)%360;
       // int sat = (90-age)%100;
@@ -41,9 +42,11 @@ class Cell {
       //-----------------------------
 
       int hue = Math.abs(333-age*4)%323;
-      int sat = Math.abs(55-age/3)%100;
-      int brt = Math.abs(88-age)%100;
-      if (brt < 10) brt = 10;
+      int sat = isInColor ? Math.abs(55-age/3)%100 : 0;
+      int brt = Math.abs(88-(isInColor ? age : age*20))%100;
+      // int brt = Math.abs(88-(isInColor ? age : age*20))%100; //org
+      int brtLim = isInColor ? 10 : 2;
+      if (brt < brtLim) brt = brtLim;
       fill(hue, sat, brt);
       stroke(hue, sat, brt);
       square(posX, posY, cellSize);
