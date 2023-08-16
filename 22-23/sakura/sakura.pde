@@ -16,8 +16,22 @@ boolean switched = true;
 ControlP5 controller;
 ControlGroup gui;
 
+int colorMode = 1;
+int colorModeMax = 4;
+
 final float fps = 60;
-float renderSpeed = 10;
+float renderSpeed = 3;
+// boolean renderFullSpeed = true;
+
+boolean showStars = true;
+boolean showGalaxy = true;
+boolean showNebula = false;
+boolean showFlower = true;
+boolean showLife = true;
+boolean showInfinity = false;
+
+
+
 
 //tracker for how many frames have elapsed
 boolean isPaused = false;
@@ -105,7 +119,7 @@ void draw() {
   if (!isPaused) {
     //println(frames);
     frames+=renderSpeed;
-    time++;
+    time=(int)frames;
     // saveFrame("../../../sakura314/img_######.png");
   }
 
@@ -122,7 +136,6 @@ void renderScene () {
     geoRender.renderMain();
 
     // matrix.render();
-    infinity.render();
     
     //nebulaCtrl.renderNebula();
     //lifeRender.lifeGenesis(2);
@@ -215,6 +228,52 @@ void keyPressed() {
     case 'm':
       isTesting = !isTesting;
       break;
+    case '=':
+      saveFrame("../../../sakura314/img_######.png");
+      break;
+    case '\\':
+      cameraSelection = cameraSelection < 6 ? cameraSelection+1 : 1;
+      break;
+    case '/':
+      colorMode = colorMode < colorModeMax ? colorMode+1 : 1;
+      break;
+    case 'a':
+      renderSpeed = renderSpeed < 10 ? renderSpeed+0.1 : 10;
+      break;
+    case 's':
+      renderSpeed = renderSpeed > 0.1 ? renderSpeed-0.1: 0.1;
+      break;
+    case 'w':
+      renderSpeed = renderSpeed < 10 ? renderSpeed+1 : 10;
+      break;
+    case 'q':
+      renderSpeed = renderSpeed > 1 ? renderSpeed-1: 1;
+      break;
+    case 'z':
+      showStars = !showStars;
+      break;
+    case 'x':
+      showGalaxy = !showGalaxy;
+      break;
+    case 'c':
+      showFlower = !showFlower;
+      break;
+    case 'n':
+      showInfinity = !showInfinity;
+      break;
+    case 'b':
+      showNebula = !showNebula;
+      break;
+    case 'v':
+      showLife = !showLife;
+      break;
+    case '\t':
+      renderSpeed /= 10;
+      break;
+
+
+
+
       
   }
 

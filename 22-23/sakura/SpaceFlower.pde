@@ -19,7 +19,7 @@ class SpaceFlower {
     
     
     if (autoRotate) {
-      float rotate = PI*2 * (float)noise.noise2( (float)frames/722*spaceSpeed + 333, (float)frames/1777*spaceSpeed + 1000 );
+      float rotate = PI*2 * (float)noise.noise2( (float)frames/722*renderSpeed + 333, (float)frames/1777*renderSpeed + 1000 );
       rotateX( rotate/4 );
       rotateY( rotate/2 );
       rotateZ( rotate/4 );
@@ -28,12 +28,13 @@ class SpaceFlower {
     if (beginingOrder>0) beginingOrder-=.01;
     spaceFlowerScale = 1;//calcspaceFlowerScale(); 
     noFill();
-    strokeWeight(map(radius, 1600, 0, .8, 2) );
+    float strokeRadiusMap = map(radius, 500, 0, 2, .1);
+    strokeWeight(map(radius, 0, 1400, 2, 4.5-beginingOrder) / (1+strokeRadiusMap));
     //println(spaceFlowerNoiseSeed, frames);
-    spaceFlowerNoiseSeed += 0.0002 * spaceSpeed;
-    spaceFlowerColorNoiseSeed += 0.00074 * spaceSpeed;
-    spaceFlowerScaleNoiseSeed += 0.005 * spaceSpeed;
-    spaceFlowerAge += spaceSpeed;
+    spaceFlowerNoiseSeed += 0.0002 * renderSpeed;
+    spaceFlowerColorNoiseSeed += 0.00074 * renderSpeed;
+    spaceFlowerScaleNoiseSeed += 0.005 * renderSpeed;
+    spaceFlowerAge += renderSpeed;
     
     spaceFlowerColorNoiseVal = (float) noise.noise2( spaceFlowerColorNoiseSeed, spaceFlowerColorNoiseSeed);
     
@@ -53,9 +54,12 @@ class SpaceFlower {
     float[] colorInput = new float[3];
     
     
-    
+      boolean flip1 = true;
+
       for (float i = .1; i < limit ; i+= map(i, limit, 0, resolution, resolution/1.2)) { //map(i, limit, 0, resolution, resolution/2)
-      
+          
+          flip1 = !flip1;
+
           roationNoiseX = (double) (spaceFlowerNoiseSeed + i/limit*.715);
           roationNoiseY = (double) (spaceFlowerNoiseSeed + i/limit*.715);
           noiseLineVal = (float) noise.noise2(roationNoiseX, roationNoiseY);
@@ -72,6 +76,22 @@ class SpaceFlower {
           nxtLayerScale = i*spaceFlowerScale*(1+(i-resolution)/100);
           
           colorData = calcColor( colorInput );
+
+          if (colorMode == 1) {
+
+          } if (colorMode == 2) {
+            // colorData[0] = 0;
+            // colorData[1] = 0;
+            colorData[2] = 0;
+          } if (colorMode == 3) {
+            // colorData[0] = 0;
+            colorData[1] = 0;
+            colorData[2] = 0;
+          } if (colorMode == 4) {
+            colorData[0] = flip1 ? 0 : 100;
+            colorData[1] = 0;
+            colorData[2] = 0;
+          }
           
           stroke(colorData[0], colorData[1], colorData[2]);  
 
@@ -87,6 +107,7 @@ class SpaceFlower {
             centerRotation = PI/petalsLim*2*j;      
             stroke(colorData[0], colorData[1], colorData[2]);  //stroke(10000);//
             fill(colorData[0], colorData[1], map(i, limit, 0, 50, 100));//map(i, limit, 0, 0, 12000)); //fill(100);//
+            if (colorMode == 4) strokeWeight(  map(curLayerSz, 30, .1, .1, 3) / (1+strokeRadiusMap));
             push();
               translate(0,0, curLayerSz);
               

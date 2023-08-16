@@ -1,37 +1,45 @@
 class Geometry {
   
   void renderMain () {
+
+    //BACKGROUND
+    
+    clear(); // reset screen
+    background(0);
     
     //FLOATING STARS
-    spaceDebris.renderCirclingDust(3000, 900);
-   
-    //GALAXY BOTTOM
-    push();
-      translate(0,1000,0);
-      blendMode(ADD);
-      spaceDebris.renderGalaxies();
-    pop();
+    if (showStars) spaceDebris.renderCirclingDust(3000, 900);
+    if (showGalaxy) {
+      //GALAXY BOTTOM
+          push();
+            translate(0,1000,0);
+            blendMode(ADD);
+            spaceDebris.renderGalaxies();
+          pop();
+          
+          //GALAXY TOP
+          push();
+            translate(0,-1000,0);
+            rotateX(PI);
+            blendMode(ADD);
+            spaceDebris.renderGalaxies();
+          pop();
+    } if (showFlower) {
+      //FLOWER
+          push();    
+            rotateZ(PI/6);
+            blendMode(BLEND);
+            spaceFlower.drawFlower(27, false); //spaceFlower.drawFlower(27, false);
+          pop();
+    } if (showNebula) {
+      //NEBULA
+      nebula.render1(1500, 900);    
+    } if (showInfinity) {
+      infinity.render();
+    }
+  
     
-    //GALAXY TOP
-    push();
-      translate(0,-1000,0);
-      rotateX(PI);
-      blendMode(ADD);
-      spaceDebris.renderGalaxies();
-    pop();
-    
-    //FLOWER
-    push();    
-      rotateZ(PI/6);
-      blendMode(BLEND);
-      spaceFlower.drawFlower(27, false); //spaceFlower.drawFlower(27, false);
-    pop();
-    
-    //NEBULA
-    // nebula.render1(1500, 900);
-    
-    
-    //pyramid(frames);
+    // pyramid(frames);
     //println(frames/100);
     //push();
     //  blendMode(BLEND);
