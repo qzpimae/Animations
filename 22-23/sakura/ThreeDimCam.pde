@@ -1,6 +1,7 @@
 
   //CAMERA VARS
   int cameraSelection = 4;
+  float cameraFocal = 1.5;
   int position = 0;
   float radius = 100;
   float cameraSpeed = renderSpeed;
@@ -112,7 +113,7 @@ class ThreeDimCam {
 
 
             } else {
-              if (radius < titleRangeMax && radius > titleRangeMin) {
+              if (autoRotate && radius < titleRangeMax && radius > titleRangeMin) {
                 camTiltX = map(radius, titleRangeMax, titleRangeMin, 0, 1);
                 camTiltY = map(radius, titleRangeMax, titleRangeMin, 1, 0);
               }
@@ -128,7 +129,7 @@ class ThreeDimCam {
               radius+= map(radius, 30, 3, .1, .001) * renderSpeed;
 
             } else {
-              if (radius < titleRangeMax && radius > titleRangeMin) {
+              if (autoRotate && radius < titleRangeMax && radius > titleRangeMin) {
                 camTiltX = map(radius, titleRangeMax, titleRangeMin, 0, 1);
                 camTiltY = map(radius, titleRangeMax, titleRangeMin, 1, 0);
               }              

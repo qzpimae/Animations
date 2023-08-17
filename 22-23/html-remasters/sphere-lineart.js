@@ -85,7 +85,7 @@ let canvas = document.createElement('canvas');
 
         time++
 
-        console.log(time)
+        // console.log(time)
         if (clearScreenBool) clearFullScreen()
         standardRender()
 

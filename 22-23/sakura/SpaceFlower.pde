@@ -17,6 +17,7 @@ class SpaceFlower {
   public void drawFlower(int lim, boolean autoRotate) {
     
     
+    rotateZ(PI/2);
     
     if (autoRotate) {
       float rotate = PI*2 * (float)noise.noise2( (float)frames/722*renderSpeed + 333, (float)frames/1777*renderSpeed + 1000 );
@@ -29,7 +30,7 @@ class SpaceFlower {
     spaceFlowerScale = 1;//calcspaceFlowerScale(); 
     noFill();
     float strokeRadiusMap = map(radius, 500, 0, 2, .1);
-    strokeWeight(map(radius, 0, 1400, 2, 4.5-beginingOrder) / (1+strokeRadiusMap));
+    strokeWeight(map(radius, 0, 1400, 2, 4.5-beginingOrder) / (1+strokeRadiusMap) * lineWidthDiv);
     //println(spaceFlowerNoiseSeed, frames);
     spaceFlowerNoiseSeed += 0.0002 * renderSpeed;
     spaceFlowerColorNoiseSeed += 0.00074 * renderSpeed;
@@ -107,7 +108,7 @@ class SpaceFlower {
             centerRotation = PI/petalsLim*2*j;      
             stroke(colorData[0], colorData[1], colorData[2]);  //stroke(10000);//
             fill(colorData[0], colorData[1], map(i, limit, 0, 50, 100));//map(i, limit, 0, 0, 12000)); //fill(100);//
-            if (colorMode == 4) strokeWeight(  map(curLayerSz, 30, .1, .1, 3) / (1+strokeRadiusMap));
+            if (colorMode == 4) strokeWeight(  map(curLayerSz, 30, .1, .1, 3) / (1+strokeRadiusMap) * lineWidthDiv);
             push();
               translate(0,0, curLayerSz);
               

@@ -22,6 +22,8 @@ int colorModeMax = 4;
 final float fps = 60;
 float renderSpeed = 3;
 // boolean renderFullSpeed = true;
+boolean autoRotate = false;
+float lineWidthDiv = 1;
 
 boolean showStars = true;
 boolean showGalaxy = true;
@@ -113,7 +115,7 @@ void draw() {
   
   //println(radius);
 
-  perspective(1.5, width/height, 1, 4000);
+  perspective(cameraFocal, width/height, 1, 4000);
   cam3D.configureCamera(cameraSelection);
 
   if (!isPaused) {
@@ -221,10 +223,6 @@ void keyPressed() {
     case ' ': 
       isPaused = !isPaused;
       break;
-
-    case 'p': 
-      println(camTiltX, camTiltY);
-      break;
     case 'm':
       isTesting = !isTesting;
       break;
@@ -270,6 +268,23 @@ void keyPressed() {
     case '\t':
       renderSpeed /= 10;
       break;
+    case '`':
+      renderSpeed *= 10;
+      break;
+    case '[':
+      lineWidthDiv = lineWidthDiv > 0.1 ? lineWidthDiv-0.1 : 0.1;
+      break;
+    case ']':
+      lineWidthDiv = lineWidthDiv < 10 ? lineWidthDiv+0.1 : 10;
+      break;
+    case 'o':
+      cameraFocal = cameraFocal > .01 ? cameraFocal-0.01 : .01;
+      break;
+    case 'p':
+      println("cameraFocal: " + cameraFocal);
+      cameraFocal = cameraFocal < 3 ? cameraFocal+0.01 : 3;
+      break;
+    
 
 
 
