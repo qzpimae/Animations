@@ -10,8 +10,8 @@
   NoiseSeed nSeedY1 = new NoiseSeed( 2549.719 - .5);//(float) Math.random()*1000 + 3939.719);
   NoiseSeed nSeedY2 = new NoiseSeed( 1732.719 - .033); //(float) Math.random()*1000 + 3141.5826);
  //width and height of canvas
-  int WIDTH = 1920;//3840; //1920
-  int HEIGHT = 1080;//2160; //1080
+  int WIDTH = 960;//3840; //1920
+  int HEIGHT = 600;//2160; //1080
   //tracker for how many frames have elapsed
   float frames = 0;
   int time = 0;
@@ -27,9 +27,9 @@
 //setup function that runs before render
 void setup() {
   //set canvas size
-  size(1920,1080);//0//set color mode to hue/saturation/brightness which i perfer for my animations
+  size(960,600);//0//set color mode to hue/saturation/brightness which i perfer for my animations
   colorMode(HSB, 360, 100, 100);
-
+  fullScreen();
   //create instance of the simplex noise class
   noise = new OpenSimplex2S( 3141592 );
   //run function to fill allPixs array

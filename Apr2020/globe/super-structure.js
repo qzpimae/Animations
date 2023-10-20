@@ -11,7 +11,7 @@ let canvas = document.createElement('canvas');
     width = canvas.width = window.innerWidth,
     height = canvas.height = window.innerHeight,
 
-    frames = 0, //keep count of how many render cycles have occured
+    frames = 3000, //keep count of how many render cycles have occured
 
     radius = height/3,
 
@@ -19,17 +19,33 @@ let canvas = document.createElement('canvas');
 
     grayScale = false,     //user can toggle grayscale
 
-    lockPos = false,     //user can toggle if the object roates on its own or is locked to the mouse position
-
+    
     flipPos = false,   //user can see what will happen to a given structure if the logitude and latitude get flipped
+    
+    lockPos = false,     //user can toggle if the object roates on its own or is locked to the mouse position
+    
+    camMode = 5,    
 
+    camModeMax = 8,    
+    
     viewLimit = 30,  //user can change how much of the object is in view
 
-    cmplxSpd = 77,//user can control how quickly more points will be added to object, range(0-333)
+    cmplxSpd = 80,//user can control how quickly more points will be added to object, range(0-333)
 
     SSindex = 0, //controls what structure is being displayed on the canvas
 
     colorMode = 0, //controls what variable determins the color of a given point
+
+    colorModeMax = 3,
+
+    lightOffset = 0, //controls how bright the object is
+
+    randomizeSStructure = false, //controls if the structure is random or not
+
+    chaosMult = 0, //controls how chaotic the structure is
+    chaosToggle = false, //controls if the structure is chaotic or not
+
+    clearScreen = true,
     
     coordinates = {   //obj to keep track of points when roating sphere
         x: 0,
@@ -186,7 +202,11 @@ let canvas = document.createElement('canvas');
 
         // console.log(frames);
 
-        clearFullScreen() //clear the canvas of previous animation cycle
+        if (clearScreen) clearFullScreen() //clear the canvas of previous animation cycle
+
+        if (randomizeSStructure) {
+            randomizeSuperStructure()
+        }
 
         createSphere() //render the sphere
 
@@ -243,9 +263,9 @@ let canvas = document.createElement('canvas');
 
             //store the points calculated into a object
             coordinates = {
-                x: x,
-                y: y,
-                z: z
+                x: x *(1+ (chaosToggle ? Math.random()*chaosMult : 0)/10),
+                y: y *(1+ (chaosToggle ? Math.random()*chaosMult : 0)/10),
+                z: z *(1+ (chaosToggle ? Math.random()*chaosMult : 0)/10)
             };
 
             let xRotation, yRotation;
@@ -256,11 +276,53 @@ let canvas = document.createElement('canvas');
                 yRotation = -mosPos.y/177 - Math.PI*3/5;
 
             } else {
-                xRotation = frames/170,
-                yRotation = frames/170;
-                rotateZ(frames/200)
-
-            }
+               switch (camMode) {
+                case 0:
+                    xRotation = frames/170;
+                    yRotation = frames/170;
+                    rotateZ(frames/170)
+                    break;
+                case 1:
+                    yRotation = frames/170;
+                    xRotation = 0;
+                    rotateZ(frames/170)
+                    break;
+                case 2:
+                    xRotation = 0;
+                    yRotation = frames/170;
+                    break;
+                case 3: 
+                    xRotation = frames/170;
+                    yRotation = 0;
+                    break;
+                case 4: 
+                    xRotation = 0;
+                    yRotation = 0;
+                    rotateZ(frames/170)
+                    break;
+                case 5: //
+                    xRotation = 0;
+                    yRotation = -Math.PI/8;
+                    rotateZ(Math.PI/2)
+                    
+                    break;
+                case 6: //
+                    xRotation = 0;
+                    yRotation = Math.PI/2;
+                    
+                    break;
+                case 7: //
+                    xRotation = Math.PI/2;
+                    yRotation = 0;
+                    
+                    break;
+                case 8: //
+                    xRotation = Math.PI/4;
+                    yRotation = 0;
+                    
+                    break;
+               }
+            } 
 
             //rotate the points about the origin to give the illusion of 3d
             rotateX(xRotation)
@@ -277,7 +339,7 @@ let canvas = document.createElement('canvas');
     //render an object's point's position onto the canvas
     function renderPoint(origin, j, i) {
 
-        let light = (origin.z/radius) * 100 > viewLimit + 20 ? (origin.z/radius) * 100 : viewLimit + 20;
+        let light = ((origin.z/radius) * 100 > viewLimit + 20 ? (origin.z/radius) * 100 : viewLimit + 20) + lightOffset;
 
         if (light > 5) {
             
@@ -286,13 +348,13 @@ let canvas = document.createElement('canvas');
 
             switch (colorMode) {
                 case 0:
-                context.fillStyle = `hsl(${origin.x}, ${color}%, ${light}%)`
+                context.fillStyle = `hsl(${i*10}, ${color}%, ${light}%)`
                     break;
                 case 1:
-                context.fillStyle = `hsl(${origin.y}, ${color}%, ${light}%)`
+                context.fillStyle = `hsl(${origin.z}, ${color}%, ${light}%)`
                     break;
                 case 2:
-                context.fillStyle = `hsl(${i*10}, ${color}%, ${light}%)`
+                context.fillStyle = `hsl(${i*j}, ${color}%, ${light}%)`
                     break;
                 case 3:
                 context.fillStyle = `hsl(${j*10}, ${color}%, ${light}%)`
@@ -368,6 +430,13 @@ let canvas = document.createElement('canvas');
             lockPos = !lockPos;
 
             break
+            case 'KeyK':
+            // console.log("b" + camMode);
+            camMode = camMode < camModeMax ? camMode+1 : 0;
+            // console.log("a" + camMode);
+            
+
+            break
             case 'ArrowLeft':
             
                 viewLimit = viewLimit > -20 ? viewLimit -1: -20;
@@ -397,17 +466,49 @@ let canvas = document.createElement('canvas');
 
             case 'KeyM':
 
-                colorMode = colorMode < 3 ? colorMode + 1: 0;
-
-            case 'KeyI':
-
-            console.log(`Brightness Setting: ${viewLimit + 20}\nCurrently viewing super structure #${SSindex+1}\nCoordinates Flipped: ${flipPos}\nColor Mode: ${colorMode+1}\nGrayscale Mode: ${grayScale}\nCamera Locked To Mouse: ${lockPos}\nMax number of points being rendered: ${Math.pow(Math.ceil(frames/100 + 1), 2)}\nObject Complexity Increase Speed: ${333-cmplxSpd}`);
+                colorMode = colorMode < colorModeMax ? colorMode + 1: 0;
             
             break;
+            case 'KeyZ':
+
+            console.log(`Brightness Setting: ${viewLimit + 20}\nCurrently viewing super structure #${SSindex+1}\nCoordinates Flipped: ${flipPos}\nColor Mode: ${colorMode}/${colorModeMax}\nCamera Mode: ${camMode}/${camModeMax}\nGrayscale Mode: ${grayScale}\nChaos Mult: ${chaosMult}\nCamera Locked To Mouse: ${lockPos}\nMax number of points being rendered: ${Math.pow(Math.ceil(frames/100 + 1), 2)}\nObject Complexity Increase Speed: ${333-cmplxSpd}`);
+            
+            break;
+            case 'KeyR':
+                lightOffset = lightOffset < 100 ? lightOffset + 1 : 100;
+                break;
+            case 'KeyE':
+                lightOffset = lightOffset > -100 ? lightOffset - 1 : -100;
+                break;
+            case 'KeyT':
+                randomizeSStructure = !randomizeSStructure;
+                break;
+            case 'KeyY':
+                chaosToggle = !chaosToggle;
+                break;
+            case 'KeyX':
+                clearScreen = !clearScreen;
+                break;
+            case 'KeyU':
+                chaosMult = chaosMult < 50 ? chaosMult + .1 : 50;
+                break;
+            case 'KeyI':
+                chaosMult = chaosMult > -50 ? chaosMult - .1 : -50;
+                break;
+
 
         }
 
     }
+
+    function randomizeSuperStructure() {
+            
+            let random = Math.floor(Math.random()*superSpos.length);
+    
+            SSindex = random;
+
+    }
+
     //mouse position
     function findObjectCoords(mousEnv) {
 
@@ -439,7 +540,7 @@ let canvas = document.createElement('canvas');
     //mouse wheel
     function mouseWheelMoved(evn) {
 
-        console.log(radius);
+        // console.log(radius);n 
         
         
         let move = evn.deltaY * -7;

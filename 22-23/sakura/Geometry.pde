@@ -3,17 +3,18 @@ class Geometry {
   void renderMain () {
 
     //BACKGROUND
-    
-    clear(); // reset screen
-    background(0);
-    
+    if (clearScreen) {
+      clear(); // reset screen
+      background(0);
+    }
     //FLOATING STARS
     if (showStars) spaceDebris.renderCirclingDust(3000, 900);
     if (showGalaxy) {
       //GALAXY BOTTOM
           push();
             translate(0,1000,0);
-            blendMode(ADD);
+            blendMode(!clearScreen ? SUBTRACT : ADD);
+            // blendMode(!clearScreen ? MULTIPLY : ADD);
             spaceDebris.renderGalaxies();
           pop();
           
@@ -21,7 +22,8 @@ class Geometry {
           push();
             translate(0,-1000,0);
             rotateX(PI);
-            blendMode(ADD);
+            blendMode(!clearScreen ? SUBTRACT : ADD);
+            // blendMode(!clearScreen ? MULTIPLY : ADD);
             spaceDebris.renderGalaxies();
           pop();
     } if (showFlower) {
@@ -29,13 +31,26 @@ class Geometry {
           push();    
             rotateZ(PI/6);
             blendMode(BLEND);
-            spaceFlower.drawFlower(27, false); //spaceFlower.drawFlower(27, false);
+            spaceFlower.drawFlower(25, false); //spaceFlower.drawFlower(27, false);
           pop();
     } if (showNebula) {
       //NEBULA
       nebula.render1(1500, 900);    
     } if (showInfinity) {
       infinity.render();
+    } if (showSphere) {
+
+      blendMode(!clearScreen ? BLEND : ADD);
+
+      // float strokeVal = !clearScreen ? (frames % 100) * 50 : frames % 200 < 100 ? (frames % 100) * 50 : 5000 - (frames % 100) * 50;
+      float strokeVal =  frames % 200 < 100 ? (frames % 100) * 50 : 5000 - (frames % 100) * 50;
+
+      //sphere 
+      noFill();
+      stroke(strokeVal);
+      sphere(700);
+      stroke(0);
+      sphere(701);
     }
   
     

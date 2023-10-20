@@ -1,10 +1,10 @@
 
 int testImgNum;
 int frames = 0;
-float renderSpeed = .1;
+float renderSpeed = 1;
 float globalMagMin = -100;
 float globalMagMax = 100;
-float sW = 1;
+float sW = 5;
 boolean isPaused = false;
 boolean isFastForwarding = false;
 boolean showOpts = false;
@@ -21,12 +21,12 @@ int magOpt = 2;
 int mod1 = 10;
 
 ArrayList<Spec> specs;
-int specCol = 30;
+int specCol = 4;
 
   //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 //2560 //1440
   // height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720 //1600 //900
-float W = 1440;
-float H = 900;
+float W = 960;
+float H = 540;
 
 void settings() {
   //set canvas size
@@ -225,19 +225,16 @@ void keyPressed() {
         case '\\':
             toggle3 = !toggle3;
             break;
-        case '\t':
-            tenXSpeed = !tenXSpeed;
-            break;
         case '`':
-            trailToggle = !trailToggle;
+            renderSpeed *= 2;
+            break;
+        case '\t':
+            renderSpeed /= 2;
             break;
         case '1':
-            strokeToggle = !strokeToggle;
-            break;
-        case ';':
             trailToggle = !trailToggle;
             break;
-        case '\'':
+        case '2':
             strokeToggle = !strokeToggle;
             break;
         case '/':

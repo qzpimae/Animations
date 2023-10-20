@@ -55,7 +55,7 @@ class Cell {
     //   }
     // }
 
-    if (true) {
+    if (scrollCellsUni) {
       y += vertScroll;
       if (y <= 0) {
         y = cellRows;
@@ -77,7 +77,7 @@ class Cell {
 
 
     
-    if (alive || ignoreAlive) {
+    if (alive) {
 
       
       // int hue = (333-age*11)%360;
@@ -90,19 +90,22 @@ class Cell {
 
       //-----------------------------
 
-      int hue = Math.abs(333-age*4)%323;
-      int sat = isInColor ? Math.abs(55-age/3)%100 : 0;
-      int brt = Math.abs((isInColor ? -88 : 100 )+(isInColor ? age*3 : age*20))%100;
+      // int hue = Math.abs(333-age*4)%323;
+      // int sat = isInColor ? Math.abs(55-age/3)%100 : 0;
+      int brt = (100+(age*20))%100 + lightOffset ;
       // int brt = Math.abs(88-(isInColor ? age : age*20))%100; //org
-      int brtLim = isInColor ? 10 : 2;
+      int brtLim =  2;
       if (brt < brtLim) brt = brtLim;
-      fill(hue, sat, brt);
-      stroke(hue, sat, brt);
+      
+      fill(0, 0, brt);
+      noStroke();
+      // stroke(0, 0, brt);
+
       square(posX, posY, cellSize);
 
-      if (playNotes && notesPlayed < noteLim && age == 1 ) {
+      if (playNotes && notesPlayed < noteLim && age == 10 ) {
         notesPlayed++;
-        sc.playNote(x + ((y+1)/(x+1)), 100, Math.random() * 2);
+        sc.playNote(x + ((y+1)/(x+1)), 100, 1);
         // sc.playNote(Math.random() * 100, 100, age/10);
       }
 

@@ -1,9 +1,10 @@
 
   //CAMERA VARS
-  int cameraSelection = 4;
-  float cameraFocal = 1.5;
+  int cameraSelection = 1;
+  float cameraFocal = .5;
+  float targetCameraFocal = .5;
   int position = 0;
-  float radius = 100;
+  float radius = 777;
   float cameraSpeed = renderSpeed;
   boolean rotateHorizontal = false;
   float camZoomSpeed = 1;

@@ -1,10 +1,19 @@
+/*\
+
+    Light: 5/6
+
+*/
+
+q
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 import ddf.minim.effects.*;
 import ddf.minim.signals.*;
 import ddf.minim.spi.*;
 import ddf.minim.ugens.*;
+import arb.soundcipher.*;
 
+SoundCipher sc;
 Minim minim;
 AudioPlayer sound1;
 AudioPlayer sound2;
@@ -12,37 +21,49 @@ AudioPlayer sound3;
 
 int testImgNum;
 int frames = 0;
-float renderSpeed = .1;
+int fps = 60;
+int baseNote = 100;
+int lightOffset = 0;
+
+float renderSpeed = 10;
 float globalMagMin = -100;
 float globalMagMax = 100;
-float sW = 1;
+float sW = 5;
 boolean isPaused = false;
 boolean isFastForwarding = false;
 boolean showOpts = false;
-boolean tenXSpeed = true;
+boolean tenXSpeed = false;
 boolean trailToggle = false;
 boolean strokeToggle = false;
 boolean toggle1 = false;
 boolean toggle2 = false;
 boolean toggle3 = false;
+boolean playTone1 = true;
+boolean playSample1 = false;
+boolean playSample2 = false;
+boolean playSample3 = false;
+
 int MAX_HEADING_OPT = 5;
-int headingOpt = 2;
+int headingOpt = 1;
 int MAX_MAG_OPT = 5;
-int magOpt = 2;
+int magOpt = 1;
 int mod1 = 10;
 
+boolean soundReset = true;
+
 ArrayList<Spec> specs;
-int specCol = 30;
+int specCol = 1;
 
   //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 //2560 //1440
   // height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720 //1600 //900
-float W = 1440;
-float H = 900;
+float W = 1280;
+float H = 720;
 
 void settings() {
   //set canvas size
    fullScreen();
-  size((int)W, (int)H); 
+   size((int)W, (int)H); 
+//    frameRate(10);
 //   size((int)W, (int)H, P2D); 
 
 }
@@ -50,6 +71,7 @@ void settings() {
 
 void setup() {
   // //set colormode
+    frameRate(fps);
 
   //   size(500,500, P2D);
   // colorMode(HSB, 360, 100, 100, 100);
@@ -60,19 +82,20 @@ void setup() {
   // //background(0);
 
     minim = new Minim(this);
+    sc = new SoundCipher(this);
+    // sc.instrument = sc.SYNTH_DRUM;
+    sc.instrument = sc.XYLOPHONE; 
     sound1 = minim.loadFile("effect1.mp3");
     sound2 = minim.loadFile("effect2.mp3");
     sound3 = minim.loadFile("effect3.mp3");
-
-    // sound1.loop();
 
 //   frameRate(2);
   colorMode(HSB, 360, 100, 100, 100);
   // noLoop();
   noCursor();
   initalize();
-  fastForward ();
-  println(specs.size());
+//   fastForward ();
+//   println(specs.size());
 
 
     
@@ -93,7 +116,7 @@ void fastForward () {
 
 void initalize () {
   specs = new ArrayList<Spec>();
-  for (float i = 0; i < H; i+=2) {
+  for (float i = 0; i < H; i+=5) {
     for (float j = 0; j < specCol; j+=1) {
 
         float initX =  map(j, 0, specCol, 0, W) + W/specCol/2;
@@ -124,8 +147,10 @@ void draw() {
   
     frames++;
 
+
     
     if (!isPaused) {
+        soundReset = true;
         if (
             !trailToggle
             //  || 
@@ -155,7 +180,7 @@ void draw() {
 
     if (showOpts) {
 
-      String controlData = ("MinMag: " + globalMagMin + "\nMaxMag: " + globalMagMax+ "\nMod-1: " + mod1 +"\nSpec Cols: " + specCol+"\nSpeed: " + renderSpeed+"\nHeadingOpt: " + headingOpt+"\nMagOpt: " + magOpt+"\n10x Speed: " + tenXSpeed+"\ntoggle1: " + toggle1+"\ntoggle2: " + toggle2+"\ntoggle3: " + toggle3);
+      String controlData = ("MinMag: " + globalMagMin + "\nMaxMag: " + globalMagMax+ "\nMod-1: " + mod1 +"\nSpec Cols: " + specCol+"\nSpeed: " + renderSpeed+"\nHeadingOpt: " + headingOpt+"\nMagOpt: " + magOpt+"\n10x Speed: " + tenXSpeed+"\ntoggle1: " + toggle1+"\ntoggle2: " + toggle2+"\ntoggle3: " + toggle3 + "\nBaseNote: " + baseNote + "\nFPS: " + fps);
       // println(controlData);
       
       textSize(30);
@@ -188,10 +213,27 @@ void keyPressed() {
         case 'x':
             renderSpeed+=1;
             break;
-        case 'u':
+        case '5':
+            lightOffset -= 10;
+            if (lightOffset < -360) lightOffset = -360;
+        break; 
+        case '6':
+            lightOffset += 1;
+            if (lightOffset > 1) lightOffset = 0;
+            break;
+        case '7':
+            fps = fps > 1 ? fps - 1 : 1;
+            frameRate(fps);
+            break;
+        case '8':
+            fps = fps < 120 ? fps + 1 : 120;
+            frameRate(fps);
+
+            break;
+        case '9':
             if (headingOpt > 1) headingOpt--;
             break;
-        case 'i':
+        case '0':
             if (headingOpt < MAX_HEADING_OPT) headingOpt++;
             break;
         case 'o':
@@ -205,6 +247,18 @@ void keyPressed() {
             break;
         case 'g':
             mod1++;
+            break;
+        case 'i':
+            baseNote = baseNote < 1000 ? baseNote + 1 : 1000;
+            break;
+        case 'u':
+            baseNote = baseNote > -1000 ? baseNote - 1 : -1000;
+            break;
+        case 'j':
+            baseNote = baseNote < 1000 ? baseNote + 10 : 1000;
+            break;
+        case 'h':
+            baseNote = baseNote > -1000 ? baseNote - 10 : -1000;
             break;
         case 'q':
             globalMagMin-=1;
@@ -230,6 +284,18 @@ void keyPressed() {
         case 'm':
             showOpts = !showOpts;
             break;
+        case 'k':
+            playTone1 = !playTone1;
+            break;
+        case 'l':
+            playSample1 = !playSample1;
+            break;
+        case ';':
+            playSample2 = !playSample2;
+            break;
+        case '\'':
+            playSample3 = !playSample3;
+            break;
         case '.':
             isFastForwarding = !isFastForwarding;
             break;
@@ -242,19 +308,16 @@ void keyPressed() {
         case '\\':
             toggle3 = !toggle3;
             break;
-        case '\t':
-            tenXSpeed = !tenXSpeed;
-            break;
         case '`':
-            trailToggle = !trailToggle;
+            renderSpeed *= 2;
+            break;
+        case '\t':
+            renderSpeed /= 2;
             break;
         case '1':
-            strokeToggle = !strokeToggle;
-            break;
-        case ';':
             trailToggle = !trailToggle;
             break;
-        case '\'':
+        case '2':
             strokeToggle = !strokeToggle;
             break;
         case '/':

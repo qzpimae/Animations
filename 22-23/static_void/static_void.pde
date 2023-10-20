@@ -1,4 +1,5 @@
 /**
+[/] ; brightness
 (r/f) noiseVar1: 6442
 (t/g) noiseVar2: 2001
 (y/h) noiseVar3: 8146
@@ -17,8 +18,8 @@
 
 // Movie movie;
 
-int W = 1024;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
-int H = 640;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
+int W = 1280;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
+int H = 720;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
 
 PVector v;
 PVector p;
@@ -50,7 +51,7 @@ int noiseVar3 = 1;
 float globalMag = 1;
 // float globalMag = 97.85181;//1;
 
-int imgChoice = 66;
+int imgChoice = 77;
 int prevImgChoice = -1;
 
 int frames = 0;
@@ -62,7 +63,10 @@ int imgFolderSelc = 0;
 int hueShift = 180;
 
 boolean autoReset = false;
-boolean isInColor = false;
+
+float brightnessOffset = 1;
+
+boolean lightsToggle = true;
 
 void settings () {
   
@@ -180,58 +184,65 @@ void draw() {
 
   frames++;
 
-  if (frames % resetPeriod == 0 && autoReset) resetScreen();
+  if (lightsToggle) {
+    if (frames % resetPeriod == 0 && autoReset) resetScreen();
 
 
-  if (imgChoice != prevImgChoice) {
-    img = loadImage("./imgs/img" + (imgChoice) + ".png");
-    img.resize(W, H);
-    img.loadPixels();
-    prevImgChoice = imgChoice;
-    imgPix = img.pixels;
-  }
-  
-  // ArrayList<Integer> imgPixList = new ArrayList<Integer>(Arrays.asList(imgPix));
- 
-  // Collections.rotate(imgPixList, 1);
-
-  
-  for (int i=0; pixels.length>i; i++)  {
-
-    rotz(v, rz);
-    rotx(v, rx);
-    
-    p.add(v);
-    
-    if (p.x > LIM) p.x = p.x - LIM+1;
-    if (p.y > LIM) p.y = p.y - LIM+1;
-    if (p.z > LIM) p.z = p.z - LIM+1;
-    
-    if (p.x < 0) p.x = p.x + LIM;
-    if (p.y < 0) p.y = p.y + LIM;
-    if (p.z < 0) p.z = p.z + LIM;
-    
-    translate(W/2 , H/2);
-    
-    //map x,y,z to somewhere in x,y only
-    int counter = (int(p.z) << 12) | (int(p.y) << 6) | int(p.x);
-
-    if ( (counter < pixels.length) && (counter >= 0)) {
-      if (imgPix[counter] != color( cos(frames/(float)noiseVar1) * (float)noiseVar2)) {
-        // pixels[counter] = imgPix[counter];
-        color orgImgPix = imgPix[counter];
-        pixels[counter] = color(
-          isInColor ?(((orgImgPix >> 0) & 0xFF) + hueShift) % 360 : 0,//hue
-          isInColor ? ((orgImgPix >> 8) & 0xFF)/2 : 0,//sat
-          (orgImgPix >> 16) & 0xFF//brigh
-        );
-        // println((orgImgPix >> 8) & 0xFF);
-        // println((imgPix[counter] >> 8) & 0xFF);
-      } else {
-        pixels[counter] = color(random(360), isInColor ? random(100) : 0, random(80)+20);
-      }
-      // pixels[counter] = color(random(360), random(100), random(80)+20);
+    if (imgChoice != prevImgChoice) {
+      img = loadImage("./imgs/img" + (imgChoice) + ".png");
+      img.resize(W, H);
+      img.loadPixels();
+      prevImgChoice = imgChoice;
+      imgPix = img.pixels;
     }
+    
+    // ArrayList<Integer> imgPixList = new ArrayList<Integer>(Arrays.asList(imgPix));
+  
+    // Collections.rotate(imgPixList, 1);
+
+    
+    for (int i=0; pixels.length>i; i++)  {
+
+      rotz(v, rz);
+      rotx(v, rx);
+      
+      p.add(v);
+      
+      if (p.x > LIM) p.x = p.x - LIM+1;
+      if (p.y > LIM) p.y = p.y - LIM+1;
+      if (p.z > LIM) p.z = p.z - LIM+1;
+      
+      if (p.x < 0) p.x = p.x + LIM;
+      if (p.y < 0) p.y = p.y + LIM;
+      if (p.z < 0) p.z = p.z + LIM;
+      
+      translate(W/2 , H/2);
+      
+      //map x,y,z to somewhere in x,y only
+      int counter = (int(p.z) << 12) | (int(p.y) << 6) | int(p.x);
+
+      if ( (counter < pixels.length) && (counter >= 0)) {
+        float brightness;
+        if (imgPix[counter] != color( cos(frames/(float)noiseVar1) * (float)noiseVar2)) {
+          // pixels[counter] = imgPix[counter];
+          color orgImgPix = imgPix[counter];
+          brightness = (orgImgPix >> 16) & 0xFF;
+          // println((orgImgPix >> 8) & 0xFF);
+          // println((imgPix[counter] >> 8) & 0xFF);
+        } else {
+          brightness = random(80)+20;
+        }
+
+        pixels[counter] = color(0, 0, brightness * brightnessOffset);
+        // if (brightness + brightnessOffset > 0) println(brightness);
+        //STROBE EFFECT pixels[counter] = color(0, 0, brightness + brightness * (sin(frames/(float)noiseVar3) * (float)noiseVar2));
+        //STROBE EFFECT // pixels[counter] = color(0, 0, brightness + (sin(frames/(float)noiseVar3) * (float)noiseVar2));
+
+        //FULL SCREEN COMPLETE RANDOM (NO IMG) // pixels[counter] = color(random(360), random(100), random(80)+20);
+      }
+  }
+
+
     
   }
   
@@ -343,13 +354,8 @@ void keyPressed() {
           println("(c)   randomizeMag: "+globalMag);
           println("(v/z)   randomize range/noiseVars");
           println("(e/d)   resetPeriod: "+resetPeriod);
-          println("(?)   isInColor: "+isInColor);
           
           // println("noiseVar4: "+noiseVar4);
-        break;
-
-        case '/':
-          isInColor = !isInColor;
         break;
       
         case 'u':
@@ -362,9 +368,33 @@ void keyPressed() {
           noiseVar1 = (int) random(NOISE_VAR_MAX);
           noiseVar2 = (int) random(NOISE_VAR_MAX);
           noiseVar3 = (int) random(NOISE_VAR_MAX);
-          println("noiseVar1: "+noiseVar1);
-          println("noiseVar2: "+noiseVar2);
-          println("noiseVar3: "+noiseVar3);
+          // println("noiseVar1: "+noiseVar1);
+          // println("noiseVar2: "+noiseVar2);
+          // println("noiseVar3: "+noiseVar3);
+        break;
+        case 'l':
+          angx -= .1;
+          rz = new PVector(cos(angx*PI/180), sin(angx*PI/180), 0);
+          rx = new PVector(0, sin(angz*PI/180), cos(angz*PI/180));
+          p = new PVector(0, 0, 0);
+        break;
+        case ';':
+          angx += .1;
+          rz = new PVector(cos(angx*PI/180), sin(angx*PI/180), 0);
+          rx = new PVector(0, sin(angz*PI/180), cos(angz*PI/180));
+          p = new PVector(0, 0, 0);
+        break;
+        case 'o':
+          angz -= .1;
+          rz = new PVector(cos(angx*PI/180), sin(angx*PI/180), 0);
+          rx = new PVector(0, sin(angz*PI/180), cos(angz*PI/180));
+          p = new PVector(0, 0, 0);
+        break;
+        case 'p':
+          angz += .1;
+          rz = new PVector(cos(angx*PI/180), sin(angx*PI/180), 0);
+          rx = new PVector(0, sin(angz*PI/180), cos(angz*PI/180));
+          p = new PVector(0, 0, 0);
         break;
         case 'x':
           angx = (int) random(360);
@@ -373,17 +403,24 @@ void keyPressed() {
           rx = new PVector(0, sin(angz*PI/180), cos(angz*PI/180));
           p = new PVector(0, 0, 0);
 
-          println("angx: "+angx + " angz: "+angz);
-          println("rz: "+rz + " rx: "+rx);
-          println("p: "+p);
+          // println("angx: "+angx + " angz: "+angz);
+          // println("rz: "+rz + " rx: "+rx);
+          // println("p: "+p);
         break;
         case 'c':
           globalMag = random(100);
-          println("globalMag: "+globalMag);
+          // println("globalMag: "+globalMag);
         break;
         case 'v':
           posrange = (int) random(500);
           subrange = (int) random(500);
+        break;
+        case ']':
+          brightnessOffset = brightnessOffset >= 1 ? 1 : brightnessOffset + .02;
+        break;
+        case '[':
+          // println("brightnessOffset: "+brightnessOffset);
+          brightnessOffset = brightnessOffset <= 0 ? 0 : brightnessOffset - .02;
         break;
         case 'e':
           resetPeriod += globalInc;
@@ -414,6 +451,9 @@ void keyPressed() {
         break;
         case '6':
           imgChoice = 66;
+        break;
+        case '\\':
+          lightsToggle = !lightsToggle;
         break;
         // case '5':
         //   imgChoice = 55;

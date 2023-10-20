@@ -1,5 +1,7 @@
 //Game of life
 
+//TODO
+
 //CONTROLS
 /*
     R:       restart
@@ -20,6 +22,18 @@
 */
 
 //GLOBAL VARS
+
+  import ddf.minim.*;
+  import ddf.minim.analysis.*;
+  import ddf.minim.effects.*;
+  import ddf.minim.signals.*;
+  import ddf.minim.spi.*;
+  import ddf.minim.ugens.*;
+  import arb.soundcipher.*;
+
+  SoundCipher sc;
+  Minim minim;
+
   //Noise algorithm that produces values used in this animation, not made by me
  OpenSimplex2S noise;
   
@@ -29,13 +43,24 @@
   boolean paused = false;
   boolean trailToggle = true;
   boolean ignoreAlive = false;
-  boolean isInColor = true;
-  boolean inLoopMode = true;
+  boolean isInColor = false;
+  boolean inLoopMode = false;
+
+  boolean playNotes = true;
+
+
+  boolean scrollCells = true;
+  boolean surroundCalcType = true;
+  
+  // boolean scrollCellsHor = true;
+  
+  int horScroll = -1; 
+  int vertScroll = 0; 
   
   int genType = 3;
   
   int frames = 0;
-  float fps = 17;
+  float fps = 15;
   
   int cellSize =  2;
   int tempCellSize = cellSize;
@@ -44,6 +69,12 @@
 
   //array of Points to keep track of quadrent information and x/y position aswell as pixel index
   Cell[][] allCells;
+
+
+  int noteLim = 100;
+  int notesPlayed = 0;
+
+
   void settings () {
     fullScreen();
     //set canvas size
@@ -57,8 +88,15 @@
     //set color mode to hue/saturation/brightness which i perfer for my animations
     colorMode(HSB, 360, 100, 100);
     //noLoop();
+    noCursor();
     //create instance of the simplex noise class
     noise = new OpenSimplex2S( 314159265 );
+
+
+    minim = new Minim(this);
+    sc = new SoundCipher(this);
+    // sc.instrument = sc.SYNTH_DRUM;
+    sc.instrument = sc.XYLOPHONE; 
     
     initalizeGame();
     frameRate(fps);
@@ -87,6 +125,12 @@
       case 't': 
         trailToggle = !trailToggle;
       break;
+      case '`':
+        scrollCells = !scrollCells;
+      break;
+      case TAB:
+        surroundCalcType = !surroundCalcType;
+        break;
       case 'n':
         calcNextGen();
       break;
@@ -100,13 +144,13 @@
         initalizeGame();
       break;
       case 'o':
-        fps-=5;
+        fps-=1;
         if (fps < 1) fps = 1;
         frameRate(fps);
         println("FPS set to: " + fps);
       break;
       case 'p':
-        fps+=5;
+        fps+=1;
         if (fps > 60) fps = 60;
         frameRate(fps);
         println("FPS set to: " + fps);
@@ -130,7 +174,26 @@
       case '=': 
         saveFrame("../../../renderScreenShot/life/life_######.png");
       break;
+
     }
+
+    if (key == CODED) {
+    switch (keyCode) {
+      case UP:
+        vertScroll = vertScroll > 0 ? 0 : 1; 
+      break;
+      case DOWN:
+        vertScroll = vertScroll < 0 ? 0 : -1; 
+      break;
+      case RIGHT:
+        horScroll = horScroll < 0 ? 0 : -1; 
+      break;
+      case LEFT:
+        horScroll = horScroll > 0 ? 0 : 1; 
+      break;
+     
+    } 
+  }
     
     
   }
@@ -180,6 +243,24 @@
       }
       
     } 
+
+    if (scrollCells) {
+      Cell[] tempCellRow;
+
+      for (int i = 0; i < allCells.length; ++i) {
+        // println("sg");
+        if (i < allCells.length-1) {
+          tempCellRow = allCells[i+1];
+          allCells[i+1] = allCells[i];
+          allCells[i] = tempCellRow;
+        } else {
+          tempCellRow = allCells[0];
+          allCells[0] = allCells[allCells.length-1];
+          allCells[allCells.length-1] = tempCellRow;
+        }
+      }
+      
+    }
     
     if (!paused) calcNextGen();
     
@@ -242,6 +323,8 @@
   }
   
   void calcNextGen() {
+
+    notesPlayed = 0;
     
     
     int[][] aliveCount = new int[cellCols][cellRows];
@@ -252,7 +335,7 @@
         int x = allCells[i][j].x;
         int y = allCells[i][j].y;
         
-        aliveCount[i][j] = calcSurroundingAlive(x, y);
+        aliveCount[i][j] = surroundCalcType ? calcSurroundingAliveV1(x, y) : calcSurroundingAliveV2(x, y);
       }  
     }   
     
@@ -283,7 +366,7 @@
   }
 
   
-  int calcSurroundingAlive(int x, int y) {
+  int calcSurroundingAliveV1(int x, int y) {
     
     int aCount = 0;
     for (int i = x - 1; i < x + 2; i++) {
@@ -291,11 +374,11 @@
         
           //if (x == 0 && y == 0) println (i,j);
         
+         if ((i == x && j == y)) continue;
          if (
            i >= 0 && j >= 0
            && i < cellCols && j < cellRows 
            && allCells[i][j].alive
-           && !(i == x && j == y)
          ) { aCount++; }
       
       }
@@ -305,3 +388,29 @@
     return aCount;
   }
   
+  //V1 CAlSurround (edges are dead)
+  int calcSurroundingAliveV2(int x, int y) {
+    
+
+    int aCount = 0;
+    for (int i = x - 1; i < x + 2; i++) {
+      for (int j = y - 1; j < y + 2; j++) {
+        
+          //if (x == 0 && y == 0) println (i,j);
+         if ((i == x && j == y)) continue;
+         if (
+           i >= 0 && j >= 0
+           && i < cellCols && j < cellRows 
+           && allCells[i][j].alive
+          //  || i < 0 && j > 0 && allCells[cellCols-1+i][j].alive && !(i == x && j == y)
+          //  || j < 0 && i > 0 && allCells[i][cellRows-1+j].alive && !(i == x && j == y)
+           || i < 0 && j < 0 && allCells[cellCols-1+i][cellRows-1+j].alive && !(i == x && j == y)
+         ) { aCount++; }
+      
+
+      }
+    
+    }
+    //println(x, y, aCount);
+    return aCount;
+  }

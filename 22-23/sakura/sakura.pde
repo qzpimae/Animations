@@ -1,5 +1,13 @@
+/*\
+
+    Light: X/C
+
+*/                 
+
+
+
 //imports
-import controlP5. *;
+import controlP5.*;
 
 //GLOBAL VARS
 //Noise algorithm that produces values used in this animation, not made by me
@@ -16,12 +24,14 @@ boolean switched = true;
 ControlP5 controller;
 ControlGroup gui;
 
-int colorMode = 1;
-int colorModeMax = 4;
+int colorMode = 3;
+int colorModeMax = 3;
 
 final float fps = 60;
 float renderSpeed = 3;
+float moveSpeed = 1;
 // boolean renderFullSpeed = true;
+boolean clearScreen = true;
 boolean autoRotate = false;
 float lineWidthDiv = 1;
 
@@ -31,7 +41,13 @@ boolean showNebula = false;
 boolean showFlower = true;
 boolean showLife = true;
 boolean showInfinity = false;
+boolean showSphere = true;
 
+
+// -1: zoom out ___ 0: still ___ 1: zoom in
+int zoomIn = 0;
+
+int lightOffset = -10;
 
 
 
@@ -43,8 +59,8 @@ int count;
 
 //width and height of canvas 
 //to change the resolution update both the WIDTH AND HEIGHT also change the values on  line 48
-final int WIDTH = 1440;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
-final int HEIGHT = 900;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
+final int WIDTH = 1280;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int HEIGHT = 720;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 final float centerX = WIDTH/2;
 final float centerY = HEIGHT/2;
 final float maxDistance = centerX+centerY;//centerX+centerY;
@@ -93,6 +109,8 @@ void setup() {
   spaceDebris.spawnGalaxies();
   spaceDebris.spawnDust();
   noStroke(); 
+  noCursor(); //commented for live testing
+
   frameRate(fps);
 
   //planet = new Planet("./testing (6).png", 1000); //switch to either 'earth-render' or 'mars-render' to see diffrent planets 
@@ -101,7 +119,6 @@ void setup() {
   if (isTesting) {
     gui.show();
   } else {
-    noCursor(); //commented for live testing
     gui.hide();
   }
   // noLoop(); ///uncomment to only render one frame
@@ -115,8 +132,17 @@ void draw() {
   
   //println(radius);
 
+  if (zoomIn == 1) radius -= moveSpeed/10;
+  else if (zoomIn == -1) radius += moveSpeed/10;
+  if (radius < 5) zoomIn *= -1;
+
+  // if (targetCameraFocal != cameraFocal) {
+  //   cameraFocal = targetCameraFocal > cameraFocal ? cameraFocal - .01 : cameraFocal + .01;
+  // }
+  
+
   perspective(cameraFocal, width/height, 1, 4000);
-  cam3D.configureCamera(cameraSelection);
+  cam3D.configureCamera(cameraSelection); 
 
   if (!isPaused) {
     //println(frames);
@@ -130,8 +156,6 @@ void draw() {
 }
 
 void renderScene () {
-  clear(); // reset screen
-    //background(0);
     
     spaceRender.displayStars();
 
@@ -145,11 +169,8 @@ void renderScene () {
 
     if (isTesting) {
       // cam3D.renderCamGumball();
+      // blendMode(ADD);
 
-      //sphere 
-      // noFill();
-      // stroke(10000);
-      // sphere(500);
       renderGUI();
     } 
 
@@ -161,8 +182,8 @@ void printTestOutput () {
 
   String var1 = "1: " + cameraSelection;
   String var2 = "2: " + radius;
-  String var3 = "3: " + globalAngl;
-  String var4 = "4: " + infinityVar;
+  String var3 = "3: " + lightOffset;
+  String var4 = "4: " + moveSpeed;
 
   push();
 
@@ -223,68 +244,112 @@ void keyPressed() {
     case ' ': 
       isPaused = !isPaused;
       break;
-    case 'm':
+    case 'z':
       isTesting = !isTesting;
+      println("");
       break;
     case '=':
-      saveFrame("../../../sakura314/img_######.png");
+      saveFrame("../../../renderScreenShot/sakura/img_######.png");
       break;
     case '\\':
       cameraSelection = cameraSelection < 6 ? cameraSelection+1 : 1;
+      if (cameraSelection == 5) cameraSelection++;
       break;
     case '/':
-      colorMode = colorMode < colorModeMax ? colorMode+1 : 1;
-      break;
-    case 'a':
-      renderSpeed = renderSpeed < 10 ? renderSpeed+0.1 : 10;
+      colorMode = colorMode < colorModeMax ? colorMode+1 : 2;
       break;
     case 's':
+      renderSpeed = renderSpeed+0.1;
+      // renderSpeed = renderSpeed < 10 ? renderSpeed+0.1 : 10;
+      break;
+    case 'a':
       renderSpeed = renderSpeed > 0.1 ? renderSpeed-0.1: 0.1;
       break;
     case 'w':
-      renderSpeed = renderSpeed < 10 ? renderSpeed+1 : 10;
+      renderSpeed = renderSpeed+1;
+      // renderSpeed = renderSpeed < 10 ? renderSpeed+1 : 10;
       break;
     case 'q':
       renderSpeed = renderSpeed > 1 ? renderSpeed-1: 1;
       break;
-    case 'z':
-      showStars = !showStars;
-      break;
+    // case 'x':
+    //   showGalaxy = !showGalaxy;
+    //   break;
+    // case 'c':
+    //   showFlower = !showFlower;
+    //   break;
     case 'x':
-      showGalaxy = !showGalaxy;
+      lightOffset = lightOffset > -100 ? lightOffset-2 : -100;
       break;
     case 'c':
-      showFlower = !showFlower;
-      break;
-    case 'n':
-      showInfinity = !showInfinity;
+      lightOffset = lightOffset < 100 ? lightOffset+2 : 100;
       break;
     case 'b':
       showNebula = !showNebula;
       break;
     case 'v':
-      showLife = !showLife;
+      showSphere = !showSphere;
       break;
     case '\t':
-      renderSpeed /= 10;
+      renderSpeed /= 2;
       break;
     case '`':
-      renderSpeed *= 10;
+      renderSpeed *= 2;
       break;
     case '[':
-      lineWidthDiv = lineWidthDiv > 0.1 ? lineWidthDiv-0.1 : 0.1;
+      lineWidthDiv = lineWidthDiv > 0.05 ? lineWidthDiv-0.05 : 0.05;
       break;
     case ']':
-      lineWidthDiv = lineWidthDiv < 10 ? lineWidthDiv+0.1 : 10;
+      lineWidthDiv = lineWidthDiv < 20 ? lineWidthDiv+0.05 : 20;
       break;
     case 'o':
-      cameraFocal = cameraFocal > .01 ? cameraFocal-0.01 : .01;
+      cameraFocal = cameraFocal > .1 ? cameraFocal-0.1 : .1;
+      // println("cameraFocal: " + cameraFocal);
+
       break;
     case 'p':
-      println("cameraFocal: " + cameraFocal);
-      cameraFocal = cameraFocal < 3 ? cameraFocal+0.01 : 3;
+      // println("cameraFocal: " + cameraFocal);
+      cameraFocal = cameraFocal < 3 ? cameraFocal+0.1 : 3;
       break;
-    
+    case '\b':
+      clearScreen = !clearScreen;
+      break;
+    case 'l':
+      moveSpeed = moveSpeed < 25 ? moveSpeed+.1 : 25;
+      break;
+    case 'k':
+      moveSpeed = moveSpeed > .1 ? moveSpeed-.1: .1;
+      break;
+    case 'm':
+      moveSpeed = moveSpeed < 25 ? moveSpeed+.5 : 25;
+      break;
+    case 'n':
+      moveSpeed = moveSpeed > .5 ? moveSpeed-.5: moveSpeed;
+      break;
+    case ',':
+      zoomIn = zoomIn == -1 ? 0 : -1;
+      break;
+    case '.':
+      zoomIn = zoomIn == 1 ? 0 : 1;
+      break;
+    case '0':
+        cameraFocal = .1;
+      break;
+    case '9':
+        cameraFocal = 9.38;
+      break;
+    case '7':
+      cameraFocal = cameraFocal > .01 ? cameraFocal-0.01 : .01;
+      break;
+    case '8':
+      cameraFocal = cameraFocal+0.01;
+      break;
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+      cameraSelection = Character.getNumericValue(key);
+      break;
 
 
 

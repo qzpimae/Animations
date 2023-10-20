@@ -1,5 +1,8 @@
 //INITIAL VARIABLE DECLERATIONS
 
+window.onload = ( ) => {
+ 
+
 const slider = document.getElementById('slider');
 
 let canvas = document.getElementById("canvas"),
@@ -31,16 +34,17 @@ const width = canvas.width = window.innerWidth,       //width of the canvas
         change_properties()
 
         setTimeout( () => {
+            animate()
             
-            if (time < 1000) {
+            // if (time < 4000) {
 
-                 animate()
+            //      animate()
                 
-            } else {
+            // } else {
 
-                return
+            //     return
                
-            }
+            // }
 
         }, delay);
     }
@@ -52,9 +56,9 @@ const width = canvas.width = window.innerWidth,       //width of the canvas
         context.beginPath()
         context.arc(x, y, size, 0, 2 * Math.PI)
 
-        let saturation = 100;
+        let saturation = 0;
 
-        context.strokeStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        context.strokeStyle = `hsl(${hue}, ${saturation}%, ${100-hue}%)`;
 
         context.stroke()
         
@@ -63,7 +67,7 @@ const width = canvas.width = window.innerWidth,       //width of the canvas
 
     function create_objects() {
 
-        for (let i = 0; i < 333; i++) {
+        for (let i = 0; i < 444; i++) {
 
             let    
             
@@ -116,7 +120,8 @@ const width = canvas.width = window.innerWidth,       //width of the canvas
 
     function create_frame() {
 
-      context.fillStyle = `hsl( ${time/3}, 100%, 30%)`;
+      context.fillStyle = `0`;
+    //   context.fillStyle = `hsl( ${time/3}, 100%, 30%)`;
         
       context.fillRect(0,0,width,height/4)
 
@@ -136,3 +141,6 @@ const width = canvas.width = window.innerWidth,       //width of the canvas
         context.restore();
         
     }
+
+       
+}

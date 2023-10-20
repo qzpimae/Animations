@@ -4,7 +4,7 @@ let canvas = document.createElement('canvas'),
 
       width = canvas.width = window.innerWidth,
       height = canvas.height = window.innerHeight,
-
+      mult1 = 1,
       time = 0,
       
       pauseAnimation = false;
@@ -38,11 +38,21 @@ document.addEventListener('keydown', userInputEvent, false);
 //USER INPUT LOGIC
 function userInputEvent(input) {
 
-    pauseAnimation = !pauseAnimation;
-
-    if (!pauseAnimation) {
-        render()
+    switch (input.code) {
+        case "Space":
+                pauseAnimation = !pauseAnimation;
+                if (!pauseAnimation) {
+                    render()
+                }            
+            break;
+        default:
+                console.log(`
+                    Controls:
+                        Pause; Space
+                `);
+            break;
     }
+
     
 }
 
@@ -60,7 +70,7 @@ function userInputEvent(input) {
 
         clearFullScreen()
 
-        createClover(time*20)
+        createClover(time*mult1)
 
         // context.rotate(.01d)
 

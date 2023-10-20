@@ -16,12 +16,15 @@ let canvas = document.createElement('canvas'),
       speed = .37,
       clearScreen = true,
       pauseAnimation = false,
-      szMlt = 1;
-      layers = 2;
-      layerMult = 1;
+      szMlt = .5,
+      layers = 2,
+      layerMult = 1,
+      rotation = 0; 
 
-context.strokeStyle = 'white';
-context.fillStyle = 'white';
+
+// context.strokeStyle = 'white';
+context.strokeStyle = "rgba(1, 1, 1, 0)";
+// context.fillStyle = 'white';
 
 context.lineWidth = 1;
 
@@ -42,8 +45,11 @@ document.addEventListener('keydown', userInputEvent, false);
 
 //USER INPUT LOGIC
 function userInputEvent(input) {
-    console.log(input.code);
+    // console.log(input.code);
     switch (input.code) {
+        case 'KeyZ':
+        clearScreen = !clearScreen;
+        break;
         case 'Space':
             pauseAnimation = !pauseAnimation;
             if (!pauseAnimation) {
@@ -75,11 +81,23 @@ function userInputEvent(input) {
             speed = speed > .002 ? speed-.1 : .002;
         break;
         case 'KeyD':
-            szMlt = szMlt < 10 ? szMlt+.1 : 10;
+            szMlt = szMlt < 10 ? szMlt+.01 : 10;
         break;
         case 'KeyC':
-            szMlt = szMlt > .002 ? szMlt-.1 : .002;
+            szMlt = szMlt > .002 ? szMlt-.01 : .002;
         break;
+
+        case 'KeyP':
+            rotation += 1;
+            break;
+        case 'Semicolon': 
+            rotation -= 1;
+            break;
+
+        case 'Slash':
+            time = 0;
+            break;
+        
         case 'KeyM': 
             console.log(`
             case 'ArrowUp':
@@ -139,9 +157,13 @@ function userInputEvent(input) {
         }
 
         if(clearScreen) clearFullScreen()
+
             
         for (let i = 0; i < layers; i++) {
-           createImg(time+(i*layerMult))
+
+            //    context.fillStyle = i % 2 != 0 && !clearFullScreen ? '100' : '0'
+            //    context.strokeStyle = i % 2 != 0 && !clearFullScreen ? '100' : '0'
+               createImg(time+(i*layerMult), i)
             
         }
         if (!pauseAnimation) {
@@ -149,10 +171,19 @@ function userInputEvent(input) {
         }
       }
 
-function createImg(s) { 
+function createImg(s, b) { 
 
     context.save();
 
+        context.translate(width/2, height/2)
+
+        context.rotate(rotation/180);
+
+        context.translate(-width/2, -height/2)
+
+        // console.log(!clearScreen)
+
+      
         for (let x = 0; x < width/20+1; x+=.7) {
             
             for (let y = 0; y < height/20+1; y+=.7) {
@@ -167,7 +198,7 @@ function createImg(s) {
                 X = x*20+ N1*(2+time/10)+N2*(2+time/10),
                 Y = y*20+ N1*(2+time/10)-N2*(2+time/10);
 
-                context.fillStyle = `hsl(0, 0%, ${100-distance/5}%)`;
+                context.fillStyle =  `hsl(0, 0%, ${(b % 2 != 0 && !clearScreen ? 0: 100)-distance/5}%)`;
                 context.beginPath()
                 context.arc(X, Y, Math.abs(radius*szMlt), 0, pi*2)
                 context.fill()
@@ -175,6 +206,9 @@ function createImg(s) {
             }
             
         }
+
+
+    // context.translate(-width/2, -height/2)
 
     context.restore();
 

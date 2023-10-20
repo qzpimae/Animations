@@ -7,14 +7,6 @@
 
 */
 
-/*\
-
-    Light: C/V
-
-*/
-
-
-
 //CONTROLS
 /*
     R:       restart
@@ -50,15 +42,15 @@
   //Noise algorithm that produces values used in this animation, not made by me
  OpenSimplex2S noise;
   
-  int WIDTH = 1280;//1504//3840; //1920
-  int HEIGHT = 720;//846//2160; //1080
+  int WIDTH = 1440;//1504//3840; //1920
+  int HEIGHT = 900;//846//2160; //1080
   
   boolean paused = true;
   boolean trailToggle = true;
   boolean ignoreAlive = false;
   boolean isInColor = true;
   boolean inLoopMode = false;
-``````
+
   boolean playNotes = false; // c: /
 
   boolean autoDynamicsToggle = false; //c: 8
@@ -91,7 +83,7 @@
   int noteLim = 20;
   int notesPlayed = 0;
 
-  float lightOffset = -25;
+  int lightOffset = -25;
   float ageMult = 1;
 
 
@@ -157,7 +149,7 @@
 
       for (int i = 0; i < allCells.length; ++i) {
         // println("sg");
-        if (i < allCells.length-1) {
+        if (i < allCells.length-2) {
           tempCellRow = allCells[i+1];
           allCells[i+1] = allCells[i];
           allCells[i] = tempCellRow;
@@ -286,18 +278,6 @@
       case 'x':
         ageMult = ageMult <= .1 ? .1 : ageMult - .1;
         break;
-      case 'i':
-        vertScroll = vertScroll < 100 ? vertScroll+1 : 100; 
-      break;
-      case 'k':
-        vertScroll = vertScroll > -100 ? vertScroll-1 : -100; 
-      break;
-      case 'l':
-        horScroll = horScroll < 0 ? 0 : -1; 
-      break;
-      case 'j':
-        horScroll = horScroll < 100 ? vertScroll+1 : 100; 
-      break;
 
 
     }
@@ -382,19 +362,15 @@
 
       if (frames % (20 - (autoResetCounter < 10 ? autoResetCounter : 10))  == 0 && random(1) > .3){
 
-        boolean trailToggleSwitch = random(1) > .5;
-        if (trailToggleSwitch != trailToggle) {
-          lightOffset = random(-60, 20);
-          trailToggle = trailToggleSwitch;
-        }
+        trailToggle = random(1) > .5;
         scrollCellsUni = scrollCellsUni ? random(1) < .9 : false;
         
         // frameRate += (random(1) > frameRate/120 ? 1 : -1) * Math.ceil(random(1) * 5);
         // println("FPS: " + frameRate);
 
         // println(horScroll + "\nVert:" + vertScroll);
-        horScroll += random(1) > .75 ? 1 : -1;
-        vertScroll += random(1) > .75 ? 1 : -1;
+        horScroll += random(1) > .5 ? 1 : -1;
+        vertScroll += random(1) > .5 ? 1 : -1;
 
 
 

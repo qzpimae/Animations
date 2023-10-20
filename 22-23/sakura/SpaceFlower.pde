@@ -105,9 +105,13 @@ class SpaceFlower {
           
           for (int j = 0; j < petalsLim; ++j) {
 
+            float fillVal = i < limit/2 ? map(i, 0, limit/2, 10, 100) : map(i, limit/2, limit, 10, 100);
+
+            fillVal += lightOffset;
+
             centerRotation = PI/petalsLim*2*j;      
             stroke(colorData[0], colorData[1], colorData[2]);  //stroke(10000);//
-            fill(colorData[0], colorData[1], map(i, limit, 0, 50, 100));//map(i, limit, 0, 0, 12000)); //fill(100);//
+            fill(colorData[0], colorData[1], fillVal);//map(i, limit, 0, 0, 12000)); //fill(100);//
             if (colorMode == 4) strokeWeight(  map(curLayerSz, 30, .1, .1, 3) / (1+strokeRadiusMap) * lineWidthDiv);
             push();
               translate(0,0, curLayerSz);

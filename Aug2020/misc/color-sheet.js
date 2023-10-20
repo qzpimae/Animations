@@ -16,6 +16,7 @@ let canvas = document.createElement('canvas'),
       width = canvas.width = window.innerWidth,
       height = canvas.height = window.innerHeight,
       time = 0,
+      frames = 0,
       timeMax = Infinity,
       timeForward = true,
       speed = .5,
@@ -25,6 +26,7 @@ let canvas = document.createElement('canvas'),
       showDots = true,
       isInColor = true,
       noiseAmt = 10,
+      clrSw = 40,
       scaleSz = 20;
 
       // square in middle
@@ -77,14 +79,14 @@ function userInputEvent(input) {
             speed = speed < 4 ? speed+.1 : 4;
         break;
         case "ArrowDown":
-            speed = speed > .1 ? speed-.1 : .1;
+            speed = speed > .1 ? speed-.1 : .03;
         break;
 
         case 'KeyZ':
             speed = speed < 1000 ? speed+.1 : 1000;
         break;
         case "KeyX":
-            speed = speed > .1 ? speed-.1 : .1;
+            speed = speed > .1 ? speed-.02 : .1;
         break;
         case 'ArrowLeft':
             noiseAmt = noiseAmt < 1000 ? noiseAmt+.1 : 100;
@@ -118,6 +120,12 @@ function userInputEvent(input) {
         case "KeyK":
             limits.eX-=5;
         break;
+        case "KeyV":
+            clrSw+=2;
+        break;
+        case "KeyB":
+            clrSw-=2;
+        break;
         }
         
 }
@@ -131,6 +139,8 @@ function userInputEvent(input) {
 
         function render() {
 
+            frames++;
+
         if (timeForward && time < timeMax) {
             time+=speed
         } else if (timeForward && time >= timeMax) {
@@ -141,6 +151,10 @@ function userInputEvent(input) {
             timeForward = true;
             time = 1.1
             seed = Math.random()  
+        }
+
+        if (frames%clrSw == 0) {
+            isInColor = !isInColor;
         }
 
         if(clearScreen) clearFullScreen()

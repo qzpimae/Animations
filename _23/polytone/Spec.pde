@@ -1,6 +1,5 @@
 class Spec {
 
-    int frames;
     PVector pos;
     PVector heading;
     float hue;
@@ -9,7 +8,7 @@ class Spec {
     float y;
 
     Spec (float x, float y, float mag) {
-        frames = 0;
+
         pos = new PVector(x, y);
         this.mag = mag;
         this.x = x;
@@ -92,14 +91,12 @@ class Spec {
     }
 
     void draw(int idx) {
-
-        frames++;
         // hue = ((abs(pos.y-H/2) + abs(pos.x-W/2)) %360 );
         // hue=159;
         // stroke(hue, 30, 100);
         // if (strokeToggle) idx++; //quick fix to toggle stroke
         // stroke(idx % 2 == 0 ? 300 : 0);
-        stroke(!trailToggle ? 360 + lightOffset : frames % 2 == 0 ? 360 + lightOffset : 0);
+        stroke(360);
         strokeWeight(sW);
         point(pos.x, pos.y);
         // fill(360);
