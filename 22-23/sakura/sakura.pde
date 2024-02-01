@@ -163,9 +163,9 @@ void renderScene () {
 
     // matrix.render();
     
-    //nebulaCtrl.renderNebula();
-    //lifeRender.lifeGenesis(2);
-    //lifeRender.renderLife();
+    // nebulaCtrl.renderNebula();
+    // lifeRender.lifeGenesis(2);
+    // lifeRender.renderLife();
 
     if (isTesting) {
       // cam3D.renderCamGumball();

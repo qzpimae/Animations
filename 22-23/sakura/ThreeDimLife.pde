@@ -95,13 +95,8 @@ class ThreeDimLife {
     
     public void calcNextGen () {
       
-      
-      
-        int[][][] newCells = new int[(int)gameDimensions][(int)gameDimensions][(int)gameDimensions];
-        
-        
+        int[][][] newCells = new int[(int)gameDimensions][(int)gameDimensions][(int)gameDimensions];  
         //CALCULATE THE NUMBER OF ALIVE NEIGHBORS
-        
         for (int x = 0; x < gameDimensions; x++) {
         
             for (int y = 0; y < gameDimensions; y++) {
@@ -118,7 +113,7 @@ class ThreeDimLife {
                       
                       for (int k = -1; k < 2; ++k) {
                           if ( 
-                              c.x+i != -1 && c.y+j != -1 && c.z+k != -1 
+                              c.x+i <= -1 && c.y+j <= -1 && c.z+k <= -1 
                               &&  !(k == 0 && j == 0 && i == 0) 
                               //&& //WRITE CODE FOR c.x + 1 not greateer than length
                           ) {
@@ -141,11 +136,8 @@ class ThreeDimLife {
                   } else {
                     newCells[x][y][z] = 0;
                   }
-            
                 }
-            
             }    
-        
         }
         
         
