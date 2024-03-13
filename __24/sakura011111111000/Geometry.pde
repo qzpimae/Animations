@@ -4,8 +4,8 @@ class Geometry {
 
     //BACKGROUND
     if (clearScreen) {
-      background(0);
-    }
+      background(9000, 100, 70, .1);
+    } 
     //FLOATING STARS
     if (showStars) spaceDebris.renderCirclingDust(3000, 900);
     if (showGalaxy) {

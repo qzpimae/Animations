@@ -109,9 +109,18 @@ class SpaceFlower {
 
             fillVal += lightOffset;
 
-            centerRotation = PI/petalsLim*2*j;      
-            stroke(colorData[0], colorData[1], colorData[2]);  //stroke(10000);//
-            fill(colorData[0], colorData[1], fillVal);//map(i, limit, 0, 0, 12000)); //fill(100);//
+            centerRotation = PI/petalsLim*2*j;    
+
+            //if the toggle is switched. line and fill lightness are switched
+            float strokeVal = whiteSakuraLines ? fillVal : colorData[2];
+            fillVal = whiteSakuraLines ? colorData[2] : fillVal;
+
+            stroke(colorData[0], colorData[1], strokeVal);  //stroke(10000);//
+            if (sakuraFill) { 
+              fill(colorData[0], colorData[1], fillVal);//map(i, limit, 0, 0, 12000)); //fill(100);//
+            } else {
+              noFill();
+            } 
             if (colorMode == 4) strokeWeight(  map(curLayerSz, 30, .1, .1, 3) / (1+strokeRadiusMap) * lineWidthDiv);
             push();
               translate(0,0, curLayerSz);

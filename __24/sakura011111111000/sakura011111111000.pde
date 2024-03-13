@@ -29,10 +29,12 @@ int colorMode = 3;
 int colorModeMax = 3;
 
 final float fps = 60;
-float renderSpeed = 3;
-float moveSpeed = 1;
+float renderSpeed = 1;
+float moveSpeed = .1;
 // boolean renderFullSpeed = true;
-boolean clearScreen = true;
+boolean clearScreen = false;
+boolean whiteSakuraLines = false;
+boolean sakuraFill = true;
 boolean autoRotate = false;
 float lineWidthDiv = 1;
 
@@ -87,7 +89,8 @@ void settings() {
 
 void setup() {
   //set colormode
-  colorMode(HSB, 10000, 100, 100, 1);
+  colorMode(HSB, 10000, 100, 100, 100);
+  background(0);
   //create objects
   controller = new ControlP5(this);
   cam3D = new ThreeDimCam();
@@ -251,8 +254,7 @@ void keyPressed() {
       saveFrame("../../../renderScreenShot/sakura/img_######.png");
       break;
     case '\\':
-      cameraSelection = cameraSelection < 6 ? cameraSelection+1 : 1;
-      if (cameraSelection == 5) cameraSelection++;
+      whiteSakuraLines = !whiteSakuraLines;
       break;
     case '/':
       colorMode = colorMode < colorModeMax ? colorMode+1 : 2;
@@ -350,10 +352,11 @@ void keyPressed() {
       cameraSelection = Character.getNumericValue(key);
       break;
 
-
-
-
       
+  }
+
+  if (keyCode == ENTER) {
+    sakuraFill = !sakuraFill;
   }
 
   
