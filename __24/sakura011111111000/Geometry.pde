@@ -4,7 +4,6 @@ class Geometry {
 
     //BACKGROUND
     if (clearScreen) {
-      clear(); // reset screen
       background(0);
     }
     //FLOATING STARS
@@ -13,7 +12,7 @@ class Geometry {
       //GALAXY BOTTOM
           push();
             translate(0,1000,0);
-            blendMode(!clearScreen ? SUBTRACT : ADD);
+            blendMode(!clearScreen ? SUBTRACT : BLEND);
             // blendMode(!clearScreen ? MULTIPLY : ADD);
             spaceDebris.renderGalaxies();
           pop();
@@ -22,7 +21,7 @@ class Geometry {
           push();
             translate(0,-1000,0);
             rotateX(PI);
-            blendMode(!clearScreen ? SUBTRACT : ADD);
+            blendMode(!clearScreen ? SUBTRACT : BLEND);
             // blendMode(!clearScreen ? MULTIPLY : ADD);
             spaceDebris.renderGalaxies();
           pop();

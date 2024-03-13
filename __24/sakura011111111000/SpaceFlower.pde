@@ -28,7 +28,7 @@ class SpaceFlower {
     }
     if (beginingOrder>0) beginingOrder-=.01;
     spaceFlowerScale = 1;//calcspaceFlowerScale(); 
-    noFill();
+    // noFill();
     float strokeRadiusMap = map(radius, 500, 0, 2, .1);
     strokeWeight(map(radius, 0, 1400, 2, 4.5-beginingOrder) / (1+strokeRadiusMap) * lineWidthDiv);
     //println(spaceFlowerNoiseSeed, frames);
