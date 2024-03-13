@@ -51,6 +51,14 @@ class Geometry {
       sphere(700);
       stroke(0);
       sphere(701);
+    } if (showLife) {
+
+      // blendMode(!clearScreen ? BLEND : ADD);
+      blendMode(BLEND);
+      stroke(10000);
+      fill(0);
+      lifeRender.lifeGenesis(2);
+      lifeRender.renderLife();
     }
   
     

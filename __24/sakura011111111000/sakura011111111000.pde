@@ -75,7 +75,7 @@ SpaceRender spaceRender;
 ThreeDimCam cam3D;
 SpaceFlower spaceFlower;
 ThreeDimLife lifeRender;
-//NebulaController nebulaCtrl;
+//NebulaController nebulaCtrl;mh
 Nebula nebula;
 SpaceDebris spaceDebris;
 
@@ -165,8 +165,6 @@ void renderScene () {
     // matrix.render();
     
     // nebulaCtrl.renderNebula();
-    lifeRender.lifeGenesis(2);
-    lifeRender.renderLife();
 
     if (isTesting) {
       // cam3D.renderCamGumball();

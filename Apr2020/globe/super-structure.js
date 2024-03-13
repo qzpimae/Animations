@@ -228,13 +228,15 @@ let canvas = document.createElement('canvas');
 
     function createSphere() {
 
-        let reso = frames/cmplxSpd + 1,//resolution of sphere coord detail
+        // let reso = (frames/100)/cmplxSpd + 1,//resolution of sphere coord detail
 
-            r = radius; //radius of sphere
+        //     r = radius; //radius of sphere
 
-        if (reso > 88) {
-            frames = 1;
-        }
+        // if (reso > 88) {
+        //     frames = 1;
+        // }
+        let reso = 70 + Math.cos(frames/100) * 10;
+        let r = radius;
 
     //first loop tracks longitude then the nested loop tracks latitude
         for (let i = 0; i < reso; i++) {
@@ -362,7 +364,7 @@ let canvas = document.createElement('canvas');
             }
             
             context.beginPath()
-            context.arc(origin.x,origin.y,size,0, pi*2)
+            context.arc(origin.x,origin.y,size/5,0, pi*2)
             context.fill()
             
         }
@@ -463,6 +465,12 @@ let canvas = document.createElement('canvas');
                 cmplxSpd = cmplxSpd < 333 ? cmplxSpd+1 : 333;
 
             break
+            case 'Digit9':
+                cmplxSpd /= 2;
+                break;
+            case 'Digit0':
+                cmplxSpd *= 2;
+                break;
 
             case 'KeyM':
 
@@ -545,6 +553,6 @@ let canvas = document.createElement('canvas');
         
         let move = evn.deltaY * -7;
 
-        radius = radius + move > 50 && radius + move < height/2 ? radius + move : radius;
+        radius = radius + move > 50 && radius + move < 10000 ? radius + move : radius;
         
     }
