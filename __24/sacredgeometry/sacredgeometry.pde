@@ -1,5 +1,4 @@
 
-import processing.sound.*;
 import java.util.Arrays; 
 //TODO
 /* 
@@ -9,8 +8,8 @@ import java.util.Arrays;
 
 int testImgNum;
 
-final int W = 2560;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
-final int H = 1600;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
+final int W = 1280;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int H = 720;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 boolean isPaused = true;
 float frames;
 float time; 
@@ -27,10 +26,10 @@ boolean flag = false;
 //41214142
 //3-318-8-22
 
-float globalLines = 5;
-float globalSides = 42;
-float globalDimensions = 14;
-float globalHigherDimensions = 2;
+float globalLines = 4;
+float globalSides = 24;
+float globalDimensions = 20;
+float globalHigherDimensions = 24;
 float globalDeityNum = 2;  
 float globalDeityHigherNum = 4;
 
@@ -593,7 +592,7 @@ void saveScreenShot () {
     if (true) { //CHANGE IF CONTROL IS NEEDED
 
       //SAVE IN REGULAR SS DIR
-      saveFrame("../../../renderScreenShot/entities/2023/08/entity_"+code+"_######.png");
+      saveFrame("../../../renderScreenShot/entities/2024/entity_"+code+"_######.png");
 
       //SAVING TEST IMGS
       saveFrame("../kaleidoscopes/testimgs/testimg"+ (testImgNum++) + ".png"); 

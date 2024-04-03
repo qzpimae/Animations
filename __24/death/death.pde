@@ -50,8 +50,8 @@
   //Noise algorithm that produces values used in this animation, not made by me
  OpenSimplex2S noise;
   
-  int WIDTH = 1920;//1504//3840; //1920
-  int HEIGHT = 1080;//846//2160; //1080
+  int WIDTH = 1280;//1504//3840; //1920
+  int HEIGHT = 720;//846//2160; //1080
   
   boolean paused = true;
   boolean trailToggle = true;

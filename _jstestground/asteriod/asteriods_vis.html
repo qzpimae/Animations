@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GQZ_Asteroids</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      border: 1px solid white;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="arrowCanvas"></canvas>
+
+  <script>
+    let frames = 0;
+    const canvas = document.getElementById('arrowCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const width = canvas.width;
+    const height = canvas.height;
+    let x = canvas.width / 2;
+    let y = canvas.height / 2;
+    let velocityX = 0;
+    let velocityY = 0;
+    let angle = Math.PI / 2;
+    const arrowWidth = 20;
+    const arrowHeight = 60;
+    const thrustPower = 0.07;
+    const brakePower = 0.005;
+    const friction = 0.98;
+    const projectileCooldownTime = 200;
+    let projectileCooldown = 0;
+    const projectiles = [];
+    const projectileRadius = 1.5;
+    const projectileSpeed = 1.5;
+    const asteroids = [];
+    const asteroidMaxSize = 64;
+    const asteroidMinSize = 3;
+    const maxFadeFrames = 20; // Adjust this value as needed
+    let health = 100;
+    let points = 0;
+    let totalAsteroidMass = 0; // Added for total asteroid mass
+    const keys = {};
+    let lastTimestamp = 0;
+    let autoShoot = true;
+    let autoShootRate = 1;
+    let pauseAnimation = false;
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    function handleKeyDown(e) {
+      keys[e.key] = true;
+
+      if ((e.key === ' ' || e.key === 'Shift' )&& Date.now() > projectileCooldown) {
+        const projectile = {
+          x,
+          y,
+          size: projectileRadius,
+          velocityX: Math.cos(angle) * projectileSpeed * 2,
+          velocityY: Math.sin(angle) * projectileSpeed * 2,
+        };
+        projectiles.push(projectile);
+        projectileCooldown = Date.now() + projectileCooldownTime;
+      }
+    }
+
+    function handleKeyUp(e) {
+      keys[e.key] = false;
+    }
+
+    function update(timestamp) {
+      // requestAnimationFrame(update);
+      if (!pauseAnimation) {
+          setTimeout(window.requestAnimationFrame, 15, update)
+      }
+      
+      
+      frames++
+      console.log(frames);
+
+      if (timestamp - lastTimestamp < 1000 / 90) {
+        return;
+      }
+      lastTimestamp = timestamp;
+
+   
+      const cosAngle = Math.cos(angle);
+      const sinAngle = Math.sin(angle);
+
+      for (const asteroid of asteroids) {
+        asteroid.age++;
+
+        let fadeFactor = 1;
+        if (asteroid.age < maxFadeFrames) {
+          fadeFactor = asteroid.age / maxFadeFrames;
+        }
+
+        const grayColor = Math.floor(255 * fadeFactor);
+        const borderColor = 0; // Black border
+
+        ctx.beginPath();
+        ctx.arc(asteroid.x, asteroid.y, asteroid.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgb(${grayColor}, ${grayColor}, ${grayColor})`;
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = borderColor;
+        ctx.fill();
+        
+        // ctx.noStroke();
+        // ctx.stroke();
+
+        ctx.closePath();
+      }
+
+      for (const asteroid of asteroids) {
+        if (asteroid.age >= maxFadeFrames) {
+          asteroid.x = (asteroid.x + asteroid.velocityX + canvas.width) % canvas.width;
+          asteroid.y = (asteroid.y + asteroid.velocityY + canvas.height) % canvas.height;
+        }
+      }
+
+      if (autoShoot && frames % autoShootRate == 0) {
+
+      } 
+
+      for (let i = projectiles.length - 1; i >= 0; i--) {
+        const projectile = projectiles[i];
+        projectile.x += projectile.velocityX;
+        projectile.y += projectile.velocityY;
+
+        if (
+          projectile.x < 0 ||
+          projectile.x > canvas.width ||
+          projectile.y < 0 ||
+          projectile.y > canvas.height
+        ) {
+          projectiles.splice(i, 1);
+        }
+      }
+
+      if (keys['ArrowUp'] || keys['w'] ) {
+        velocityX += cosAngle * thrustPower;
+        velocityY += sinAngle * thrustPower;
+      }
+      if (keys['ArrowDown'] || keys['s'] ) {
+        velocityX *= 1 - brakePower;
+        velocityY *= 1 - brakePower;
+      }
+      if (keys['ArrowLeft'] || keys['a'] ) {
+        angle -= 0.075;
+      }
+      if (keys['ArrowRight']  || keys['d'] ) {
+        angle += 0.075;
+      }
+      if (keys['p'])
+
+      velocityX *= friction;
+      velocityY *= friction;
+
+      x = (x + velocityX + canvas.width) % canvas.width;
+      y = (y + velocityY + canvas.height) % canvas.height;
+
+      render(); //renderBG
+
+      drawArrow();
+      handleCollisions();
+      updateAsteroids();
+      updateProjectiles();
+      showHUD();
+
+
+       //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+       ctx.fillStyle =`hsla(0,0%,0%, 0.05)`
+        ctx.fillRect(-canvas.width, -canvas.height, canvas.width*2, canvas.height*2);
+
+    }
+
+    function drawArrow() {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(-arrowHeight / 4, -arrowWidth / 4);
+      ctx.lineTo(-arrowHeight / 4, arrowWidth / 4);
+      ctx.lineTo(arrowHeight / 4, 0);
+      ctx.closePath();
+      ctx.fillStyle = 'cyan';
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function handleCollisions() {
+      totalAsteroidMass = 0;
+
+      for (let i = asteroids.length - 1; i >= 0; i--) {
+        const asteroid = asteroids[i];
+        totalAsteroidMass += asteroid.size; // Calculate total asteroid mass
+
+        const distanceShipAsteroid = Math.hypot(x - asteroid.x, y - asteroid.y);
+
+        // Check if the asteroid is done fading in
+        if (asteroid.age >= maxFadeFrames) {
+          if (distanceShipAsteroid < arrowWidth / 2 + asteroid.size / 2) {
+            health -= asteroid.size;
+            asteroids.splice(i, 1);
+          }
+        }
+
+        for (let j = projectiles.length - 1; j >= 0; j--) {
+          const projectile = projectiles[j];
+          const distance = Math.hypot(projectile.x - asteroid.x, projectile.y - asteroid.y);
+
+          // Check if the asteroid is done fading in
+          if (asteroid.age >= maxFadeFrames) {
+            if (distance < projectileRadius + asteroid.size) {
+              splitAsteroid(asteroid);
+              asteroids.splice(i, 1);
+              projectiles.splice(j, 1);
+              points += 10;
+            }
+          }
+        }
+      }
+    }
+
+    function updateAsteroids() {
+      for (const asteroid of asteroids) {
+        if (asteroid.age >= maxFadeFrames) {
+          ctx.beginPath();
+          ctx.arc(asteroid.x, asteroid.y, asteroid.size, 0, Math.PI * 2);
+          ctx.fillStyle = 'gray';
+          ctx.fill();
+          ctx.closePath();
+        }
+      }
+    }
+
+    function updateProjectiles() {
+      // Update projectile positions
+      for (let i = projectiles.length - 1; i >= 0; i--) {
+        const projectile = projectiles[i];
+        projectile.x += projectile.velocityX;
+        projectile.y += projectile.velocityY;
+
+        // Remove projectiles that are out of bounds
+        if (
+          projectile.x < 0 ||
+          projectile.x > canvas.width ||
+          projectile.y < 0 ||
+          projectile.y > canvas.height
+        ) {
+          projectiles.splice(i, 1);
+        }
+      }
+
+      // Draw projectiles
+      for (let i = 0; i < projectiles.length; i++) {
+        const projectile = projectiles[i];
+        ctx.beginPath();
+        ctx.arc(projectile.x, projectile.y, projectile.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+        ctx.closePath();
+      }
+    }
+
+    function showHUD() {
+
+      //hud vars are rounded to the nearest 10th
+      // console.log( (( health * 10 ) % 1 ) / 10);
+      const hudHealth = (Math.round( health * 10 ) ) / 10
+      const totalAsteroidSizes = asteroids.reduce((sum, asteroid) => sum + asteroid.size, 0);
+      const hudDebris = (Math.round( totalAsteroidSizes.toFixed(2) * 10 )) / 10
+      const hudPoints = (Math.round( points * 10 )) / 10
+
+      
+      // Draw health and points
+      ctx.fillStyle = 'white';
+      ctx.font = '20px Arial';
+      ctx.fillText(`Health: ${hudHealth}`, 20, 30);
+
+      // Display total asteroid sizes in the middle
+      ctx.fillText(`Debris: ${hudDebris}`, canvas.width / 2 - 80, 30);
+
+      ctx.fillText(`Points: ${hudPoints}`, canvas.width - 120, 30);
+
+      // Draw projectile cooldown information
+      const cooldownPercentage = Math.max(0, (projectileCooldown - Date.now()) / projectileCooldownTime);
+      const cooldownColor = `rgb(${255 * (1 - cooldownPercentage)}, ${255 * cooldownPercentage}, 0)`;
+
+      const barWidth = 100;
+      const barHeight = 10;
+      const barX = (canvas.width - barWidth) / 2;
+      const barY = canvas.height - 40;
+
+      // Draw white border
+      ctx.fillStyle = 'white';
+      ctx.fillRect(barX - 2, barY - 2, barWidth + 4, barHeight + 4);
+
+      // Draw filled portion based on cooldownPercentage
+      ctx.fillStyle = cooldownColor;
+      ctx.fillRect(barX, barY, barWidth * cooldownPercentage, barHeight);
+    }
+
+    function spawnAsteroid() {
+      const minPower = 3; // Minimum power of 2 (2^1)
+      const maxPower = 6; // Maximum power of 2 (2^5)
+
+      const power = Math.floor(Math.random() * (maxPower - minPower + 1)) + minPower;
+      const size = Math.pow(2, power);
+
+      const asteroid = {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: size,
+        velocityX: Math.random() - 0.5,
+        velocityY: Math.random() - 0.5,
+        age: 0, // Initialize age to 0
+      };
+
+      asteroids.push(asteroid);
+    }
+
+    function splitAsteroid(asteroid) {
+      const randomSplit = 
+        Math.random() > .75 && asteroid.size / 2 > asteroidMinSize ? 
+        Math.ceil(Math.random() * 4) + 1 
+        : 2;
+      if (asteroid.size > asteroidMinSize * randomSplit) {
+
+        for (let k = 0; k < randomSplit; k++) {
+          const newAsteroid = {
+            x: asteroid.x,
+            y: asteroid.y,
+            size: asteroid.size / randomSplit,
+            velocityX: asteroid.velocityX * ((Math.random() - 0.5)*4),
+            velocityY: asteroid.velocityY * ((Math.random() - 0.5)*4),
+            age: maxFadeFrames, // Set age to maxFadeFrames for split asteroids
+          };
+          asteroids.push(newAsteroid);
+        }
+      }
+    }
+
+    function gradualAsteroidSpawn() {
+      const maxMass = 200; // Adjust this value as needed
+      const respawnRate = 0.5; // Adjust this value for respawn speed
+
+      const currentMass = asteroids.reduce((sum, asteroid) => sum + asteroid.size, 0);
+
+      // Calculate spawn rate based on the current mass and respawn rate
+      const spawnRate = 1 - currentMass / maxMass;
+      const adjustedSpawnRate = spawnRate * respawnRate;
+
+      // Adjust spawn probability based on adjustedSpawnRate
+      if (Math.random() < adjustedSpawnRate) {
+        spawnAsteroid();
+      }
+
+      // Schedule the next asteroid spawn
+      setTimeout(gradualAsteroidSpawn, 3000);
+    }
+
+    function spawnInitialAsteroids(count) {
+      for (let i = 0; i < count; i++) {
+        spawnAsteroid();
+      }
+    }
+
+
+    class SimplexNoise {
+                constructor() {
+                    // To remove the need for index wrapping, double the permutation table length
+                    this.perm = new Array(512);
+                    this.grad3 = [
+                        [1, 1, 0], [-1, 1, 0], [1, -1, 0], [-1, -1, 0],
+                        [1, 0, 1], [-1, 0, 1], [1, 0, -1], [-1, 0, -1],
+                        [0, 1, 1], [0, -1, 1], [0, 1, -1], [0, -1, -1]
+                    ];
+
+                    this.seed(0);
+                }
+
+                seed(seed) {
+                    if (seed > 0 && seed < 1) {
+                        // Scale the seed for consistency
+                        seed *= 65536;
+                    }
+
+                    seed = Math.floor(seed);
+
+                    if (seed < 256) {
+                        seed |= seed << 8;
+                    }
+
+                    for (let i = 0; i < 256; i++) {
+                        let v;
+                        if (i & 1) {
+                            v = this.perm[i] ^ (seed & 255);
+                        } else {
+                            v = this.perm[i] ^ ((seed >> 8) & 255);
+                        }
+
+                        this.perm[i + 256] = this.perm[i] = v;
+                    }
+                }
+
+
+
+                noise(xin, yin) {
+                    // Noise contributions from the three corners
+                    let n0, n1, n2;
+
+                    // Skewing/Unskewing factors for 2D
+                    const F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
+                    const G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
+
+                    // Noise contributions from the first corner
+                    let s = (xin + yin) * F2;
+                    let i = Math.floor(xin + s);
+                    let j = Math.floor(yin + s);
+                    const t = (i + j) * G2;
+                    const X0 = i - t; // Unskew the cell origin back to (x, y) space
+                    const Y0 = j - t;
+                    const x0 = xin - X0; // The x, y distances from the cell origin
+                    const y0 = yin - Y0;
+
+                    // For the 2D case, the simplex shape is an equilateral triangle.
+                    // Determine which simplex we are in.
+                    let i1, j1; // Offsets for second (middle) corner of simplex in (i, j) coords
+                    if (x0 > y0) {
+                        i1 = 1;
+                        j1 = 0;
+                    } else {
+                        i1 = 0;
+                        j1 = 1;
+                    }
+
+                    // A step of (1, 0) in (i, j) means a step of (1 - c, -c) in (x, y), and
+                    // a step of (0, 1) in (i, j) means a step of (-c, 1 - c) in (x, y), where
+                    // c = (3 - sqrt(3))/6
+
+                    const x1 = x0 - i1 + G2; // Offsets for middle corner in (x, y) unskewed coords
+                    const y1 = y0 - j1 + G2;
+                    const x2 = x0 - 1.0 + 2.0 * G2; // Offsets for last corner in (x, y) unskewed coords
+                    const y2 = y0 - 1.0 + 2.0 * G2;
+
+                    // Work out the hashed gradient indices of the three simplex corners
+                    const ii = i & 255;
+                    const jj = j & 255;
+                    const gi0 = this.perm[ii + this.perm[jj]] % 12;
+                    const gi1 = this.perm[ii + i1 + this.perm[jj + j1]] % 12;
+                    const gi2 = this.perm[ii + 1 + this.perm[jj + 1]] % 12;
+
+                    // Calculate the contribution from the three corners
+                    let t0 = 0.5 - x0 * x0 - y0 * y0;
+                    if (t0 < 0) {
+                        n0 = 0.0;
+                    } else {
+                        t0 *= t0;
+                        n0 = t0 * t0 * this.dot(this.grad3[gi0], x0, y0);
+                    }
+
+                    let t1 = 0.5 - x1 * x1 - y1 * y1;
+                    if (t1 < 0) {
+                        n1 = 0.0;
+                    } else {
+                        t1 *= t1;
+                        n1 = t1 * t1 * this.dot(this.grad3[gi1], x1, y1);
+                    }
+
+                    let t2 = 0.5 - x2 * x2 - y2 * y2;
+                    if (t2 < 0) {
+                        n2 = 0.0;
+                    } else {
+                        t2 *= t2;
+                        n2 = t2 * t2 * this.dot(this.grad3[gi2], x2, y2);
+                    }
+
+                    // Add contributions from each corner to get the final noise value.
+                    // The result is scaled to return values in the interval [-1,1].
+                    return 70.0 * (n0 + n1 + n2);
+                }
+
+                dot(g, x, y) {
+                    return g[0] * x + g[1] * y;
+                }
+            }
+
+
+            const 
+                pi = Math.PI,
+                sqrt = Math.sqrt,
+                pow = Math.pow;
+
+            let seed = Math.random()*1000,
+                mosPos = {
+                    x: 1000,
+                    y: 1000,
+                };
+            //VARS FOR CANVAS AND TIMING EVENTS
+            let 
+                time = 0,
+                timeMax = Infinity,
+                timeForward = true,
+                speed = .3,
+                disMult = .0001,
+                targetDisMult = .003,
+                sizeMult = 50,
+                targetSzMult = 15,
+                clearScreen = false,
+                showLines = true,
+                showDots = true,
+                inColor = false,
+                automated = true,
+                lightOff = -80;
+
+            ctx.strokeStyle = 'white';
+            ctx.fillStyle = 'white';
+
+            ctx.lineWidth = .5;
+
+
+            const simNoise = new SimplexNoise();
+
+            canvas.style = `display: block;
+                            position: static;
+                            top: 0px;
+                            left: 0px;
+                            cursor: none;
+                            margin:auto;
+                            background-color: black`;
+
+            document.body.style = `margin: 0`;
+
+            //document.body.appendChild(canvas)
+
+            //USER INPUT EVENT LISTENER
+            //document.addEventListener('keydown', userInputEvent, false);
+            //canvas.onmousemove = findObjectCoords;
+
+
+            canvas.addEventListener('click', ()=>{
+                targetSzMult = ranRange(10, 20)
+                targetDisMult = ranRange(.0003, .05)
+            }, false);
+
+
+            function logInfo () {
+                console.log(`
+                
+                time = ${time}0,
+                timeForward = ${timeForward}true,
+                speed ${speed} = .4,
+                disMult ${disMult}= 1,
+                targetDisMult = ${targetDisMult}20,
+                sizeMult = ${sizeMult}20,
+                targetSzMult = ${targetSzMult}20,
+                clearScreen = true,
+                pauseAnimation = false,
+                showLines = true,
+                showDots = true,
+                inColor = false,
+                lightOff = ${lightOff}0;
+                
+                
+                `);
+            }
+
+            
+
+            // 0.0003482808479138186
+            // 69
+            // 2
+            // 24
+
+            //USER INPUT LOGIC
+          /*  function userInputEvent(input) {
+                switch (input.code) {
+                    case 'Space':
+                        pauseAnimation = !pauseAnimation;
+                        if (!pauseAnimation) {
+                            render()
+                        }
+                        logInfo()
+                    break;
+                    case 'ArrowUp':
+                        speed = speed < 40 ? speed+.1 : 40;
+                    break;
+                    case "ArrowDown":
+                        speed = speed > .1 ? speed-.1 : .1;
+                    break;
+                    case 'ArrowLeft':
+                        sizeMult = sizeMult < 300 ? sizeMult+.1 : 300;
+                    break;
+                    case "ArrowRight":
+                        sizeMult = sizeMult > .1 ? sizeMult-.1 : .1;
+                    break;
+                    case 'KeyQ':
+                        disMult*=2;
+                        // console.log(disMult);
+                    break;
+                    case 'KeyW':
+                        disMult/=2;
+                        // console.log(disMult);
+                    case 'KeyA':
+                        disMult*=1.1;
+                        // console.log(disMult);
+                    break;
+                    case 'KeyS':
+                        disMult/=1.1;
+                        // console.log(disMult);
+                    break;
+                    case "KeyL":
+                        showLines = !showLines;
+                        if (!showDots && !showLines) showDots = true
+                    break;
+                    case "KeyO":
+                        showDots = !showDots;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                        if (!showDots && !showLines) showLines = true
+                    break;
+                    case "KeyZ":
+                        clearScreen = !clearScreen;
+                    break;
+                    case "KeyC":
+                        inColor = !inColor;
+                    break;
+                    case "KeyU":
+                        lightOff -= 1;
+                        // console.log(light);
+                    break;
+                    case "KeyI":
+                        lightOff += 1;
+                    break;
+                    }
+            }
+*/
+            //SET THE CANVAS ORIGIN TO THE MIDDLE OF THE WINDOW
+                //   ctx.translate(width/2, height/2)   
+
+            //ANIMAITON CYCLE
+
+
+                    function render() {
+
+                    if (timeForward && time < timeMax) {
+                        time+=speed/50
+                    } else if (timeForward && time >= timeMax) {
+                        setTimeout(()=>{timeForward = false;}, 100)
+                    } else if (!timeForward && time > 1) {
+                        time-=speed/50
+                    } else if ( time <= 1){
+                        timeForward = true;
+                        time = 1.1
+                        seed = Math.random()  
+                    }
+		    const tempLightOff = lightOff;
+                    if (automated) {
+                        lightOff = ((Math.sin(time))*50) + lightOff
+
+
+                    // const noiseInc = simNoise.noise(time/1000, time/700);
+                    // disMult = disMult * 1.0002 < targetDisMult ? disMult * 1.0002 : disMult * .9997; 
+                    // sizeMult =  sizeMult * 1.0002 < targetSzMult ? sizeMult * 1.0002 : sizeMult * .9997;
+
+                    disMult = Math.sin(time/10)/100
+                    // sizeMult =  sizeMult * 1.0002 < targetSzMult ? sizeMult * 1.0002 : sizeMult * .9997;
+
+                    }
+
+                        
+                    createImg(time)
+
+		    lightOff = tempLightOff
+                    
+                }
+
+            function createImg(s) { 
+
+                const limits = {
+                    sX: 0,
+                    eX: width/sizeMult,
+                    sY: 0,
+                    eY: height/sizeMult,
+                },
+                
+                points = [];
+
+                    for (let x = limits.sX; x < limits.eX; x++) {
+
+                        points.push([]);
+                        
+                        for (let y = limits.sY; y < limits.eY; y++) {
+
+                            const
+                            distance = sqrt( pow((x*sizeMult)-(width/2), 2) + pow((y*sizeMult)-(height/2), 2) ),
+                            noiseX = (x/sizeMult + seed ) + s/100 + (distance/(113377*disMult)), 
+                            noiseY = (y/sizeMult + seed ) + s/100 + (distance/113377*disMult),
+                            N1 = simNoise.noise(noiseX, noiseY),
+                            N2 = simNoise.noise(noiseY, noiseY),
+                            // N1 = Noise(noiseX, noiseY),
+                            // N2 = Noise(noiseY, noiseY),
+                            radius = 2+N1+N2 > 1 ? 2+N1+N2 : 1,
+                            X = x*sizeMult + (N1*sizeMult-N2*sizeMult),
+                            Y = y*sizeMult + (N1*sizeMult+N2*sizeMult)*distance*disMult,
+
+                            point = {x: X, y: Y, r: radius, dis: distance };
+
+                            points[x-limits.sX].push(point)
+                                    
+                        }
+                        
+                    }
+
+                    renderPoints(points)
+
+            }
+
+            function renderMouse() {
+                ctx.fillStyle = 'white';                  
+                ctx.beginPath()
+                ctx.arc(mosPos.x, mosPos.y, 2, 0, pi*2)
+                ctx.fill()
+            }
+
+            function renderPoints(arr) {
+
+                // const t = Math.ceil(time/sizeMult)
+
+                for (let i = 0; i < arr.length; i++) {
+
+                    for (let j = 0; j < arr[i].length; j++) {
+                        
+                        const p = arr[i][j];
+
+                        const colorVar = (p.dis/3)*p.r+144
+
+                        // const pColor = `hsl(${colorVar}, 100%, 77%)`;
+                        const pColor = `hsl(${colorVar}, ${inColor ? 100 : 0}%, ${(colorVar/4%80)+lightOff}%)`;
+
+
+                        if (showLines) {
+                            const px = 
+                                arr[i+1] != undefined 
+                                ? arr[i+1][j]   
+                                : false;
+                            const py = 
+                                arr[i][j+1] != undefined 
+                                ? arr[i][j+1]   
+                                : false;
+                            const pxy = 
+                                arr[i+1] != undefined 
+                                && arr[i+1][j+1] != undefined 
+                                ? arr[i+1][j+1] 
+                                : false;
+
+                            ctx.strokeStyle = pColor;                  
+                            
+                            if (px||py||pxy) {
+                                ctx.beginPath()
+                                ctx.moveTo(p.x,p.y)
+                                if (px) ctx.lineTo(px.x, px.y)
+                                if (py) ctx.lineTo(py.x, py.y)
+                                ctx.lineTo(p.x,p.y)
+                                if (pxy) ctx.lineTo(pxy.x, pxy.y)
+                                ctx.stroke()
+                            }
+                        }
+
+                        if (showDots) {
+                            ctx.fillStyle = pColor;                  
+                            ctx.beginPath()
+                            ctx.arc(p.x, p.y, p.r, 0, pi*2)
+                            ctx.fill()
+                            
+                        }
+
+                    }
+                }
+
+            }
+
+            function clearFullScreen() {
+
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.restore();
+                
+            }
+
+            function mapNumber (number, min1, max1, min2, max2) {
+                return ((number - min1) * (max2 - min2) / (max1 - min1) + min2);
+            };
+
+            function ranRange(min, max) {
+                // Ensure min is less than max
+                if (min > max) {
+                    [min, max] = [max, min];
+                }
+
+                // Generate a random number within the range
+                const randomNumber = Math.random() * (max - min) + min;
+
+                return randomNumber;
+            }
+
+
+            function findObjectCoords(mouseEvent) {
+
+                let obj = canvas,
+                    obj_left = 0,
+                    obj_top = 0,
+                    xpos,
+                    ypos;
+
+            while (obj.offsetParent)
+            {
+                obj_left += obj.offsetLeft;
+                obj_top += obj.offsetTop;
+                obj = obj.offsetParent;
+            }
+            if (mouseEvent)
+            {
+                xpos = mouseEvent.pageX;
+                ypos = mouseEvent.pageY;
+            }
+
+            xpos -= obj_left;
+            ypos -= obj_top;
+
+            mosPos.x = xpos
+            mosPos.y = ypos
+
+            }
+
+
+
+    spawnInitialAsteroids(3);
+    requestAnimationFrame(update);
+    gradualAsteroidSpawn();
+  </script>
+</body>
+
+</html>

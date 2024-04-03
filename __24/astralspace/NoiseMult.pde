@@ -11,25 +11,35 @@ class NoiseMult {
     public void renderNoise9 () {
         
 
+        int pixSpacing = 8;//abs(round(sin(frames/20)*10))+4;
+        println(pixSpacing);
         loadPixels();
-        for  (int x=0;x<a.width;x+=4){
-            for (int y=0;y<a.height;y+=4){
+        for  (int x=0;x<a.width-1;x+=pixSpacing){
+            for (int y=0;y<a.height-1;y+=pixSpacing){
 
-                float xScl = WIDTH/6.9;// globalXScale;// xScl = 769;
-                float yScl = HEIGHT/3.9;// globalYScale// yScl = 69;
+                float xScl = WIDTH/12;// globalXScale;// xScl = 769;
+                float yScl = HEIGHT/2;// globalYScale// yScl = 69;
 
-                float tSX = 16666 + ( renderAdvanceToggle ? (frames*renderSpeed/33) : -transX/10 );
-                float tSY = 15555 - ( renderAdvanceToggle ? (frames*renderSpeed/8) :-transY/10 );
+                float tSX = 16666 + ( renderAdvanceToggle ? (frames*renderSpeed/80) : -transX/10 );
+                float tSY = 15555 - ( renderAdvanceToggle ? (frames*renderSpeed/60) :-transY/10 );
                 float noise1 =  (float) noise.noise2(   x/xScl+tSX,    y/yScl+tSY     );
                 float noise2 =  (float) noise.noise2(   x/xScl*15+tSX, y/yScl/2+tSY  );
-                float noise3 =  (float) noise.noise2(   x/xScl*10+tSX, y/yScl*10+tSY  );
+                float noise3 =  (float) noise.noise2(   x/xScl*20+tSX, y/yScl*10+tSY  );
                 
                 float finalNoise = (noise1+noise3+noise2)/3;
                 float hue = (float) (abs(map(finalNoise, -1, 1, 339, 159))+frames*renderSpeed)%360;
                 float sat = (float) abs(map(finalNoise, 0, 1, -100, 100));
-                float brt = (float) abs(map(finalNoise, 0, 1, -100, 100));
-                int pos = x+a.width*y;
-                A[pos] = color (hue, sat, brt);
+                float brt = (float) abs(map(finalNoise*2, -1, 1, -150, 100));
+
+                int pos1 = x+a.width*y;
+                int pos2 = (x+1)+a.width*y;
+                int pos3 = x+a.width*(y+1);
+                int pos4 = (x+1)+a.width*(y+1);
+                A[pos1] = color (hue, sat, brt);
+                A[pos2] = color (hue, sat, brt);
+                A[pos3] = color (hue, sat, brt);
+                A[pos4] = color (hue, sat, brt);
+                
             }
         }
         arrayCopy(A,pixels);
@@ -44,15 +54,16 @@ class NoiseMult {
         float min = 100;
         float max = 0;
 
+        int pixSz = 3;
 
         loadPixels();
-        for  (int x=0;x<a.width;x+=2){
-            for (int y=0;y<a.height;y+=2){
+        for  (int x=0;x<a.width;x+=pixSz){
+            for (int y=0;y<a.height;y+=pixSz){
 
                 float xScl = (float)WIDTH/10 * (1 + globalXScale/10);// xScl = 769;
                 float yScl = (float)HEIGHT/10 * (1 + globalYScale/10);// yScl = 69;
 
-                float tSX = 16666 + ( renderAdvanceToggle ? ((frames*renderSpeed)/100) : -transX/22 );
+                float tSX = 16666 + ( renderAdvanceToggle ? ((frames*renderSpeed)/300) : -transX/22 );
                 float tSY = 15555;// - ( renderAdvanceToggle ? (frames*renderSpeed/111) : transY/22 );
 
                 float noise1 =  (float) noise.noise2(   (x/xScl)+tSX,    (y/yScl)+tSY     ) * 2;
@@ -77,14 +88,23 @@ class NoiseMult {
                 // println(brt);
                 if ( !invertLight) brt = brt %100;
                 
-                int pos1 = x+a.width*y;
-                int pos2 = (x+1)+a.width*y;
-                int pos3 = x+a.width*(y+1);
-                int pos4 = (x+1)+a.width*(y+1);
-                A[pos1] = color (hue, sat, brt);
-                A[pos2] = color (hue, sat, brt);
-                A[pos3] = color (hue, sat, brt);
-                A[pos4] = color (hue, sat, brt);
+                for (int i = 0; i < pixSz; ++i) {
+                    for (int j = 0; j < pixSz; ++j) {
+                        int pos = (x+i)+a.width*(y+j);
+                        if (A.length > pos)
+                            A[pos] = color (hue, sat, brt);
+                    }
+                }
+
+                //HARDCODED pixel size of 4
+                // int pos1 = x+a.width*y;
+                // int pos2 = (x+1)+a.width*y;
+                // int pos3 = x+a.width*(y+1);
+                // int pos4 = (x+1)+a.width*(y+1);
+                // A[pos1] = color (hue, sat, brt);
+                // A[pos2] = color (hue, sat, brt);
+                // A[pos3] = color (hue, sat, brt);
+                // A[pos4] = color (hue, sat, brt);
             }
         }
 
@@ -94,7 +114,6 @@ class NoiseMult {
         updatePixels();
 
     }
-
 
     public void renderNoise7 () {
 
@@ -165,7 +184,7 @@ class NoiseMult {
             }
         }
 
-    }
+     }
         // println(min);
         // println(max);
         arrayCopy(A,pixels);

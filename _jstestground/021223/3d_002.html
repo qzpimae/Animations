@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Space Simulator</title>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import * as THREE from 'https://threejs.org/build/three.module.js';
+
+    // Set up scene
+    const scene = new THREE.Scene();
+
+    // project
+    let frames = 0;
+    let projectileRadius = 1;
+    let projectileSpeed = 10;
+    let thrustPower = 20;
+    let brakePower = 10;
+
+    // Set up camera
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    // Set up renderer
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Set up arrow dimensions
+    const arrowWidth = 20;
+    const arrowHeight = 40;
+
+    // Set up arrow geometry
+    const arrowGeometry = new THREE.BufferGeometry();
+    const arrowVertices = new Float32Array([
+      0, 0, 0,
+      -arrowHeight / 4, -arrowWidth / 4, 0,
+      -arrowHeight / 4, arrowWidth / 4, 0,
+      arrowHeight / 4, 0, 0
+    ]);
+    arrowGeometry.setAttribute('position', new THREE.BufferAttribute(arrowVertices, 3));
+
+    // Set up arrow material
+    const arrowMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const arrowMesh = new THREE.Mesh(arrowGeometry, arrowMaterial);
+    scene.add(arrowMesh);
+
+    // Set up projectile geometry
+    const projectileGeometry = new THREE.BufferGeometry();
+    const projectileVertices = new Float32Array([
+      0, 0, 0,
+      -projectileRadius / 2, -projectileRadius / 2, 0,
+      -projectileRadius / 2, projectileRadius / 2, 0,
+      projectileRadius / 2, projectileRadius / 2, 0
+    ]);
+    projectileGeometry.setAttribute('position', new THREE.BufferAttribute(projectileVertices, 3));
+
+    // Set up projectile material
+    const projectileMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+
+    // Arrays to store projectiles and asteroids
+    const projectiles = [];
+    const asteroids = [];
+
+    // Handle spacebar press
+    window.addEventListener('keydown', (e) => {
+      if (e.key === ' ') {
+        const projectile = new THREE.Mesh(projectileGeometry, projectileMaterial);
+        projectile.position.copy(arrowMesh.position);
+        const projectileDirection = new THREE.Vector3(1, 0, 0);
+        projectileDirection.applyAxisAngle(new THREE.Vector3(0, 0, 1), arrowMesh.rotation.z);
+        projectile.velocity = projectileDirection.multiplyScalar(projectileSpeed);
+        projectiles.push(projectile);
+        scene.add(projectile);
+      }
+    });
+
+    // Handle arrow key press
+    const keys = {};
+
+    window.addEventListener('keydown', (e) => {
+      keys[e.key] = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keys[e.key] = false;
+    });
+
+    // Update function
+    const update = () => {
+      requestAnimationFrame(update);
+
+      console.log("frames:", frames++);
+
+      // Update arrow position and rotation based on arrow keys
+      if (keys['ArrowUp']) {
+        arrowMesh.position.x += Math.cos(arrowMesh.rotation.z) * thrustPower;
+        arrowMesh.position.y += Math.sin(arrowMesh.rotation.z) * thrustPower;
+      }
+      if (keys['ArrowDown']) {
+        arrowMesh.position.x -= Math.cos(arrowMesh.rotation.z) * brakePower;
+        arrowMesh.position.y -= Math.sin(arrowMesh.rotation.z) * brakePower;
+      }
+      if (keys['ArrowLeft']) {
+        arrowMesh.rotation.z += 0.05;
+      }
+      if (keys['ArrowRight']) {
+        arrowMesh.rotation.z -= 0.05;
+      }
+
+      // Log arrowMesh properties to the console
+      console.log('Arrow Mesh Properties:',  {
+        position: arrowMesh.position.clone() ,
+        rotation: arrowMesh.rotation.clone(),
+        scale: arrowMesh.scale.clone()
+      });
+
+      // Update projectile positions
+      projectiles.forEach((projectile) => {
+        projectile.position.x += projectile.velocity.x;
+        projectile.position.y += projectile.velocity.y;
+
+        // Check for collisions with asteroids
+        asteroids.forEach((asteroid) => {
+          const distance = projectile.position.distanceTo(asteroid.position);
+          if (distance < projectileRadius + asteroid.size / 2) {
+            // Destroy asteroid and remove projectile
+            scene.remove(asteroid);
+            asteroids.splice(asteroids.indexOf(asteroid), 1);
+            scene.remove(projectile);
+            projectiles.splice(projectiles.indexOf(projectile), 1);
+          }
+        });
+
+        // Remove projectiles that are out of bounds
+        if (
+          projectile.position.x < -10 ||
+          projectile.position.x > 10 ||
+          projectile.position.y < -10 ||
+          projectile.position.y > 10
+        ) {
+          scene.remove(projectile);
+          projectiles.splice(projectiles.indexOf(projectile), 1);
+        }
+      });
+
+      // Render the scene
+      renderer.render(scene, camera);
+    };
+
+    // Start the animation loop
+    update();
+  </script>
+</body>
+</html>

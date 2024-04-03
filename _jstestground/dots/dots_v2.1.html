@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>08_23 </title>
+    <style type="text/css">
+    
+        body {
+            background-color: rgb(0, 0, 0);
+            margin: 0px;
+            overflow: hidden;
+            height: 100vh;
+        }
+        canvas {
+            display: block;
+            position: static;
+            top: 0px;
+            left: 0px;
+        }
+
+    </style>
+
+</head>
+<body >
+
+
+    <script >
+
+
+///js
+
+	    const {floor, random, sqrt, pow, round, sin, PI} = Math;
+        const p = [...Array(512)].map(() => floor(random() * 255)); //used for perlin noise
+
+        const pi = Math.PI;
+        let seed = Math.random()*100;
+        //VARS FOR CANVAS AND TIMING EVENTS
+        let canvas = document.createElement('canvas'),
+            context = canvas.getContext('2d'),
+            width = canvas.width = window.innerWidth,
+            height = canvas.height = window.innerHeight,
+            time = 1000,
+            timeMax = Infinity,
+            timeForward = true,
+            speed = .2,
+            clearScreen = true,
+            pauseAnimation = false,
+            szMlt = .3,
+            layers = 1,
+            layerMult = 1,
+            rotation = 0; 
+
+
+        // context.strokeStyle = 'white';
+        context.strokeStyle = "rgba(1, 1, 1, 0)";
+        // context.fillStyle = 'white';
+
+        context.lineWidth = 1;
+
+        canvas.style = `display: block;
+                        position: static;
+                        top: 0px;
+                        left: 0px;
+                        cursor: none;
+                        margin:auto;
+                        background-color: black`;
+
+        document.body.style = `margin: 0`;
+
+        document.body.appendChild(canvas)
+
+        //USER INPUT EVENT LISTENER
+        document.addEventListener('keydown', userInputEvent, false);
+
+        //USER INPUT LOGIC
+        function userInputEvent(input) {
+            // console.log(input.code);
+            switch (input.code) {
+                case 'KeyZ':
+                clearScreen = !clearScreen;
+                break;
+                case 'Space':
+                    pauseAnimation = !pauseAnimation;
+                    if (!pauseAnimation) {
+                        render()
+                    }
+                break;
+                case 'ArrowUp':
+                    speed = speed < 10 ? speed+.01 : 10;
+                break;
+                case "ArrowDown":
+                    speed = speed > .002 ? speed-.01 : .002;
+                break;
+                case 'KeyQ':
+                    layerMult = layerMult < 50 ? layerMult+.01 : 50;
+                break;
+                case "KeyA":
+                    layerMult = layerMult > .005 ? layerMult-.01 : .005;
+                break;
+                case 'KeyO':
+                    layers = layers < 100 ? layers+1 : 100;
+                break;
+                case 'KeyL':
+                    layers = layers > 1 ? layers-1 : 1;
+                break;
+                case 'KeyT':
+                    speed = speed < 10 ? speed+.1 : 10;
+                break;
+                case 'KeyG':
+                    speed = speed > .002 ? speed-.1 : .002;
+                break;
+                case 'KeyD':
+                    szMlt = szMlt < 10 ? szMlt+.01 : 10;
+                break;
+                case 'KeyC':
+                    szMlt = szMlt > .002 ? szMlt-.01 : .002;
+                break;
+
+                case 'KeyP':
+                    rotation += 1;
+                    break;
+                case 'Semicolon': 
+                    rotation -= 1;
+                    break;
+
+                case 'Slash':
+                    time = 0;
+                    break;
+                
+                case 'KeyM': 
+                    console.log(`
+                    case 'ArrowUp':
+                    speed = speed < 10 ? speed+.01 : 10;
+                break;
+                case "ArrowDown":
+                    speed = speed > .002 ? speed-.01 : .002;
+                break;
+                case 'KeyQ':
+                    layerMult = layerMult < 50 ? layerMult+.01 : 50;
+                break;
+                case "KeyA":
+                    layerMult = layerMult > .005 ? layerMult-.01 : .005;
+                break;
+                case 'KeyO':
+                    layers = layers < 100 ? layers+1 : 100;
+                break;
+                case 'KeyL':
+                    layers = layers > 1 ? layers-1 : 1;
+                break;
+                case 'KeyT':
+                    speed = speed < 10 ? speed+.1 : 10;
+                break;
+                case 'KeyG':
+                    speed = speed > .002 ? speed-.1 : .002;
+                break;
+                case 'KeyD':
+                    szMlt = szMlt < 10 ? szMlt+.1 : 10;
+                break;
+                case 'KeyC':
+                    szMlt = szMlt > .002 ? szMlt-.1 : .002;
+                break;
+            }
+                    `);
+            }
+        }
+
+        //SET THE CANVAS ORIGIN TO THE MIDDLE OF THE WINDOW
+            //   context.translate(width/2, height/2)   
+
+        //ANIMAITON CYCLE
+
+                render()
+
+                function render() {
+
+                if (timeForward && time < timeMax) {
+                    time+=speed
+                } else if (timeForward && time >= timeMax) {
+                    setTimeout(()=>{timeForward = false;}, 100)
+                } else if (!timeForward && time > 1) {
+                    time-=speed
+                } else if ( time <= 1){
+                    timeForward = true;
+                    time = 1.1
+                    seed = Math.random()  
+                }
+
+                if(clearScreen) clearFullScreen()
+
+                    
+                for (let i = 0; i < layers; i++) {
+
+                    //    context.fillStyle = i % 2 != 0 && !clearFullScreen ? '100' : '0'
+                    //    context.strokeStyle = i % 2 != 0 && !clearFullScreen ? '100' : '0'
+                    createImg(time+(i*layerMult), i)
+                    
+                }
+                if (!pauseAnimation) {
+                    setTimeout(window.requestAnimationFrame, 0, render)
+                }
+            }
+
+        function createImg(s, b) { 
+
+            context.save();
+
+                context.translate(width/2, height/2)
+
+                context.rotate(rotation/180);
+
+                context.translate(-width/2, -height/2)
+
+                // console.log(!clearScreen)
+
+                let scaler = 75 + sin(time/100) * 10;// Math.sin(time/100); //Math.sin(time/100) * 2000
+                if (scaler < 10) scaler = 10;
+            
+                for (let x = 0; x < width/scaler+1; x+=.7) {
+                    
+                    for (let y = 0; y < height/scaler+1; y+=.7) {
+
+                        const
+                        noiseX = x/30 + s/50, 
+                        noiseY = y/30,
+                        distance = sqrt( pow((x*scaler)-(width/2), 2) +  pow((y*scaler)-(height/2), 2) ),
+                        N1 = perlin2D(noiseX, noiseY),
+                        N2 = perlin2D(noiseY,noiseX),
+                        radius = 4-distance/300,
+                        X = x*scaler+ N1*(2+time/10)+N2*(2+time/10),
+                        Y = y*scaler+ N1*(2+time/10)-N2*(2+time/10);
+
+                        context.fillStyle =  `hsl(0, 0%, ${(b % 2 != 0 && !clearScreen ? 0: 100)-distance/5}%)`;
+                        context.beginPath()
+                        context.arc(X, Y, Math.abs(radius*szMlt), 0, pi*2)
+                        context.fill()
+                                
+                    }
+                    
+                }
+
+
+            // context.translate(-width/2, -height/2)
+
+            context.restore();
+
+        }
+
+        function clearFullScreen() {
+
+            context.save();
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.restore();
+            
+        }
+
+        function mapNumber (number, min1, max1, min2, max2) {
+            return ((number - min1) * (max2 - min2) / (max1 - min1) + min2);
+        };
+
+
+
+        ///PERLIN NOISE (written with chat-gpt)
+        //
+        //
+        //
+        ////
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        ////
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        ////
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        ////
+        //
+        //
+        //
+        //
+        //
+        //
+
+
+
+
+
+
+        function fade(t) {
+            return t * t * t * (t * (t * 6 - 15) + 10);
+        }
+
+        function lerp(t, a, b) {
+            return a + t * (b - a);
+        }
+
+        function grad(hash, x) {
+            const h = hash & 1;
+            return h === 0 ? x : -x;
+        }
+
+        function grad2(hash, x, y) {
+            const h = hash & 7;
+            const u = h < 4 ? x : y;
+            const v = h < 4 ? y : x;
+            return (h & 1 ? -u : u) + (h & 2 ? -2.0 * v : 2.0 * v);
+        }
+
+
+        function perlin2D(x, y) {
+            const X = floor(x) & 255;
+            const Y = floor(y) & 255;
+            x -= floor(x);
+            y -= floor(y);
+            const fadeX = fade(x);
+            const fadeY = fade(y);
+
+            const a = p[X] + Y;
+            const b = p[X + 1] + Y;
+
+            return lerp(fadeY, lerp(fadeX, grad(p[a], x), grad(p[b], x - 1)),
+                                lerp(fadeX, grad(p[a + 1], x - 1), grad(p[b + 1], x - 1)));
+        }
+    </script>
+</body>
+</html>

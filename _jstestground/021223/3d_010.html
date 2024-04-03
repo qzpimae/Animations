@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arrow Movement</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      border: 1px solid white;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="arrowCanvas"></canvas>
+
+  <script>
+
+    //
+    const canvas = document.getElementById('arrowCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas dimensions to match the window
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Initial position, velocity, and angle
+    let x = canvas.width / 2;
+    let y = canvas.height / 2;
+    let velocityX = 0;
+    let velocityY = 0;
+    let angle = Math.PI / 2; // Rotate by 90 degrees
+
+    // Arrow dimensions
+    const arrowWidth = 10; // Decreased ship size
+    const arrowHeight = 20; // Decreased ship size
+
+    // Constants for momentum and inertia
+    const thrustPower = 0.2;
+    const brakePower = 0.005; // Decreased brake power
+    const friction = 0.98;
+
+    // Projectile cooldown
+    const projectileCooldownTime = 1000; // Cooldown time in milliseconds
+    let projectileCooldown = 0;
+
+    // Handle spacebar press
+    const projectiles = [];
+    const projectileRadius = 2;
+    const projectileSpeed = 10;
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === ' ' && Date.now() > projectileCooldown) {
+        const projectile = {
+          x,
+          y,
+          size: projectileRadius,
+          velocityX: Math.cos(angle) * projectileSpeed * 2,
+          velocityY: Math.sin(angle) * projectileSpeed * 2,
+        };
+        projectiles.push(projectile);
+        projectileCooldown = Date.now() + projectileCooldownTime;
+      }
+    });
+
+    // Asteroids
+    const asteroids = [];
+    const asteroidMaxSize = 32;
+    const asteroidMinSize = 2;
+
+    function spawnAsteroid() {
+      const asteroid = {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * (asteroidMaxSize - asteroidMinSize) + asteroidMinSize,
+        velocityX: Math.random() - 0.5,
+        velocityY: Math.random() - 0.5,
+      };
+      asteroids.push(asteroid);
+    }
+
+    // Spawn initial asteroids with random values, loop 3 times
+    for (let i = 0; i < 3; i++) {
+      spawnAsteroid();
+    }
+
+    // Update function
+    let lastTimestamp = 0;
+
+    function update(timestamp) {
+      requestAnimationFrame(update);
+
+      // Limit frame rate to 24 frames per second
+      if (timestamp - lastTimestamp < 1000 / 60) {
+        return;
+      }
+      lastTimestamp = timestamp;
+
+      // Clear the entire canvas once per frame
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Update velocity and position based on arrow keys
+      if (keys['ArrowUp']) {
+        velocityX += Math.cos(angle) * thrustPower;
+        velocityY += Math.sin(angle) * thrustPower;
+      }
+      if (keys['ArrowDown']) {
+        velocityX *= 1 - brakePower; // Decreased brake power
+        velocityY *= 1 - brakePower; // Decreased brake power
+      }
+      if (keys['ArrowLeft']) {
+        angle -= 0.075; // Increased turning speed
+      }
+      if (keys['ArrowRight']) {
+        angle += 0.075; // Increased turning speed
+      }
+
+      // Apply friction to simulate inertia
+      velocityX *= friction;
+      velocityY *= friction;
+
+      // Update position based on velocity
+      x += velocityX;
+      y += velocityY;
+
+      // Wrap around the screen
+      if (x > canvas.width) {
+        x = 0;
+      } else if (x < 0) {
+        x = canvas.width;
+      }
+
+      if (y > canvas.height) {
+        y = 0;
+      } else if (y < 0) {
+        y = canvas.height;
+      }
+
+      // Draw the updated arrow
+      drawArrow();
+
+      // Check for collisions with asteroids
+      for (let i = 0; i < asteroids.length; i++) {
+        const asteroid = asteroids[i];
+        const distance = Math.hypot(x - asteroid.x, y - asteroid.y);
+
+        // Ship and asteroid collision
+        if (distance < arrowWidth / 2 + asteroid.size / 2) {
+          health -= 10;
+          asteroids.splice(i, 1);
+          i--;
+        }
+
+        // Projectile and asteroid collision
+        for (let j = 0; j < projectiles.length; j++) {
+          const projectile = projectiles[j];
+          const distance = Math.hypot(projectile.x - asteroid.x, projectile.y - asteroid.y);
+
+          if (distance < projectileRadius + asteroid.size) {
+            // Destroy asteroid and increase points
+            splitAsteroid(asteroid);
+            asteroids.splice(i, 1);
+            projectiles.splice(j, 1);
+            points += 10;
+
+            i--;
+            break;
+          }
+        }
+      }
+
+      // Update asteroid positions and handle screen wrapping
+      for (const asteroid of asteroids) {
+        asteroid.x += asteroid.velocityX;
+        asteroid.y += asteroid.velocityY;
+
+        // Wrap asteroids around the screen
+        if (asteroid.x > canvas.width + asteroid.size) {
+          asteroid.x = -asteroid.size;
+        } else if (asteroid.x < -asteroid.size) {
+          asteroid.x = canvas.width + asteroid.size;
+        }
+
+        if (asteroid.y > canvas.height + asteroid.size) {
+          asteroid.y = -asteroid.size;
+        } else if (asteroid.y < -asteroid.size) {
+          asteroid.y = canvas.height + asteroid.size;
+        }
+
+        // Draw asteroids
+        ctx.beginPath();
+        ctx.arc(asteroid.x, asteroid.y, asteroid.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'gray';
+        ctx.fill();
+        ctx.closePath();
+      }
+
+      // Update projectile positions
+      for (let i = 0; i < projectiles.length; i++) {
+        const projectile = projectiles[i];
+        projectile.x += projectile.velocityX;
+        projectile.y += projectile.velocityY;
+
+        // Remove projectiles that are out of bounds
+        if (
+          projectile.x < 0 ||
+          projectile.x > canvas.width ||
+          projectile.y < 0 ||
+          projectile.y > canvas.height
+        ) {
+          projectiles.splice(i, 1);
+          i--;
+        }
+
+        // Draw projectiles
+        ctx.beginPath();
+        ctx.arc(projectile.x, projectile.y, projectile.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+        ctx.closePath();
+      }
+
+      // Draw HUD
+      showHUD();
+    }
+
+    // Add these variables at the beginning of the script tag
+    let health = 100;
+    let points = 0;
+
+    // Arrow keys state
+    const keys = {};
+
+    // Event listeners for keydown and keyup events
+    window.addEventListener('keydown', (e) => {
+      keys[e.key] = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keys[e.key] = false;
+    });
+
+    // Draw functions
+    function drawArrow() {
+      // Save the current transformation matrix
+      ctx.save();
+
+      // Translate to the arrow's position
+      ctx.translate(x, y);
+
+      // Rotate the arrow based on the angle
+      ctx.rotate(angle);
+
+      // Draw the arrow shape with the tip on the adjacent side
+      ctx.beginPath();
+      ctx.moveTo(-arrowHeight / 4, -arrowWidth / 4);
+      ctx.lineTo(-arrowHeight / 4, arrowWidth / 4);
+      ctx.lineTo(arrowHeight / 4, 0);
+      ctx.closePath();
+      ctx.fillStyle = 'white';
+      ctx.fill();
+
+      // Restore the transformation matrix
+      ctx.restore();
+    }
+
+    // Function to split an asteroid into two
+    function splitAsteroid(asteroid) {
+      if (asteroid.size > asteroidMinSize * 2) {
+        for (let k = 0; k < 2; k++) {
+          const newAsteroid = {
+            x: asteroid.x,
+            y: asteroid.y,
+            size: asteroid.size / 2,
+            velocityX: asteroid.velocityX + (Math.random() - 0.5),
+            velocityY: asteroid.velocityY + (Math.random() - 0.5),
+          };
+          asteroids.push(newAsteroid);
+        }
+      }
+    }
+
+    // Function to gradually add asteroids with randomness
+    function gradualAsteroidSpawn() {
+      const sumOfSizes = asteroids.reduce((sum, asteroid) => sum + asteroid.size, 0);
+      const rate = sumOfSizes > 0 ? 1 / sumOfSizes : 1;
+
+      if (Math.random() < rate) {
+        spawnAsteroid();
+      }
+
+      // Schedule the next asteroid spawn
+      setTimeout(gradualAsteroidSpawn, 1000);
+    }
+
+    // Show HUD function with projectile cooldown information
+    function showHUD() {
+      // Draw health and points
+      ctx.fillStyle = 'white';
+      ctx.font = '20px Arial';
+      ctx.fillText(`Health: ${health}`, 20, 30);
+      ctx.fillText(`Points: ${points}`, canvas.width - 120, 30);
+
+      // Draw projectile cooldown information
+      const cooldownPercentage = Math.min(1, (projectileCooldown - Date.now()) / projectileCooldownTime);
+      const cooldownColor = `rgb(${255 * (1 - cooldownPercentage)}, ${255 * cooldownPercentage}, 0)`;
+
+      ctx.fillStyle = cooldownColor;
+      ctx.fillText('Cooldown:', canvas.width / 2 - 40, canvas.height - 30);
+      ctx.fillRect(canvas.width / 2 + 50, canvas.height - 40, 100 * cooldownPercentage, 10);
+    }
+
+    // Start the animation loop and asteroid spawn
+    requestAnimationFrame(update);
+    gradualAsteroidSpawn();
+  </script>
+</body>
+
+</html>

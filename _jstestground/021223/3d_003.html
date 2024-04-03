@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arrow Movement</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      border: 1px solid white;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="arrowCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('arrowCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas dimensions to match the window
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Initial position, velocity, and angle
+    let x = canvas.width / 2;
+    let y = canvas.height / 2;
+    let velocityX = 0;
+    let velocityY = 0;
+    let angle = Math.PI / 2; // Rotate by 90 degrees
+
+    // Arrow dimensions
+    const arrowWidth = 20;
+    const arrowHeight = 40;
+
+    // Constants for momentum and inertia
+    const thrustPower = 0.2; // Increase thrust power
+    const brakePower = 0.02; // Decrease brake power
+    const friction = 0.98; // Decrease friction
+
+    function drawArrow() {
+      // Save the current transformation matrix
+      ctx.save();
+
+      // Translate to the arrow's position
+      ctx.translate(x, y);
+
+      // Rotate the arrow based on the angle
+      ctx.rotate(angle);
+
+      // Draw the arrow shape with the tip on the adjacent side
+      ctx.beginPath();
+      ctx.moveTo(-arrowHeight / 4, -arrowWidth / 4);
+      ctx.lineTo(-arrowHeight / 4, arrowWidth / 4);
+      ctx.lineTo(arrowHeight / 4, 0);
+      ctx.closePath();
+      ctx.fillStyle = 'white';
+      ctx.fill();
+
+      // Draw asteroids
+      for (const asteroid of asteroids) {
+        ctx.beginPath();
+        ctx.arc(asteroid.x, asteroid.y, asteroid.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'gray';
+        ctx.fill();
+        ctx.closePath();
+      }
+
+      // Restore the transformation matrix
+      ctx.restore();
+    }
+
+    const projectiles = [];
+    const projectileRadius = 2;
+    const projectileSpeed = 10;
+
+    // Handle spacebar press
+    window.addEventListener('keydown', (e) => {
+      if (e.key === ' ') {
+        const projectile = {
+          x,
+          y,
+          size: projectileRadius,
+          velocityX: Math.cos(angle) * projectileSpeed * 2, // 2x speed
+          velocityY: Math.sin(angle) * projectileSpeed * 2, // 2x speed
+        };
+        projectiles.push(projectile);
+      }
+    });
+
+    const asteroids = [];
+    const asteroidMaxSize = 32;
+    const asteroidMinSize = 2;
+
+    function spawnAsteroid(x, y, size, velocityX, velocityY) {
+      const asteroid = {
+        x,
+        y,
+        size,
+        velocityX,
+        velocityY,
+      };
+      asteroids.push(asteroid);
+    }
+
+    function splitAsteroid(asteroid) {
+      if (asteroid.size > asteroidMinSize * 2) {
+        // Create two smaller asteroids with random velocities
+        for (let i = 0; i < 2; i++) {
+          const newAsteroidSize = asteroid.size / 2;
+          const newVelocityX = Math.random() - 0.5;
+          const newVelocityY = Math.random() - 0.5;
+
+          spawnAsteroid(asteroid.x, asteroid.y, newAsteroidSize, newVelocityX, newVelocityY);
+        }
+      }
+    }
+
+    // Update function
+    function update() {
+      // Update velocity and position based on arrow keys
+      if (keys['ArrowUp']) {
+        // Apply thrust
+        velocityX += Math.cos(angle) * thrustPower;
+        velocityY += Math.sin(angle) * thrustPower;
+      }
+      if (keys['ArrowDown']) {
+        // Apply brake
+        velocityX *= brakePower;
+        velocityY *= brakePower;
+      }
+      if (keys['ArrowLeft']) {
+        // Rotate left
+        angle -= 0.05;
+      }
+      if (keys['ArrowRight']) {
+        // Rotate right
+        angle += 0.05;
+      }
+
+      // Apply friction to simulate inertia
+      velocityX *= friction;
+      velocityY *= friction;
+
+      // Update position based on velocity
+      x += velocityX;
+      y += velocityY;
+
+      // Wrap around the screen
+      if (x > canvas.width) {
+        x = 0;
+      } else if (x < 0) {
+        x = canvas.width;
+      }
+
+      if (y > canvas.height) {
+        y = 0;
+      } else if (y < 0) {
+        y = canvas.height;
+      }
+
+      // Draw the updated arrow
+      drawArrow();
+
+      // Update projectile positions
+      for (const projectile of projectiles) {
+        projectile.x += projectile.velocityX;
+        projectile.y += projectile.velocityY;
+
+        // Check for collisions with asteroids
+        for (const asteroid of asteroids) {
+          const distance = Math.hypot(projectile.x - asteroid.x, projectile.y - asteroid.y);
+
+          if (distance < projectileRadius + asteroid.size / 2) {
+            // Destroy asteroid, split it, and remove projectile
+            splitAsteroid(asteroid);
+            asteroids.splice(asteroids.indexOf(asteroid), 1);
+            projectiles.splice(projectiles.indexOf(projectile), 1);
+            break;
+          }
+        }
+
+        // Remove projectiles that are out of bounds
+        if (
+          projectile.x < 0 ||
+          projectile.x > canvas.width ||
+          projectile.y < 0 ||
+          projectile.y > canvas.height
+        ) {
+          projectiles.splice(projectiles.indexOf(projectile), 1);
+        }
+      }
+
+      // Request the next animation frame
+      requestAnimationFrame(update);
+    }
+
+    // Add these variables at the beginning of the script tag
+    const keys = {};
+
+    // Event listeners for keydown and keyup events
+    window.addEventListener('keydown', (e) => {
+      keys[e.key] = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keys[e.key] = false;
+    });
+
+    // Start the animation loop
+    update();
+  </script>
+</body>
+</html>

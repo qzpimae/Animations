@@ -3,7 +3,7 @@ boolean isPaused = false;
 float globalXScale = 121;
 float globalYScale = 121;
 float globalDimensions = 6;
-float renderSpeed = .25;
+float renderSpeed = 1;
 float globalNoiseMult = 17;
 
 float globalRndrScl = 333;
@@ -18,7 +18,7 @@ int colorMode = 1;
 int globalLineHue = 177;
 int globalBgHue = 339;
 
-int renderOption = 1;
+int renderOption = 10;
 boolean invertHue = false;
 boolean invertLight = true;
 
@@ -51,8 +51,8 @@ NoiseSeed nSeedY1 = new NoiseSeed((float) Math.random()*1000 + 3939.719);
 NoiseSeed nSeedY2 = new NoiseSeed((float) Math.random()*1000 + 3141.5826);
 //width and height of canvas
 
-final int WIDTH =   1280;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
-final int HEIGHT = 720;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
+final int WIDTH =   1920;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int HEIGHT = 1080;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 //tracker for how many frames have elapsed
 float frames = 0;
 //array of Points to keep track of quadrent information and x/y position aswell as pixel index
@@ -76,7 +76,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60);
+  frameRate(30);
   
   //set canvas size
   colorMode(HSB, 360, 100, 100);
@@ -201,7 +201,6 @@ void keyPressed() {
     case 'x': 
       globalRndrScl+=incrementer/10;
       break;
-    //VAR 5 - dimensions
     case 'd': 
       globalDimensions-=incrementer;
       if (globalDimensions < 1) globalDimensions = 1;
@@ -210,14 +209,18 @@ void keyPressed() {
     case 'f': 
       globalDimensions+=incrementer;
       break;
-    //VAR 6 - higher dimensions
     case 'c': 
       renderSpeed = renderSpeed-incrementer/100 > 0 ? renderSpeed-incrementer/100 : .01;
       break;
     case 'v': 
       renderSpeed+=incrementer/100;
       break;
-    //VAR 7 - deitiy dimensions
+    case '`':
+      renderSpeed *= 1.5;
+      break;
+    case '\t':
+      renderSpeed /= 1.5;
+      break;
     case 'g': 
       globalNoiseMult-=incrementer;
       if (globalNoiseMult < 1) globalNoiseMult = 1;
