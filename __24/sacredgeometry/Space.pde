@@ -13,6 +13,8 @@ class Space  {
                 background(0, 0, 100);
             } 
             // background(333, 50, 5);
+        } else if (screenFade) {
+            background(0, 0, 0, .01);
         }
 
         if (entityUpdated) {

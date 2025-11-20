@@ -92,16 +92,16 @@ class Cell {
 
       // int hue = Math.abs(333-age*4)%323;
       // int sat = isInColor ? Math.abs(55-age/3)%100 : 0;
-      float brt = (100+(age*20))%100 + lightOffset ;
-      // int brt = Math.abs(88-(isInColor ? age : age*20))%100; //org
-      int brtLim =  2;
-      if (brt < brtLim) brt = brtLim;
+      // float brt = (100+(age*20))%100 + lightOffset ;
+      // // int brt = Math.abs(88-(isInColor ? age : age*20))%100; //org
+      // int brtLim =  2;
+      // if (brt < brtLim) brt = brtLim;
       
-      fill(0, 0, brt);
-      noStroke();
-      // stroke(0, 0, brt);
+      // fill(0, 0, brt);
+      // noStroke();
+      // // stroke(0, 0, brt);
 
-      square(posX, posY, cellSize);
+      // square(posX, posY, cellSize);
 
       if (playNotes && notesPlayed < noteLim && age == 10 ) {
         notesPlayed++;
@@ -127,13 +127,22 @@ class Cell {
       // square(posX, posY, cellSize);
 
     // // -------------------------------
-      // int hue = Math.abs(333-age*4)%323;
-      // int sat = (90-age)%100;
-      // int brt = (100-age)%100;
-      // if (brt < 10) brt = 10;
-      // fill(hue, sat, brt);
-      // stroke(hue, sat, brt);
-      // square(posX, posY, cellSize);
+
+      int colorOffset = 10 + (frames % 100);
+
+      int hue = 360-Math.abs(333-age*4-frames+(x*y))%323; 
+      //(x+1)*(y+1))/(age+1)
+      int sat = age > colorOffset ? 0 : (90-age)%100;
+      int brt = age > colorOffset ? 100 : (100-age)%100;
+      if (brt < 10) brt = 10;
+
+      if (!isInColor) {
+        sat = 0;
+        brt *= 2;
+      }
+      fill(hue, sat, brt);
+      stroke(hue, sat, brt);
+      square(posX, posY, cellSize);
 
 
 

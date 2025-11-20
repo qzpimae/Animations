@@ -50,15 +50,15 @@
   //Noise algorithm that produces values used in this animation, not made by me
  OpenSimplex2S noise;
   
-  int WIDTH = 1280;//1504//3840; //1920
-  int HEIGHT = 720;//846//2160; //1080
+  int WIDTH = 1440;//1504//3840; //1920
+  int HEIGHT = 900;//846//2160; //1080
   
   boolean paused = true;
   boolean trailToggle = true;
   boolean ignoreAlive = false;
   boolean isInColor = true;
   boolean inLoopMode = false;
-``````
+  
   boolean playNotes = false; // c: /
 
   boolean autoDynamicsToggle = false; //c: 8
@@ -96,7 +96,7 @@
 
 
   void settings () {
-    fullScreen();
+    // fullScreen();
     //set canvas size
     //WIDTH //3840; //1920 //1280 //800
     //HEIGHT //2160; //1080 //720  //450

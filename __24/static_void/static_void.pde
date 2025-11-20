@@ -18,8 +18,8 @@
 
 // Movie movie;
 
-int W = 1280;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
-int H = 720;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
+int W = 1920;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
+int H = 1080;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
 
 PVector v;
 PVector p;
@@ -39,7 +39,7 @@ float angz = 0; // degrees
 PImage img, imgH;
 color[] imgPix;
 
-int IMG_MAX = 10;
+int IMG_MAX = 1;
 int NOISE_VAR_MAX = 10000;
 int noiseVar1 = 500;
 int noiseVar2 = 100;
@@ -51,7 +51,7 @@ int noiseVar3 = 1;
 float globalMag = 1;
 // float globalMag = 97.85181;//1;
 
-int imgChoice = 77;
+int imgChoice = 1;
 int prevImgChoice = -1;
 
 int frames = 0;
@@ -129,17 +129,17 @@ void initalize () {
 void resetScreen () {
 
 
-  int tempImg = (int)random(IMG_MAX);
-  while (imgSelections == 0 && tempImg > 3 && tempImg < 11 || imgSelections == 1 && tempImg < 4 ) {
-    tempImg = (int)random(IMG_MAX);
-  }
+  // int tempImg = (int)random(IMG_MAX);
+  // while (imgSelections == 0 && tempImg > 3 && tempImg < 11 || imgSelections == 1 && tempImg < 4 ) {
+  //   tempImg = (int)random(IMG_MAX);
+  // }
 
   // println(tempImg);
   // imgChoice = tempImg;
 
   v.set(random(posrange)-subrange, random(posrange)-subrange, random(posrange)-subrange);
   
-  p.set(random(W), random(H), random(H)); //start point could be random too
+  p.set(random(W), random(H), random(H)); //start point could be random tooi/ 
   // p.set(mouseX, mouseY, random(H)); //start point could be random too
   
   v.normalize();

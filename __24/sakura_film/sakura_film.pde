@@ -29,12 +29,12 @@ int colorMode = 3;
 int colorModeMax = 3;
 
 final float fps = 60;
-float renderSpeed = 1;
+float renderSpeed = .2;
 float moveSpeed = .1;
 // boolean renderFullSpeed = true;
 boolean clearScreen = false;
-boolean whiteSakuraLines = false;
-boolean sakuraFill = true;
+boolean whiteSakuraLines = true;
+boolean sakuraFill = false;
 boolean autoRotate = false;
 float lineWidthDiv = 1;
 
@@ -47,10 +47,10 @@ boolean showInfinity = false;
 boolean showSphere = true;
 
 
-// -1: zoom out ___ 0: still ___ 1: zoom in cryptwarblr
+// -1: zoom out ___ 0: still ___ 1: zoom in
 int zoomIn = 0;
 
-int lightOffset = -10;
+int lightOffset = -70;
 
 
 
@@ -62,8 +62,8 @@ int count;
 
 //width and height of canvas 
 //to change the resolution update both the WIDTH AND HEIGHT also change the values on  line 48
-final int WIDTH = 800;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
-final int HEIGHT = 600;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
+final int WIDTH = 2560;//(300dpi) 9933// (8K) 7680// (print) 3576// (4K) 3840//(UHD)//(72dpi) 2384// 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560 //960
+final int HEIGHT = 1600;//(300dpi) 7016// (8K) 4320// (print) 2472// (4K) 2160//(UHD)//(72dpi) 1648// 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600 //540
 final float centerX = WIDTH/2;
 final float centerY = HEIGHT/2;
 final float maxDistance = centerX+centerY;//centerX+centerY;
@@ -84,7 +84,7 @@ SpaceDebris spaceDebris;
 void settings() {
   //set canvas size
   size(WIDTH, HEIGHT, P3D); //width: (4K) 3840; // (HD) 1920 //(Square HD) 1280 //(SD) 1280 // height: (4K) 2160; //(HD) 1080 //(Square HD) 1024//(SD) 720
-  fullScreen(); 
+  fullScreen();
 }
 
 void setup() {

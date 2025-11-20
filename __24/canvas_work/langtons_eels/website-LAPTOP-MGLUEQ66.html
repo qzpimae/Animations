@@ -1,0 +1,95 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>My website</title>
+</head>
+<body id="body">
+
+
+
+<div id="root">
+	<h1>Big</h1>
+	<p>this is gonna be small</p>
+
+<img src="./img1.png"></img>
+<img src="./img2.png"></img>
+<img src="./img3.png"></img>
+
+<button id="butt" >Click ME!!!</button> 
+<canvas id="can" height=600 width=600 ></canvas>
+
+</div>
+
+
+</body>
+
+
+<script type="text/javascript">
+
+	const butt = document.getElementById("butt");
+	const body = document.getElementById("root");
+
+	butt.innerText = Math.round( Math.random() * 10);
+
+	butt.onclick = () => {
+		butt.innerText = Math.round( Math.random() * 10);
+		body.background =  "red"
+		makeLines(Math.random()*1000);
+	}
+
+	const canvas = document.getElementById("can");
+
+	const ctx = canvas.getContext("2d");
+	
+	ctx.fillStyle="black"
+	ctx.rect(0,0,100,100);
+
+	ctx.fill();
+
+	ctx.background = "black"
+	
+
+	function makeLines(num) {
+	
+	let frames = 0
+
+	while(frames < 1000) {
+		
+		frames++;
+		const r1 = Math.random() * 360
+		const r2 = (Math.random() * 50) + 50
+		const r3 = (Math.random() * 100)
+
+		ctx.strokeStyle = `hsl(${r1},${r2}%,${r3}%)`
+		
+		const x1 = Math.random() * 600
+		const x2 = Math.random() * 600
+		const y1 = Math.random() * 600
+		const y2 = Math.random() * 600	
+		ctx.beginPath()
+		ctx.moveTo(x1, y1)
+		ctx.lineTo(x2, y2)
+		ctx.stroke();
+
+		for( let i = 0; i < 100; i++) {
+			console.log("asfd")
+		}
+		
+	}
+	}
+
+
+	const state = []
+	
+
+	function spawnAnt () {
+		
+	}
+
+</script>
+</html>
+
+
+

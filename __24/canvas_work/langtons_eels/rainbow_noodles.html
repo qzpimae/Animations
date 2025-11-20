@@ -1,0 +1,266 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>My website</title>
+</head>
+<body id="body">
+
+<div id="root">
+	<h1>Big penis</h1>
+	<p>this is gonna be small</p>
+
+
+<button id="butt" >Click ME!!!</button> 
+<canvas id="can" height=600 width=600 ></canvas>
+
+</div>
+
+
+</body>
+
+
+<script type="text/javascript">
+
+	//Langtons Ant algorithm v1.0 @gqz
+	
+	// rules:
+	// square grid, pixels have a binary state (ie. black & white)
+	// an 'ant' is on one of these pixels. the ant has an orientation (n/s/e/w)
+	// the ant moves left if the pixel it's on is 
+	
+
+
+
+	const butt = document.getElementById("butt");
+	const body = document.getElementById("root");
+
+	butt.innerText = Math.round( Math.random() * 10);
+
+	butt.onclick = () => {
+		butt.innerText = Math.round( Math.random() * 10);
+		body.background =  "red";
+		makeLines(Math.random()*100);
+	}
+
+	const canvas = document.getElementById("can");
+
+
+	canvas.style = `display: block;
+                top: 0px;
+                left: 0px;
+                cursor: none;
+                margin:auto;
+                background-color: black`;
+
+	document.body.style = `margin: 0;
+	background-color: black`;
+
+	const ctx = canvas.getContext("2d");
+	
+	ctx.fillStyle="black";
+	ctx.rect(0,0,100,100);
+
+	ctx.fill();
+
+	ctx.background = "black"
+
+	let frames = 0
+
+
+	const state = []
+
+	let ants = []
+
+	initializeState()
+	initializeAnts()
+
+	loop()
+
+	function loop () {
+
+		frames++
+		//console.log(frames);
+
+		butt.innerText = frames
+
+		ctx.fillStyle = 'hsla(0, 0%, 0%, .05)';
+
+
+                ctx.fillRect(0, 0, 600, 600);
+		//makeLines(Math.random()*10)
+		updateAnts();
+
+		renderState();
+
+		if (frames % 10000 == 0) resetGame();		
+
+		 setTimeout(window.requestAnimationFrame, 30, loop)
+	}
+
+	function resetGame() {
+
+		initializeState()
+		
+	}
+
+
+	function genColor () {
+			const r1 = frames % 360
+			const r2 = (Math.random() * 50) + 50
+			const r3 = (Math.random() * 50) + 50
+
+			return `hsl(${r1},${r2}%,${r3}%)`
+
+	}
+
+
+	
+
+	function makeLines(num) {
+	
+		let count = 0
+
+		while(count < num) {
+		
+			count++;
+			const r1 = frames % 360
+			const r2 = (Math.random() * 50) + 50
+			const r3 = (Math.random() * 50) + 50
+
+			ctx.strokeStyle = `hsl(${r1},${r2}%,${r3}%)`
+		
+			const x1 = ant.x*6
+			const x2 = ant.x*6 + (Math.random() * 100) - 50
+			const y1 = ant.y*6
+			const y2 = ant.y*6 + (Math.random() * 100) - 50
+
+			ctx.beginPath()
+			ctx.moveTo(x1, y1)
+			
+			ctx.lineTo(x2, y2)
+			ctx.stroke();
+
+
+
+			//ctx.moveTo(300 + Math.sin(frames/100) * 100, 300 + Math.cos(frames/100) * 100)
+
+		
+		}
+	}
+
+
+	
+
+	function initializeAnts() {
+		const protoAnt = {
+			x: 50, 
+			y: 50,
+			a: 0,
+			c: 0, //hue 0-360
+			//n_0 e_1 s_2 w_3
+			o: 0
+		}
+
+		ants.splice(0,ants.length);
+
+		for (let i = 0; i < 300; i++) {
+
+			const newAnt = {...protoAnt}
+			newAnt.x = Math.round(Math.random() * 100);
+			newAnt.y = Math.round(Math.random() * 100);
+			
+			newAnt.c = newAnt.y * 3;
+			//newAnt.c = Math.round(Math.random() * 360);
+
+
+
+			ants.push(newAnt);
+		}
+
+
+	}
+
+	function initializeState() {
+		
+		state.splice(0,state.length)
+
+		for(let i = 0; i < 100; i++) {
+			state.push([])
+			for (let j = 0; j < 100; j++) {
+				state[i].push(Math.round(Math.random()))
+				//state[i].push(0)
+
+			}
+		}
+
+	}
+	
+
+	function updateAnts () {
+
+		for(let i = 0; i < ants.length; i++){
+			const ant = ants[i];
+			//console.log(ant);
+			try {
+			if (state[ant.x][ant.y]) {
+				ant.o = ant.o < 3 ? ant.o + 1 : 0;
+			} else {
+				ant.o = ant.o > 0 ? ant.o - 1 : 3;
+			}
+	
+			state[ant.x][ant.y] = state[ant.x][ant.y] ? 0 : 1;
+		
+			if (ant.o == 0) {
+				ant.y++
+			} else if (ant.o == 1) {
+				ant.x++
+			} else if (ant.o == 2) {
+				ant.y--
+			} else if (ant.o == 3) {
+				ant.x--
+			}
+			} catch (err) {}
+
+
+		}
+
+		
+		
+	}
+
+	function renderState () {
+
+		//render game state (show which pixels are 'alive')
+		for(let i = 0; i < 100; i++) {
+
+			for (let j = 0; j < 100; j++) {
+
+				let pixelState = state[i][j];
+				if (!pixelState) continue; //this is not being checked rn
+
+				ctx.fillStyle = !pixelState 
+				? 'chartreuse' //genColor() 
+				: 'black'; 
+
+				ctx.fillRect(i*6, j*6, 6,6)
+			}
+		}
+
+
+		//render pos of ants
+		
+		for(let i = 0; i < ants.length; i++){
+			const ant = ants[i];
+
+			ctx.fillStyle = `hsl(${ant.c}, 70%, 70%)`;//'deeppink'
+			ctx.fillRect(ant.x*6, ant.y*6, 6, 6)		
+		}
+	}
+
+</script>
+</html>
+
+
+
