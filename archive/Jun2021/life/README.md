@@ -7,7 +7,7 @@ this is my first foray into coding the Game-Of-Life algortihm
 everything here is 100% handcoded by me with the exception of the OpenSimplex noise algorithm, which i use to populate one of the inital state.
 
 i have since created an updated version with an emphasis on live visuals for music events
-check it out [here](https://github.com/qzpimae/Animations/tree/main/__24/death)
+check it out [here](https://github.com/qzpimae/Animations/tree/main/archive/__24/life_livevis)
 
 my first version of my 'life' program made for web was for a muesuem exibit
 see the project [here](https://github.com/qzpimae/life_planted_gqz)
