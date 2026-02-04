@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>space eel</title>
+
+    <link rel="stylesheet" href="snake.css">
+    
+
+    
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="game_display" hidden>
+
+
+
+        <div class="rightSideBar" id="rightSideBar" hidden>
+
+
+            <h3>Try to collect cosmic food and survive as the space eel as long as you can</h3>
+            <br>
+            <h3>PRESS P OR Q TO PAUSE</h3>
+            <br>
+<!-- 
+            <label for="playerIcon">Select to Change Snake Head</label>
+            <select id="playerIcon" onchange="changePlayerIcon()"> 
+                <option value="pacman">Pac-Man</option>
+                <option value="smallCBpattern.png">Checkerboard</option>
+                <option value="yin-yang.png">Yin Yang</option>
+                <option value="star1.png">Star</option>
+                <option value="eye.png">Eye</option>
+
+            </select>
+
+            <br>
+            <h3>WARNING<br>If you prevent prompts on this page you will not be able to pause or post your highscores</h3>
+            <br> -->
+
+            <br>
+            <div id="gameinfo">
+
+                <h1 id="message">Press 'Space' To Start</h1>
+        
+            </div>
+
+            <div id="currentSession">
+
+                <h3 id="cshs">Current Session High-Score:</h3><h4 id="localhs">0</h4>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <script>
+
+        // window.alert("desktop: \n| space to start | wasd to move | p/q to pause |\nmoblie: \n| tap to start | swipe to move |");
+
+    </script>
+    <script type="text/javascript" src="./game-src/starFuncs.js"></script>
+    <script type="text/javascript" src="./game-src/leaderBoard.js"></script>
+    <script type="text/javascript" src="./game-src/userInput.js"></script>
+    <script type="text/javascript" src="./game-src/collision.js"></script>
+    <script type="text/javascript" src="./game-src/animateSnake.js"></script>
+    <script type="text/javascript" src="./game-src/snakeTrail.js"></script>
+    <script type="text/javascript" src="./game-src/screenBackground.js"></script>
+    <script type="text/javascript" src="./game-src/powerups.js"></script>
+
+    <script type="text/javascript" src="./game-src/preStart.js"></script>
+    <script type="text/javascript" src="./game-src/main.js"></script>
+    
+
+</body>
+</html>

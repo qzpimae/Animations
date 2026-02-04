@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>π test - π</title>
+  <style>
+    body {
+      font-size: x-large;
+      color: white;
+      background-color: black;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 90vh;
+      border: 5px solid deeppink;	
+    }
+    #pitest {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #piDis {
+    	word-wrap: break-word;
+	width: 70vw;
+    }
+    #piPad {
+        display: grid;
+        grid-template-columns: repeat(3, 80px); /* 3 columns */
+        grid-template-rows: repeat(3, 80px) 80px; /* Add an extra row for the 0 */
+        gap: 10px;
+        margin-top: 20px;
+    }
+    #piPad button:nth-child(10) {
+        grid-column: 2; /* Place the 0 button in the center of the bottom row */
+    }
+
+    #piPad button {
+      font-size: large;
+      cursor: pointer;
+      width: 80px;
+      height: 80px;
+      background-color: #222;
+      color: white;
+      border: 2px solid #555;
+      border-radius: 10px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    #piPad button:hover {
+      background-color: #444;
+      transform: scale(1.1);
+    }
+    #piPad button:active {
+      background-color: #666;
+      transform: scale(1);
+    }
+    #piCan {
+      height: 20vh;
+      width: 20vh;
+      /* display: block;
+      position: static;
+            top: 0px;
+            left: 0px; */
+    }
+  </style>
+</head>
+<body>
+  <canvas id="piCan"></canvas>
+  <div id="pitest"></div>
+  <script src="./pitest.js"></script>
+  <p>Not sure what's next? Check the <a href="/pi/reference">reference</a></p>
+  <a href="https://cancelled.work/pi"><-- (go back)</a>
+</body>
+</html>

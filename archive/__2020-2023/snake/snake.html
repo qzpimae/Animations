@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SNAKE</title>
+
+    <link rel="stylesheet" href="snake.css">
+    
+
+    
+</head>
+<body>
+    <div class="game_display">
+
+        <div class="leftSideBar" id = "leftSideBar">
+
+            <h1 id="title">SPACE SNAKE</h4>
+
+            <div id="currentSession">
+
+                <h3 id="cshs">Current Session High-Score:</h3><h4 id="localhs">0</h4>
+
+            </div>
+
+            <div id="lbdiv">
+
+            </div>
+
+            <!-- leaderboard will be a table created in javascript -->
+            
+            
+        </div>
+
+        <canvas id="canvas"></canvas>
+
+        <div class="rightSideBar" id="rightSideBar">
+
+
+            <h3>Pure Javascript Snake</h3>
+            <br>
+            <h3>Try to collect cosmic food and survive as the space snake as long as you can</h3>
+            <br>
+            <h3>PRESS P OR Q TO PAUSE</h3>
+            <button id="darkmode" onclick="toggleDarkMode()">TOGGLE DARK MODE</button>
+            <br>
+
+            <label for="playerIcon">Select to Change Snake Head</label>
+            <select id="playerIcon" onchange="changePlayerIcon()"> 
+                <option value="pacman">Pac-Man</option>
+                <option value="smallCBpattern.png">Checkerboard</option>
+                <option value="yin-yang.png">Yin Yang</option>
+                <option value="star1.png">Star</option>
+                <option value="eye.png">Eye</option>
+
+            </select>
+
+            <br>
+            <h3>WARNING<br>If you prevent prompts on this page you will not be able to pause or post your highscores</h3>
+            <br>
+
+            <br>
+            <div id="gameinfo">
+
+                <h1 id="message">Press 'Space' To Start</h1>
+        
+            </div>
+
+        </div>
+
+
+    </div>
+
+    
+    <script type="text/javascript" src="./game-src/starFuncs.js"></script>
+    <script type="text/javascript" src="./game-src/leaderBoard.js"></script>
+    <script type="text/javascript" src="./game-src/userInput.js"></script>
+    <script type="text/javascript" src="./game-src/collision.js"></script>
+    <script type="text/javascript" src="./game-src/animateSnake.js"></script>
+    <script type="text/javascript" src="./game-src/snakeTrail.js"></script>
+    <script type="text/javascript" src="./game-src/screenBackground.js"></script>
+    <script type="text/javascript" src="./game-src/powerups.js"></script>
+
+    <script type="text/javascript" src="./game-src/preStart.js"></script>
+    <script type="text/javascript" src="./game-src/main.js"></script>
+    
+
+</body>
+</html>

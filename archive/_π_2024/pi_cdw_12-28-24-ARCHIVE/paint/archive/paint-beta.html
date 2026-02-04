@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>paint on the web</title>
+    <script src="./p5.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            overflow: hidden; /* Prevent scrolling */
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let time = 0; // Variable to track time
+        let brushSize = 3; // Size of the brush
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            background(0); // Set initial background to white
+        }
+
+        function draw() {
+            time += 1; // Increment time every frame
+            let hueValue = time % 360; // Keep hue in range [0, 360]
+            let colorValue = `hsl(${hueValue}, 70%, 50%)` 
+            //color(hueValue, 255, 255); // Create a color based on hue
+            // fill(`hsl(${hue > 0 ? hue : 0}, 50%, ${lightness}%)`);
+            // Check if mouse or touch is pressed
+            if (mouseIsPressed || (touches.length > 0)) {
+                stroke(colorValue);
+                strokeWeight(brushSize);
+                // Draw lines for mouse or touch interactions
+                if (mouseIsPressed) {
+                    line(mouseX, mouseY, pmouseX, pmouseY);
+                } else if (touches.length > 0) {
+                    // Use the first touch point
+                    line(touches[0].x, touches[0].y, pmouseX, pmouseY);
+                }
+            }
+        }
+
+        // Handle touch input for mobile
+        function touchMoved() {
+            return false; // Prevent default touch events (scrolling)
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight); // Resize canvas when window size changes
+        }
+    </script>
+</body>
+</html>

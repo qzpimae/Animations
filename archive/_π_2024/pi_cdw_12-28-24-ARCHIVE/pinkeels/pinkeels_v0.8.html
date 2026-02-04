@@ -1,0 +1,254 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Pink Eels</title>
+</head>
+<body>
+	<div id="root">
+		<canvas id="canvas" height=600 width=600 ></canvas>
+		<button id="butt" >Click ME!!!</button> 
+		<p style="text-align: center;">[G's Eels] --- <a href="https://en.wikipedia.org/wiki/Langton%27s_ant" target="_blank">Langton's Ant</a> algorithm v0.8 <a href="https://linktr.ee/gqz777" target="_blank">@gqz</a></p>
+	</div>
+</body>
+
+
+<script type="text/javascript">
+
+	//[g's Eels] --- Langtons Ant algorithm v0.8 @gqz 
+	
+	// RULES: __________________________________________________________________
+	// square grid, pixels have a binary state (ie. black & white)
+	// an 'eel' is on one of these pixels. the eel has an orientation (N/S/E/W)
+	// the eel moves LEFT if the pixel it's on is (0/BLACK) and RIGHT if its on (1/WHITE)
+	// when the eel moves, it leaves the pixel it was previously on the OPPOSITE of its current state 0 or 1
+	
+	//getElementById allows us to access DOM elements and manipulate them in JS
+	const butt = document.getElementById("butt");
+	const body = document.getElementById("root");
+
+	//hides the button (only used for testing atm)
+	butt.hidden = true
+	//add event listener for keyboard controls
+	document.addEventListener('keydown', userInputEvent, false);
+	
+	const canvas = document.getElementById("canvas");
+	
+	canvas.style = `display: block;
+                top: 0px;
+                left: 0px;
+                cursor: none;
+                margin:auto;
+				margin-top: 2em;
+                background-color: black;
+				border: 10px solid black;`
+
+	document.body.style = `margin: 0;
+	background-color: deeppink`;
+
+	const ctx = canvas.getContext("2d");
+	
+	//Setting the background before the animation starts
+		// ctx.fillStyle="black";
+		// ctx.rect(0,0,100,100);
+		// ctx.fill();
+
+	//simpler alt code for setting the background, 
+	//but the previous version will clear the screen if there is already something drawn
+	ctx.background = "black"
+
+
+	//count for how many animation frames have eslapse
+	let frames = 0
+	//how many itteration of the simulation should be calculated for each animation frame
+	let itterationsPerFrame = 1
+
+	//toggle for pausing the simulation
+	let pauseAnimation = false
+
+	//this array store the data for the similation field. 
+	//each pixel is represented as a 0 or 1, and they are store here in a 2d array structure;
+	//each sub-array is a row within the 2D grid, and each element is a pixel within that row
+	const state = []
+
+	//an eel changes the state as it moves, there can be more than one eel in this sim, 
+	//so we use an array to easily preform all the same code to each one on each itteration of the sim
+	let eels = []
+
+	//before the similation loop is started, the state and eels will be initaialized
+	initializeState()
+	initializeEels()
+
+	//start the animation loop
+	loop()
+
+	function loop () {
+
+		//itterate the frame count
+		frames++
+		//console.log(frames); 
+
+		//update the button innerText to display the current frame count
+		butt.innerText = frames
+
+		//this is a very transparent color (alpha is the last arg)
+		//this allows for a smooth fading affect when the eels move around
+		ctx.fillStyle = 'hsla(0, 0%, 100%, .05)';
+		//fill the whole screen with this transparent color
+		ctx.fillRect(0, 0, 600, 600);
+
+		//update the eels position, and modify the game state according to Langton's Ant algorithm
+		for (let i = 0; i < itterationsPerFrame; i++) {
+			updateEels();
+		}
+
+		//render the current simulation field's state as well as the eels positions
+		renderState();
+
+		// an auto reset timer. the animation will reset every 1000 frames
+		//if (frames % 1000 == 0) resetSim();		
+
+		if (!pauseAnimation) setTimeout(window.requestAnimationFrame, 30, loop)
+	}
+
+	function resetSim() {
+		//simply reinitialize the state and the eels and similation field will be as if the page was refreshed
+		//more could be done here if resets are to have more logic
+		initializeState();
+		initializeEels();
+	}	
+
+	function initializeEels() {
+		const protoEel = {
+			x: 50, 
+			y: 50,
+			a: 0,
+			c: 0, //hue 0-360
+			//n_0 e_1 s_2 w_3
+			o: 0
+		}
+
+		eels.splice(0,eels.length);
+
+		//this loop will itterate for the number of eels to be generated on initialization
+		//note: currently eels could be placed on the same spot, 
+		//but they should immedietly diverge on the first itteration of the sim
+		const numberOfEels = 12;
+		for (let i = 0; i < numberOfEels; i++) {
+
+			const newEel = {...protoEel}
+			newEel.x = Math.round(Math.random() * 100);
+			newEel.y = Math.round(Math.random() * 100);
+			
+			newEel.c = newEel.y * 3;
+
+			eels.push(newEel);
+		}
+
+
+	}
+
+	function initializeState() {
+		
+		state.splice(0,state.length)
+
+		for(let i = 0; i < 100; i++) {
+			state.push([])
+			for (let j = 0; j < 100; j++) {
+				//state[i].push(Math.round(Math.random())); //randomize the state
+				state[i].push(0)
+
+			}
+		}
+
+	}
+	
+
+	function updateEels () {
+
+		for(let i = 0; i < eels.length; i++){
+			const eel = eels[i];
+			//console.log(eel);
+			try {
+			if (state[eel.x][eel.y]) {
+				eel.o = eel.o < 3 ? eel.o + 1 : 0;
+			} else {
+				eel.o = eel.o > 0 ? eel.o - 1 : 3;
+			}
+	
+			state[eel.x][eel.y] = state[eel.x][eel.y] ? 0 : 1;
+		
+			if (eel.o == 0) {
+				eel.y++
+			} else if (eel.o == 1) {
+				eel.x++
+			} else if (eel.o == 2) {
+				eel.y--
+			} else if (eel.o == 3) {
+				eel.x--
+			}
+			} catch (err) {}
+
+
+		}
+
+		
+		
+	}
+
+	function renderState () {
+
+		//render game state (show which pixels are 'alive')
+		for(let i = 0; i < 100; i++) {
+
+			for (let j = 0; j < 100; j++) {
+
+				let pixelState = state[i][j];
+				if (!pixelState) continue; //this is not being checked rn
+
+				ctx.fillStyle = 'black'; 
+
+				ctx.fillRect(i*6, j*6, 6,6)
+			}
+		}
+
+
+		//render pos of eels
+		
+		for(let i = 0; i < eels.length; i++){
+			const eel = eels[i];
+
+			ctx.fillStyle = 'deeppink';//`hsl(${eel.c}, 70%, 70%)`;//
+			ctx.fillRect(eel.x*6, eel.y*6, 6, 6)		
+		}
+	}
+
+	
+    //USER INPUT LOGIC
+    function userInputEvent(input) {
+        switch (input.code) {
+            case 'Space':
+                pauseAnimation = !pauseAnimation;
+                if (!pauseAnimation) {
+                    loop()
+                }
+            break;
+            case 'ArrowUp':
+                itterationsPerFrame = itterationsPerFrame < 500 ? itterationsPerFrame+1 : 500;
+            break;
+            case "ArrowDown":
+                itterationsPerFrame = itterationsPerFrame > 1 ? itterationsPerFrame-1 : 1
+            break;
+            case 'KeyR':
+                resetSim();
+            break;
+        }
+    }
+
+</script>
+</html>
+
+
+
+

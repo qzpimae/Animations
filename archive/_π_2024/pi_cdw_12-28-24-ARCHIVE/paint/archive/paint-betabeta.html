@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>paint on the web - life</title>
+    <script src="./p5.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            overflow: hidden; /* Prevent scrolling */
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let gameState = [];
+        let frameCount = 0;
+        let time = 0; // Variable to track time
+        let brushSize = 4; // Size of the brush
+
+        let cellSize = 7;
+
+        let numRows, numCols;
+
+        function setup() {
+
+            numRows = Math.floor(windowHeight/cellSize);
+            numCols = Math.floor(windowWidth/cellSize);
+
+            // console.log(height);
+            
+
+            createCanvas(windowWidth, windowHeight);
+            background(0);
+            initializeGameState();
+        }
+
+        function draw() {
+            time += 1; // Increment time every frame
+            frameCount++;
+            let hueValue = time % 360; // Keep hue in range [0, 360]
+            let colorValue = `hsl(${hueValue}, 70%, 50%)` 
+            
+            if (mouseIsPressed || (touches.length > 0)) {
+                stroke(colorValue);
+                strokeWeight(brushSize);
+                // Draw lines for mouse or touch interactions
+                if (mouseIsPressed) {
+                    line(mouseX, mouseY, pmouseX, pmouseY);
+                    activateCell(mouseX,mouseY)
+                } else if (touches.length > 0) {
+                    // // Use the first touch point
+                    // line(touches[0].x, touches[0].y, pmouseX, pmouseY);
+                    // activateCell(touches[0].x, touches[0].y)
+                    // background(Math.random() * 255)
+                    
+                }
+            }
+
+            translate((width - numCols * cellSize) / 2, (height - numRows * cellSize) / 2);  // Center the grid
+            if (frameCount % 5 == 0) {
+                updateGameState();  // Calculate the next game state
+                drawGrid();         // Draw the cells on the canvas
+            }
+        }
+
+        function initializeGameState() {
+            gameState = [];
+            for (let i = 0; i < numRows; i++) {
+            let row = [];
+            for (let j = 0; j < numCols; j++) {
+                row.push({
+                alive: 0,//Math.random() > .5 ? 1 : 0, // Cells start as dead
+                age: 0
+                });
+            }
+            gameState.push(row);
+            }
+        }
+
+        function updateGameState() {
+            let nextGameState = [];
+            for (let i = 0; i < numRows; i++) {
+            let newRow = [];
+            for (let j = 0; j < numCols; j++) {
+                const neighbors = countNeighbors(i, j);
+                const currentCell = gameState[i][j];
+                if (currentCell.alive) {
+                newRow.push({ alive: neighbors === 2 || neighbors === 3 ? 1 : 0, age: neighbors === 2 || neighbors === 3 ? currentCell.age + 1 : 0 });
+                } else {
+                newRow.push({ alive: neighbors === 3 ? 1 : 0, age: neighbors === 3 ? 1 : 0 });
+                }
+            }
+            nextGameState.push(newRow);
+            }
+            gameState = nextGameState;
+        }
+
+          // Count the number of live neighbors for a given cell
+        function countNeighbors(x, y) {
+            let count = 0;
+            for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                if (i === 0 && j === 0) continue; // Skip the current cell
+                const row = (x + i + numRows) % numRows;  // Wrap around edges
+                const col = (y + j + numCols) % numCols;  // Wrap around edges
+                count += gameState[row][col].alive;
+            }
+            }
+            return count;
+        }
+
+          // Draw the grid on the canvas
+        function drawGrid() {
+            for (let i = 0; i < numRows; i++) {
+            for (let j = 0; j < numCols; j++) {
+                const cell = gameState[i][j];
+                if (cell.alive) {
+                    const hue = 120 - cell.age / 5;
+                    const lightness = ((100 - cell.age * 12.75) % 50) + 50;
+                    fill(`hsl(${hue > 0 ? hue : 0}, 50%, ${lightness}%)`);
+                } else {
+                    fill(0);
+                }
+                noStroke();
+                rect(j * cellSize, i * cellSize, cellSize, cellSize);  // Corrected row and column positioning
+            }
+            }
+        }
+
+        function mouseDragged() {
+            activateCell(mouseX, mouseY);
+        }
+
+        // Handle touch input for mobile
+        function touchMoved() {
+
+            return false; // Prevent default touch events (scrolling)
+        }
+
+        function activateCell(x, y) {
+
+            // console.log(x,y);
+            
+
+            // background(x)
+            // First, convert the screen coordinates to canvas-relative coordinates
+            let canvasX = x - (width - numCols * cellSize) / 2;
+            let canvasY = y - (height - numRows * cellSize) / 2;
+
+            // console.log(`Touch at screen (${x}, ${y}), canvas (${canvasX}, ${canvasY})`);
+
+            // Then, convert canvas coordinates to grid coordinates
+            let col = Math.floor(canvasX / cellSize);
+            let row = Math.floor(canvasY / cellSize);
+
+            // console.log(`Grid cell at (${row}, ${col})`);
+
+            // Ensure the coordinates are within the grid boundaries
+            if (col >= 0 && col < numCols && row >= 0 && row < numRows) {
+            gameState[row][col] = { alive: 1, age: 0 }; // Activate the cell (make it alive)
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight); // Resize canvas when window size changes
+        }
+    </script>
+</body>
+</html>

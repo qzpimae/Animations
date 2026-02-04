@@ -1,0 +1,18 @@
+	<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gallery - π</title>
+</head>
+<body style="color: white; background: black; border: 5px solid deeppink; margin: 0; padding: 1em;">
+    <a href="https://cancelled.work/pi"><-- (go back)</a>
+    <br><br>
+    <img src="/pi/misc/files/renders/sakura_032508082024.png" alt="no img :("></img>
+    <br><br>
+    <img src="/pi/misc/files/renders/sakura_001435.png" alt="no img :(	"></img>
+    <p style="color: deeppink;">{written in Java[vanilla Processing] 'sakura' project 2020 - present}</p>
+    <a href="https://cancelled.work/pi/animations">check out the animation archive</a>
+    <p style="color: grey;">last updated 2:36am 08/24/24</p>
+</body>
+</html>

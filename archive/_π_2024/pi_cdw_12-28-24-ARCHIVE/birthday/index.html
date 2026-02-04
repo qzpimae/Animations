@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎂🥳🎉<3🎉🥳🎂</title>
+    <style>
+        body {
+            background-image: url('birthday.gif'); /* Replace with your GIF URL */
+            background-repeat: repeat; /* Tiles the GIF */
+            background-size: auto; /* Keeps original size */
+            color: deeppink;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        select, button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #mainContent {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="inputSelectors">
+        <label id="monthLabel" style="display: none;">Select your birth month:</label>
+        <select id="monthSelect" style="display: none;">
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+        </select>
+
+        <label id="dayLabel" style="display: none;">Select your birth day:</label>
+        <select id="daySelect" style="display: none;">
+            <!-- Days 1 to 31 -->
+            <script>
+                for (let i = 1; i <= 31; i++) {
+                    document.write(`<option value="${i}">${i}</option>`);
+                }
+            </script>
+        </select>
+
+        <button id="confirmButton" style="display: none;">Confirm</button>
+    </div>
+
+    <div id="mainContent">
+        <h1 id="birthdayMessage"></h1>
+
+        <label for="colorSelect">Select your favorite color:</label>
+        <select id="colorSelect">
+            <option value="0">Red</option>
+            <option value="15">Tangerine</option>
+            <option value="30">Orange</option>
+            <option value="60">Yellow</option>
+            <option value="75">Chartreuse</option>
+            <option value="120">Green</option>
+            <option value="150">Seafoam</option>
+            <option value="180">Cyan</option>
+            <option value="240">Blue</option>
+            <option value="270">Indigo</option>
+            <option value="285">Periwinkle</option>
+            <option value="300">Violet</option>
+            <option value="315">Mauve</option>
+            <option value="333">Pink</option>
+            <option value="345">Fuchsia</option>
+        </select>
+        
+
+        <button id="presentButton">Open your present</button>
+        <p id="linkOutput"></p>
+    </div>
+
+    <script>
+        // Get query params for month, day, and optional name
+        const urlParams = new URLSearchParams(window.location.search);
+        let month = parseInt(urlParams.get('month'));
+        let day = parseInt(urlParams.get('day'));
+        const name = urlParams.get('name'); // Optional name parameter
+
+        const monthLabel = document.getElementById('monthLabel');
+        const monthSelect = document.getElementById('monthSelect');
+        const dayLabel = document.getElementById('dayLabel');
+        const daySelect = document.getElementById('daySelect');
+        const confirmButton = document.getElementById('confirmButton');
+        const mainContent = document.getElementById('mainContent');
+
+        // Check if day or month is missing
+        if (isNaN(month)) {
+            monthLabel.style.display = 'block';
+            monthSelect.style.display = 'block';
+            confirmButton.style.display = 'block';
+        }
+
+        if (isNaN(day)) {
+            dayLabel.style.display = 'block';
+            daySelect.style.display = 'block';
+            confirmButton.style.display = 'block';
+        }
+
+        // Show the main content once month and day are confirmed
+        confirmButton.addEventListener('click', () => {
+            if (isNaN(month)) {
+                month = parseInt(monthSelect.value);
+            }
+            if (isNaN(day)) {
+                day = parseInt(daySelect.value);
+            }
+
+            // Hide the input selectors and show the main content
+            document.getElementById('inputSelectors').style.display = 'none';
+            mainContent.style.display = 'block';
+
+            displayBirthdayMessage(month, day);
+        });
+
+        function displayBirthdayMessage(month, day) {
+            const today = new Date();
+            const currentMonth = today.getMonth() + 1; // months are 0-indexed in JS
+            const currentDay = today.getDate();
+
+            const birthday = new Date(today.getFullYear(), month - 1, day);
+            const timeDiff = birthday - today;
+            const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            const birthdayMessage = document.getElementById('birthdayMessage');
+            
+            let messagePrefix = (name ? `Happy Birthday, ${name}! ` : 'Happy Birthday! '); // Use name if available
+
+            if (currentMonth === month && currentDay === day) {
+                birthdayMessage.innerText = messagePrefix + "It's your special day! I hope the world is kind to you today <3";
+            } else if (daysDiff > 0 && daysDiff <= 30) {
+                birthdayMessage.innerText = messagePrefix + `It's almost your special day!\nIt's only ${daysDiff} days away.`;
+            } else {
+                const daysAway = daysDiff < 0 ? 365 + daysDiff : daysDiff;
+                birthdayMessage.innerText = `Happy belated${name ? ' ' + name : ''}!!..or should I say happy very early birthday!\nIt's only ${daysAway} days away.`;
+            }
+        }
+
+
+        // Handle present button click
+        document.getElementById('presentButton').addEventListener('click', () => {
+            const colorSelect = document.getElementById('colorSelect');
+            const selectedColor = parseInt(colorSelect.value);
+
+            const presentLink = `https://sacred-web.vercel.app/?protons=${month}&neutrons=${day}&hue=${selectedColor}&lightMode=1&advancedMode=1&saturation=100&lightness=70`;
+            document.getElementById('linkOutput').innerHTML = `<a href="${presentLink}" target="_self">Click here to open your present!</a>`;
+        });
+
+        // Automatically show the birthday message if both month and day are already provided
+        if (!isNaN(month) && !isNaN(day)) {
+            mainContent.style.display = 'block';
+            displayBirthdayMessage(month, day);
+        }
+    </script>
+</body>
+</html>

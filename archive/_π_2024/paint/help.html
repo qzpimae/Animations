@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>paint by π — help & guide</title>
+<style>
+    body {
+        background: #0a0a0e;
+        color: #d7e6ff;
+        margin: 0;
+        font-family: Courier, monospace;
+        line-height: 1.55;
+        padding-bottom: 120px;
+    }
+    h1, h2, h3 {
+        color: #5cc6ff;
+        font-weight: 700;
+        margin-top: 60px;
+    }
+    .accent { color: #ff7b00; font-weight: bold; }
+    a { color: #5cc6ff; }
+    header {
+        text-align: center;
+        padding: 40px 20px;
+        border-bottom: 2px solid #5cc6ff22;
+    }
+    section { padding: 35px 25px; max-width: 900px; margin: auto; }
+    code, .code {
+        background: #14141b;
+        border: 1px solid #5cc6ff55;
+        padding: 5px 8px;
+        border-radius: 4px;
+        color: #5cc6ff;
+        display: inline-block;
+        margin: 2px 0;
+    }
+    ul { margin-top: 8px; }
+    li { margin: 7px 0; }
+    .param {
+        background: #101018;
+        border-left: 4px solid #ff7b00;
+        padding: 12px 15px;
+        margin: 18px 0;
+    }
+    footer {
+        width: 100%;
+        text-align: center;
+        margin-top: 60px;
+        padding: 45px 10px;
+        border-top: 2px solid #5cc6ff22;
+        color: #888;
+    }
+    /* Modes section styling (matches other control sections) */
+#modes {
+  padding: 14px 18px;
+  margin: 14px 0;
+  border: 1px solid hsla(0,0%,50%,0.35);
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+}
+
+#modes h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#modes h3 {
+  margin: 18px 0 6px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  padding-bottom: 3px;
+  border-bottom: 1px solid hsla(0,0%,50%,0.25);
+}
+
+#modes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 2px 0;
+}
+
+#modes li {
+  margin: 2px 0;
+  font-size: 0.9rem;
+  line-height: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#modes li b {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1>paint by π — a digital painting & Conway's Game of Life simulator</h1>
+    <p>Guide to controls, shortcuts, settings & URL configuration</p>
+</header>
+
+<section>
+
+<p>
+<em>paint by π</em> is a <strong>painting tool</strong> and a <a href="https://www.youtube.com/watch?v=R9Plq-D1gEk"><strong>Game of Life cellular automaton</strong></a>.
+Every brush stroke seeds cells into the simulation — which evolve over time based on <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">rules</a>.
+</p>
+
+<hr>
+
+<h2> On-Screen Menu (bottom-right corner)</h2>
+<p>
+Tap / click the UI buttons in the lower-right corner to open the control wheel.
+Buttons navigate levels and adjust parameters:
+</p>
+
+<ul>
+    <li><span class="accent">light</span> — toggles dark / light visualization</li>
+    <li><span class="accent">speed</span> — changes simulation speed (frame buffer)</li>
+    <li><span class="accent">color</span> — cycles color engine (ink / sakura / rainbow)</li>
+    <li><span class="accent">reset</span> — clears canvas and starts a new algorithm pattern</li>
+</ul>
+
+<p>
+UI appears only if <code>ui=1</code> or the user hasn't hidden it,
+and can be toggled at any time with keyboard <code>\</code>.
+</p>
+
+<hr>
+
+<h2>Keyboard Controls</h2>
+
+<div class="param">
+<b>Painting & Evolution</b><br>
+<code>SPACE</code> — Pause / Play simulation<br>
+<code>R</code> — Reset / restart simulation<br>
+</div>
+
+<div class="param">
+<b>Visual / Display</b><br>
+<code>F</code> — Fade trail toggle<br>
+<code>D</code> — Full clear toggle<br>
+<code>L</code> — Light / Dark mode<br>
+<code>C</code> — Cycle color modes<br>
+<code>Q</code> — Cursor stroke toggle<br>
+<code>\</code> — Show / Hide UI menu<br>
+</div>
+
+<div class="param">
+<b>Speed</b><br>
+<code>,</code> — Faster evolution<br>
+<code>.</code> — Slower evolution<br>
+</div>
+
+<div class="param">
+<b>Feedback (experimental)</b><br>
+<code>↑ ↓ ← →</code> — Offset simulation border<br>
+<code>Shift</code> — Turn feedback scrolling on/off<br>
+<code>/</code> — Enable/disable 'hot-edges'<br>
+</div>
+
+<div class="param">
+<b>Debugging</b><br>
+<code>S</code> — Log full settings to console<br>
+</div>
+
+<hr>
+
+<h2>URL “Modes” — Presets that apply multiple settings at once</h2>
+<p>
+The <code>mode</code> parameter can include multiple space-separated modes
+and they are applied <strong>in order</strong>:
+</p>
+
+<div class="code">?mode=penandpaper colordrop</div>
+
+<b>Available modes:</b>
+<section id="modes">
+  
+    <h3>Color / Theme Modes</h3>
+    <ul>
+      <li><b>penandpaper</b> / pnp — White background, no UI, light mode, no fade</li>
+      <li><b>ink</b> — Standard ink colors</li>
+      <li><b>gay</b> — Full rainbow spectrum colors</li>
+      <li><b>cherryblossom</b> / cb — Soft blossom palette</li>
+      <li><b>sakura</b> — Pink background, blossom colors, light mode, no UI</li>
+      <li><b>colordrop</b> / cd — Random pastel background each start</li>
+      <li><b>dark</b> — Dark mode on</li>
+      <li><b>light</b> — Light mode on</li>
+    </ul>
+  
+    <h3>Cell Size / Brush Size</h3>
+    <ul>
+      <li><b>tiny</b> — Very small cells, fine brush</li>
+      <li><b>small</b> — Small cells, small brush</li>
+      <li><b>med</b> — Medium cells, medium brush</li>
+      <li><b>large</b> — Large cells, big brush</li>
+    </ul>
+  
+    <h3>Speed / Frame Buffer</h3>
+    <ul>
+      <li><b>vvslow</b> — Very very slow</li>
+      <li><b>vslow</b> — Very slow</li>
+      <li><b>slow</b> — Slow</li>
+      <li><b>slowfast</b> — Medium-slow</li>
+      <li><b>fastslow</b> — Medium-fast</li>
+      <li><b>fast</b> — Fast</li>
+      <li><b>vfast</b> — Very fast</li>
+      <li><b>vvfast</b> — Extremely fast</li>
+    </ul>
+  
+    <h3>Random Cell Excitment</h3>
+    <ul>
+      <li><b>ran</b> — Some randomness</li>
+      <li><b>vran</b> — High randomness</li>
+      <li><b>vvran</b> — Extreme randomness</li>
+    </ul>
+
+    <h3>Initialization Algorithm</h3>
+    <ul>
+    <li><b>ranalg</b> — Select random algorithm</li>
+      <li><b>1</b>–<b>5</b> — Directly select algorithm number 1–5</li>
+    </ul>
+  
+    <h3>UI / Controls</h3>
+    <ul>
+      <li><b>ui</b> — Show UI</li>
+      <li><b>noui</b> — Hide UI</li>
+      <li><b>menu</b> — Show menu</li>
+      <li><b>nomenu</b> — Hide menu</li>
+    </ul>
+  
+    <h3>Border / Fade / Cursor</h3>
+    <ul>
+      <li><b>border</b> — Borders on</li>
+      <li><b>borderOff</b> — Borders off</li>
+      <li><b>fade</b> — Fade effect on</li>
+      <li><b>nofade</b> — Fade effect off</li>
+      <li><b>nostroke</b> — No cursor stroke</li>
+      <li><b>nocursor</b> — Cursor hidden</li>
+    </ul>
+  
+    <h3>Brush Tips</h3>
+    <ul>
+      <li><b>finetip</b> / ftip — Small brush tip</li>
+      <li><b>medtip</b> / mtip — Medium brush tip</li>
+      <li><b>bigtip</b> / btip — Large brush tip</li>
+    </ul>
+  
+    <h3>Playback</h3>
+    <ul>
+      <li><b>pause</b> / paused — Pause simulation</li>
+      <li><b>play</b> / unpause — Resume simulation</li>
+    </ul>
+  
+    <h3>Timing / Cycle</h3>
+    <ul>
+      <li><b>nowait</b> — No wait between cycles</li>
+    </ul>
+  </section>
+  
+
+<hr>
+
+<h2>URL “Direct Control” — Modify engine values manually</h2>
+<p>Append parameters to the URL:</p>
+
+<div class="code">?alg=4&color=2&fade=1&scale=6&ran=8&ranwait=600</div>
+
+<table style="width:100%; border-spacing:10px;">
+<tr><td><code>alg</code></td><td>Starting algorithm (0–5)</td></tr>
+<tr><td><code>color</code></td><td>0 ink · 1 sakura · 2 rainbow</td></tr>
+<tr><td><code>fade</code></td><td>1 fade trail · 0 static</td></tr>
+<tr><td><code>clear</code></td><td>Remove background each update</td></tr>
+<tr><td><code>scale</code></td><td>Cell size</td></tr>
+<tr><td><code>ran</code></td><td>Random seed drops per cycle</td></tr>
+<tr><td><code>ranwait</code></td><td>Random seed frequency (frames)</td></tr>
+<tr><td><code>buff</code></td><td>Frame buffer (simulation speed)</td></tr>
+<tr><td><code>ui</code></td><td>1 show menu · 0 hide menu</td></tr>
+<tr><td><code>light</code></td><td>1 light mode · 0 dark mode</td></tr>
+<tr><td><code>cl</code></td><td>Cursor line trail on/off</td></tr>
+<tr><td><code>bs</code></td><td>Brush size</td></tr>
+</table>
+
+<p><strong>Example:</strong></p>
+<div class="code">/paint?mode=sakura&buff=1&cl=1&bs=14</div>
+
+<hr>
+
+<h2>Feedback & Help ✨</h2>
+<h4>if you have any questions or suggestions for what i could add to this app, please feel free to reach out [ @gqz7777 on instagram ] </h4>
+
+</section>
+
+<footer>
+    created by π · updated Nov 2025 
+</footer>
+
+</body>
+</html>

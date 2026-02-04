@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game of Life - P5.js Version</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    canvas {
+      border: 1px solid black;
+      background-color: black;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+
+<script>
+  let numRows = 120;
+  let numCols = 80;
+  let cellSize;
+  let gameState = [];
+  let frameCount = 0;
+
+  function setup() {
+    createCanvas(windowWidth, windowHeight);
+    cellSize = min(windowWidth / numCols, windowHeight / numRows);  // Adjust cell size based on window dimensions
+    initializeGameState();
+    frameRate(10); // Set the simulation speed
+  }
+
+  function draw() {
+    background(0); // Clear the canvas with a black background
+    translate((width - numCols * cellSize) / 2, (height - numRows * cellSize) / 2);  // Center the grid
+    updateGameState();  // Calculate the next game state
+    drawGrid();         // Draw the cells on the canvas
+    frameCount++;
+  }
+
+  // Initialize the game state with random live and dead cells
+  function initializeGameState() {
+    for (let i = 0; i < numRows; i++) {
+      let row = [];
+      for (let j = 0; j < numCols; j++) {
+        row.push({
+          alive: 0,//Math.random() > 0.9 ? 1 : 0,
+          age: 0
+        });
+      }
+      gameState.push(row);
+    }
+  }
+
+  // Update the game state based on Game of Life rules
+  function updateGameState() {
+    let nextGameState = [];
+    for (let i = 0; i < numRows; i++) {
+      let newRow = [];
+      for (let j = 0; j < numCols; j++) {
+        const neighbors = countNeighbors(i, j);
+        const currentCell = gameState[i][j];
+        if (currentCell.alive) {
+          newRow.push({ alive: neighbors === 2 || neighbors === 3 ? 1 : 0, age: neighbors === 2 || neighbors === 3 ? currentCell.age + 1 : 0 });
+        } else {
+          newRow.push({ alive: neighbors === 3 ? 1 : 0, age: neighbors === 3 ? 1 : 0 });
+        }
+      }
+      nextGameState.push(newRow);
+    }
+    gameState = nextGameState;
+  }
+
+  // Count the number of live neighbors for a given cell
+  function countNeighbors(x, y) {
+    let count = 0;
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        if (i === 0 && j === 0) continue; // Skip the current cell
+        const row = (x + i + numRows) % numRows;  // Wrap around edges
+        const col = (y + j + numCols) % numCols;  // Wrap around edges
+        count += gameState[row][col].alive;
+      }
+    }
+    return count;
+  }
+
+  // Draw the grid on the canvas
+  function drawGrid() {
+    for (let i = 0; i < numRows; i++) {
+      for (let j = 0; j < numCols; j++) {
+        const cell = gameState[i][j];
+        if (cell.alive) {
+          const hue = 120 - cell.age / 5;
+          const lightness = ((100 - cell.age * 12.75) % 50) + 50;
+          fill(`hsl(${hue > 0 ? hue : 0}, 50%, ${lightness}%)`);
+        } else {
+          fill(30);
+        }
+        noStroke();
+        rect(i * cellSize, j * cellSize, cellSize, cellSize);
+      }
+    }
+  }
+
+function mouseDragged() {
+  activateCell(mouseX, mouseY);
+}
+
+function touchMoved() {
+  activateCell(touchX, touchY);
+  return false; // Prevents default scrolling behavior on touchscreens
+}
+
+function activateCell(x, y) {
+  // Calculate the row and column based on the mouse/touch coordinates
+  const col = Math.floor((x - (width - numCols * cellSize) / 2) / cellSize);
+  const row = Math.floor((y - (height - numRows * cellSize) / 2) / cellSize);
+
+  // Ensure the coordinates are within the grid boundaries
+  if (row >= 0 && row < numRows && col >= 0 && col < numCols) {
+    gameState[row][col] = { alive: 1, age: 0 }; // Set the cell to be alive
+  }
+}
+
+
+  // Adjust the canvas size if the window is resized
+  function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+    cellSize = min(windowWidth / numCols, windowHeight / numRows);  // Recalculate cell size
+  }
+</script>
+
+</body>
+</html>
