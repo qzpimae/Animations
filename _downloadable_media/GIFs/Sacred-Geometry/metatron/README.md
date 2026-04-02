@@ -5,10 +5,10 @@
 
 ### One Metatron Cube Structure
 ![](metatronv1.gif)
-[source](https://github.com/qzpimae/Animations/tree/main/Jun2020/metatron.js)
+[source](https://github.com/qzpimae/Animations/tree/main/archive/Jun2020/metatron.js)
 
 <p>&nbsp<p><p>&nbsp<p>
 
 ### Seven Metatron Cube Structure
 ![](metatronv2.gif)
-[source](https://github.com/qzpimae/Animations/tree/main/Jun2020/metatron.js)
+[source](https://github.com/qzpimae/Animations/tree/main/archive/Jun2020/metatron.js)

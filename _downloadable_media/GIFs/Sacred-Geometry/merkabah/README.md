@@ -15,7 +15,7 @@
 
 ![](merkabah2.gif)
 
-[source](https://github.com/qzpimae/Animations/tree/main/Aug2020/misc/merkabah.js)
+[source](https://github.com/qzpimae/Animations/tree/main/archive/Aug2020/misc/merkabah.js)
 
 <p>&nbsp<p><p>&nbsp<p>
 

@@ -16,4 +16,4 @@
 ### Both Previous Designs Combine
 ![](sacred-geo.gif)
 
-These three gifs were made using the same interactive animation. The source code can be found [here](https://github.com/qzpimae/Animations/tree/main/Apr2020/triangles/fractal-tri04.js)
+These three gifs were made using the same interactive animation. The source code can be found [here](https://github.com/qzpimae/Animations/tree/main/archive/Apr2020/triangles/fractal-tri04.js)
