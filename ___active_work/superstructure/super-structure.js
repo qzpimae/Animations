@@ -1,0 +1,616 @@
+console.log(`Press Space to Start/Stop Animation,\n\n < and > (Comma and Period): cycle through diffrent 3D structures\n\nLeft/Right Arrow Keys: control how much of the object stays in view\n\nPress 'I' to display current settings\n\nPress 'M' to cycle through 4 color modes\n\nPress 'G' to toggle view in grayscale\n\nPress 'O' to decrease speed that complexity is being added to the object 'P' to increase speed\n\nPress 'L' to toggle camera locking on mouse position/auto-rotate\n\nPress 'F' to toggle flipping of structure's latitude and logitude coordinates`);
+
+// alert('Look At Dev Console For Instructions\nFull Screen Recommended When You Click  \'OK\'')
+
+const pi = Math.PI; //shortcut because is gets used alot
+
+//i like to create all my html elements in JS so this code can be run by simplying adding it in a script tag of an empty HTML file
+let canvas = document.createElement('canvas');
+    context = canvas.getContext('2d'),
+
+    width = canvas.width = window.innerWidth,
+    height = canvas.height = window.innerHeight,
+
+    frames = 3000, //keep count of how many render cycles have occured
+
+    radius = height/3,
+
+    renderPaused = false,    //user can toggle animation paused/unpaused
+
+    grayScale = true,     //user can toggle grayscale
+
+    
+    flipPos = false,   //user can see what will happen to a given structure if the logitude and latitude get flipped
+    
+    lockPos = false,     //user can toggle if the object roates on its own or is locked to the mouse position
+    
+    camMode = 5,    
+
+    camModeMax = 8,    
+    
+    viewLimit = 30,  //user can change how much of the object is in view
+
+    cmplxSpd = 80,//user can control how quickly more points will be added to object, range(0-333)
+
+    rotationSpd = 1,
+
+    SSindex = 0, //controls what structure is being displayed on the canvas
+
+    colorMode = 0, //controls what variable determins the color of a given point
+
+    colorModeMax = 3,
+    
+    strokeWeight = .5
+
+    lightOffset = 0, //controls how bright the object is
+
+    saturation = 100,
+
+    randomizeSStructure = false, //controls if the structure is random or not
+
+    chaosMult = 0, //controls how chaotic the structure is
+    chaosToggle = false, //controls if the structure is chaotic or not
+
+    clearScreen = false,
+
+    fadeScreen = true,
+    
+    coordinates = {   //obj to keep track of points when roating sphere
+        x: 0,
+        y: 0,
+        z: 0
+    },
+
+    mosPos = { //track mouse position 
+        x: 0,
+        y: 0,
+    },
+
+    superSpos = [ //longitude is represented by true, latitude by false, a ternary oporater will change how the object is structured to showcased diffrent super structures with less code
+        {   //donut horizontal
+            x1: true,
+            x2: true,
+            y1: false,
+            y2: true,
+            z:  false 
+        },
+        {   //donut vertical
+            x1: false,
+            x2: false,
+            y1: false,
+            y2: true,
+            z:  true 
+        },
+        {   //infinity 8 destructured
+            x1: false,
+            x2: false,
+            y1: false,
+            y2: true,
+            z:  false 
+        },
+        {   //infinity 8 structured
+            x1: false,
+            x2: false,
+            y1: true,
+            y2: true,
+            z:  false 
+        },
+        {   //one bend
+            x1: false,
+            x2: false,
+            y1: true,
+            y2: true,
+            z:  true 
+        },
+        {   //s-curve
+            x1: true,
+            x2: true,
+            y1: false,
+            y2: false,
+            z:  true 
+        },
+        {   //plane twist
+            x1: true,
+            x2: false,
+            y1: true,
+            y2: true,
+            z:  false 
+        },
+        {   //full twist
+            x1: false,
+            x2: true,
+            y1: false,
+            y2: true,
+            z:  true 
+        },
+        {   //unnamed
+            x1: true,
+            x2: false,
+            y1: true,
+            y2: false,
+            z:  false 
+        },
+        {   //cylinder 1
+            x1: true,
+            x2: true,
+            y1: true,
+            y2: true,
+            z:  false 
+        },
+        {   //cylinder 2
+            x1: false,
+            x2: false,
+            y1: false,
+            y2: false,
+            z:  true 
+        },
+        {   //infinity band
+            x1: false,
+            x2: false,
+            y1: false,
+            y2: false,
+            z:  false 
+        },
+        {   //boat structure 1
+            x1: false,
+            x2: true,
+            y1: true,
+            y2: true,
+            z:  false 
+        },
+        {   //boat structure 2
+            x1: true,
+            x2: false,
+            y1: false,
+            y2: false,
+            z:  true 
+        },
+        {   //hor sphere
+            x1: false,
+            x2: true,
+            y1: false,
+            y2: true,
+            z:  false 
+        },
+        {   //(better) vert sphere
+            x1: true,
+            x2: false,
+            y1: true,
+            y2: false,
+            z:  true 
+        }
+    ];
+
+    //set styling 
+
+    document.body.style = 'cursor: none; margin: 0px;';
+
+    canvas.style = `display: block; position: static; top: 0px; left: 0px; cursor: none; margin:auto`
+    //event listener for mouse tracking 
+    canvas.onmousemove = findObjectCoords;
+    
+    //event listener for mouser wheel
+    canvas.onwheel = mouseWheelMoved;
+
+    //event listener for user input
+    document.addEventListener('keydown', takeUserInput, false)
+
+    document.body.style.backgroundColor = 'black';
+
+    document.body.appendChild(canvas);
+
+    context.translate(width/2, height/2)
+
+    context.fillStyle = 'white';
+   
+   //ANIMATION CYCLE
+     render()
+
+      function render() {
+
+        // console.log(frames);
+
+        if (clearScreen) clearFullScreen() //clear the canvas of previous animation cycle
+
+        if (fadeScreen && frames % 2 == 0) fadeFullScreen()
+
+        if (randomizeSStructure) {
+            randomizeSuperStructure()
+        }
+
+        createSphere() //render the sphere
+
+        //counts how many frames have occured
+        frames++
+
+
+        //user can toggle pausing of animation via 'spacebar'
+        if (!renderPaused) {
+            setTimeout(window.requestAnimationFrame, 0, render)
+        }
+
+      }
+
+    //function used to map numbers from int into a radian range
+    function mapNumber (number, min1, max1, min2, max2) {
+        return ((number - min1) * (max2 - min2) / (max1 - min1) + min2);
+    };
+
+    function createSphere() {
+
+        // let reso = (frames/100)/cmplxSpd + 1,//resolution of sphere coord detail
+
+        //     r = radius; //radius of sphere
+
+        // if (reso > 88) {
+        //     frames = 1;
+        // }
+        let reso = 70 + Math.cos(frames/100) * cmplxSpd/12;
+        let r = radius;
+
+    //first loop tracks longitude then the nested loop tracks latitude
+        for (let i = 0; i < reso; i++) {
+            
+            let lon = mapNumber(i , 0, reso, 0, pi);
+
+            for (let j = 0; j < reso; j++) {
+
+            let lat = mapNumber(j , 0, reso, 0, pi*2),
+                structureObj = {...(superSpos[SSindex])};
+
+            if (flipPos) {   
+                for (const key in structureObj) {
+                    structureObj[key] = !structureObj[key];
+                }
+            }
+
+            let x1 = structureObj.x1 ? lon : lat, x2 = structureObj.x2 ? lon : lat,
+                y1 = structureObj.y1 ? lon : lat, y2 = structureObj.y2 ? lon : lat,
+                z1 = structureObj.z  ? lon : lat;
+
+            //formula for finding  xyz position based on polar angle in a xy system
+            const x = (r * Math.sin(x1) * Math.cos(x2)),
+                  y = (r * Math.sin(y1) * Math.sin(y2)),
+                  z =  r * Math.cos(z1);
+
+            //store the points calculated into a object
+            coordinates = {
+                x: x *(1+ (chaosToggle ? Math.random()*chaosMult : 0)/10),
+                y: y *(1+ (chaosToggle ? Math.random()*chaosMult : 0)/10),
+                z: z *(1+ (chaosToggle ? Math.random()*chaosMult : 0)/10)
+            };
+
+            let xRotation, yRotation, zRotation;
+
+            if (lockPos) {
+                
+                xRotation = mosPos.x/177 - Math.PI,
+                yRotation = -mosPos.y/177 - Math.PI*3/5;
+                zRotation = 0;
+
+            } else {
+
+
+                let rotationDiv = 1000 * rotationSpd
+
+                
+               switch (camMode) {
+                case 0:
+                    xRotation = frames/rotationDiv;
+                    yRotation = frames/rotationDiv;
+                    zRotation = frames/rotationDiv;
+                    break;
+                case 1:
+                    yRotation = frames/rotationDiv;
+                    xRotation = 0;
+                    zRotation = frames/rotationDiv;
+                    break;
+                case 2:
+                    xRotation = 0;
+                    yRotation = frames/rotationDiv;
+                    zRotation = 0;
+                    
+                    break;
+                case 3: 
+                    xRotation = frames/rotationDiv;
+                    yRotation = 0;
+                    zRotation = 0;
+
+                    break;
+                case 4: 
+                    xRotation = 0;
+                    yRotation = 0;
+                    zRotation = frames/rotationDiv;
+                    break;
+                case 5: //
+                    xRotation = 0;
+                    yRotation = -Math.PI/8;
+                    zRotation = Math.PI/2;
+                    
+                    break;
+                case 6: //
+                    xRotation = 0;
+                    yRotation = Math.PI/2;
+                    zRotation = 0;
+                    
+                    break;
+                case 7: //
+                    xRotation = Math.PI/2;
+                    yRotation = 0;
+                    zRotation = 0;
+                    
+                    break;
+                case 8: //
+                    xRotation = Math.PI/4;
+                    yRotation = 0;
+                    zRotation = 0;
+                    
+                    break;
+               }
+            } 
+
+            //rotate the points about the origin to give the illusion of 3d
+            rotateX(xRotation)
+            rotateY(yRotation)
+            rotateZ(zRotation)
+            
+            renderPoint(coordinates, j, i)
+
+            }
+            
+        }
+
+    }
+
+    //render an object's point's position onto the canvas
+    function renderPoint(origin, j, i) {
+
+        let light = ((origin.z/radius) * 100 > viewLimit + 20 ? (origin.z/radius) * 100 : viewLimit + 20) + lightOffset;
+       
+        if (light > 2) {
+            
+            let color = grayScale ? 0 : saturation,
+                size  = origin.z/67>.88 ? origin.z/67 * strokeWeight : .88 * strokeWeight;
+
+            switch (colorMode) {
+                case 0:
+                context.fillStyle = `hsl(${i*10}, ${color}%, ${light}%)`
+                    break;
+                case 1:
+                context.fillStyle = `hsl(${origin.z}, ${color}%, ${light}%)`
+                    break;
+                case 2:
+                context.fillStyle = `hsl(${i*j}, ${color}%, ${light}%)`
+                    break;
+                case 3:
+                context.fillStyle = `hsl(${j*10}, ${color}%, ${light}%)`
+                    break;
+            }
+            
+            context.beginPath()
+            context.arc(origin.x,origin.y,size/5,0, pi*2)
+            context.fill()
+            
+        }
+        
+    }
+
+    //functions to roate object's positions about the 0,0,0 origin
+
+    function rotateY(radians) {
+
+        let y = coordinates.y;
+        coordinates.y = (y * Math.cos(radians)) + (coordinates.z * Math.sin(radians) * -1.0);
+        coordinates.z = (y * Math.sin(radians)) + (coordinates.z * Math.cos(radians));
+    }
+
+    function rotateX(radians) {
+
+        let x = coordinates.x;
+        coordinates.x = (x * Math.cos(radians)) + (coordinates.z * Math.sin(radians) * -1.0);
+        coordinates.z = (x * Math.sin(radians)) + (coordinates.z * Math.cos(radians));
+    }
+
+    function rotateZ(radians) {
+
+        let x = coordinates.x;
+        coordinates.x = (x * Math.cos(radians)) + (coordinates.y * Math.sin(radians) * -1.0);
+        coordinates.y = (x * Math.sin(radians)) + (coordinates.y * Math.cos(radians));
+    }
+
+    //function clears entire canvas
+    function clearFullScreen() {
+
+        context.save();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        // context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "hsl(0, 0%, 0%)"
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.restore();
+        
+    }
+
+    function fadeFullScreen() {
+
+        context.save();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.fillStyle = "hsla(0, 0%, 0%, .05)"
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.restore();
+        
+    }
+
+    //functions for event listeners
+
+    //user input 
+    function takeUserInput (evn) {
+        switch (evn.code) {
+            case 'Space':
+
+            renderPaused = !renderPaused;
+            console.log(`Brightness Setting: ${viewLimit + 20}\nCurrently viewing super structure #${SSindex+1}\nCoordinates Flipped: ${flipPos}\nColor Mode: ${colorMode}/${colorModeMax}\nCamera Mode: ${camMode}/${camModeMax}\nGrayscale Mode: ${grayScale}\nChaos Mult: ${chaosMult}\nCamera Locked To Mouse: ${lockPos}\nMax number of points being rendered: ${Math.pow(Math.ceil(frames/100 + 1), 2)}\nObject Complexity Increase Speed: ${333-cmplxSpd}`);
+            
+        
+            if (!renderPaused) { 
+                render()
+            }
+            break;
+            case 'KeyG':
+            
+            grayScale = !grayScale;
+
+            break;
+            case 'KeyF':
+  
+            flipPos = !flipPos;
+
+            break
+            case 'KeyL':
+  
+            lockPos = !lockPos;
+
+            break
+            case 'KeyK':
+            // console.log("b" + camMode);
+            camMode = camMode < camModeMax ? camMode+1 : 0;
+            // console.log("a" + camMode);
+            
+
+            break
+            case 'ArrowLeft':
+            
+                viewLimit = viewLimit > -20 ? viewLimit -1: -20;
+            break;
+            case 'Comma':
+
+                SSindex = SSindex > 0 ? SSindex - 1: superSpos.length-1;
+            break;
+            case 'ArrowRight':
+
+                viewLimit = viewLimit < 100 ? viewLimit + 1: 100;
+            break;
+            case 'Period':
+
+                SSindex = SSindex < superSpos.length-1 ? SSindex + 1: 0;
+            break;
+            case 'KeyO':
+
+                cmplxSpd = cmplxSpd > .01 ? cmplxSpd-.01 : .01;
+
+            break
+            case 'KeyP':
+
+                cmplxSpd = cmplxSpd < 3000 ? cmplxSpd+.5 : 3000;
+
+            break
+            case 'Digit9':
+                cmplxSpd /= 2;
+                if (cmplxSpd < .001) cmplxSpd = .001
+                break;
+            case 'Digit0':
+                cmplxSpd *= 2;
+                if (cmplxSpd > 1000) cmplxSpd = 1000
+                break;
+
+            case 'KeyM':
+
+                colorMode = colorMode < colorModeMax ? colorMode + 1: 0;
+            
+            break;
+            case 'KeyZ':
+                fadeScreen = !fadeScreen;
+
+            break;
+            case 'KeyR':
+                lightOffset = lightOffset < 100 ? lightOffset + 1 : 100;
+                break;
+            case 'KeyE':
+                lightOffset = lightOffset > -100 ? lightOffset - 1 : -100;
+                break;
+
+            case 'Digit5':
+                rotationSpd = rotationSpd < 3 ? rotationSpd + .05 : 3;
+                break;
+            case 'Digit6':
+                rotationSpd = rotationSpd > .05 ? rotationSpd - .05 : .05;
+                break;
+            case 'Digit4':
+                saturation = saturation < 100 ? saturation + 1 : 100;
+                break;
+            case 'Digit3':
+                saturation = saturation > 0 ? saturation - 1 : 0;
+                break;
+            case 'Digit2':
+                strokeWeight = strokeWeight < 3 ? strokeWeight + .1 : 3;
+                break;
+            case 'Digit1':
+                strokeWeight = strokeWeight > .2 ? strokeWeight - .1 : .1;
+                break;
+            case 'KeyT':
+                randomizeSStructure = !randomizeSStructure;
+                break;
+            case 'KeyY':
+                chaosToggle = !chaosToggle;
+                break;
+            case 'KeyX':
+                clearScreen = !clearScreen;
+                break;
+            case 'KeyU':
+                chaosMult = chaosMult < 50 ? chaosMult + .1 : 50;
+                break;
+            case 'KeyI':
+                chaosMult = chaosMult > -50 ? chaosMult - .1 : -50;
+                break;
+
+
+        }
+
+    }
+
+    function randomizeSuperStructure() {
+            
+            let random = Math.floor(Math.random()*superSpos.length);
+    
+            SSindex = random;
+
+    }
+
+    //mouse position
+    function findObjectCoords(mousEnv) {
+
+            let obj = canvas,
+                obj_left = 0,
+                obj_top = 0,
+                xpos,
+                ypos;
+
+        while (obj.offsetParent)
+        {
+            obj_left += obj.offsetLeft;
+            obj_top += obj.offsetTop;
+            obj = obj.offsetParent;
+        }
+        if (mousEnv)
+        {
+            xpos = mousEnv.pageX;
+            ypos = mousEnv.pageY;
+        }
+        
+        xpos -= obj_left;
+        ypos -= obj_top;
+        
+        mosPos.x = xpos
+        mosPos.y = ypos
+
+    }
+    //mouse wheel
+    function mouseWheelMoved(evn) {
+
+        // console.log(radius);n 
+        
+        
+        let move = evn.deltaY * -7;
+
+        radius = radius + move > 50 && radius + move < 10000 ? radius + move : radius;
+        
+    }

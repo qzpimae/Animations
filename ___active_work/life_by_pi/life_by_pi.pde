@@ -35,31 +35,19 @@
 */
 
 //GLOBAL VARS
-
-  import ddf.minim.*;
-  import ddf.minim.analysis.*;
-  import ddf.minim.effects.*;
-  import ddf.minim.signals.*;
-  import ddf.minim.spi.*;
-  import ddf.minim.ugens.*;
-  import arb.soundcipher.*;
-
-  SoundCipher sc;
-  Minim minim;
-
   //Noise algorithm that produces values used in this animation, not made by me
  OpenSimplex2S noise;
   
-  int WIDTH = 1920;//1504//3840; //1920
-  int HEIGHT = 1080;//846//2160; //1080
+  int WIDTH =  1440;//1504//3840; //1920
+  int HEIGHT = 900;//846//2160; //1080
   
   boolean paused = true;
   boolean trailToggle = true;
   boolean ignoreAlive = false;
   boolean isInColor = true;
   boolean inLoopMode = false;
-  
   boolean playNotes = false; // c: /
+  boolean fadeToggle = true;
 
   boolean autoDynamicsToggle = false; //c: 8
 
@@ -91,7 +79,7 @@
   int noteLim = 20;
   int notesPlayed = 0;
 
-  float lightOffset = -25;
+  float lightOffset = 10;
   float ageMult = 1;
 
 
@@ -113,10 +101,6 @@
     noise = new OpenSimplex2S( 314159265 );
 
 
-    minim = new Minim(this);
-    sc = new SoundCipher(this);
-    // sc.instrument = sc.SYNTH_DRUM;
-    sc.instrument = sc.XYLOPHONE; 
     
     initalizeGame();
     frameRate(fps);
@@ -134,9 +118,13 @@
     // background((frames*10)%360, 100, 33); // reset screen // uncomment for rainbow strobe ( trail does not work)
     if (trailToggle) background(0);
 
+    // if (fadeToggle) {
+    //       background("hsla(0,0%,0%,.1)"); 
+    // }
 
 
-    // if (autoDynamicsToggle) autoDynamics();
+
+    if (autoDynamicsToggle) autoDynamics();
 
     //double count = 0;
 
@@ -154,7 +142,6 @@
 
     if (scrollCells && scrollCellsUni) {
       Cell[] tempCellRow;
-      Cell[] firstCellRow = allCells[0];
 
       for (int i = 0; i < allCells.length; ++i) {
         // println("sg");
@@ -166,9 +153,6 @@
           tempCellRow = allCells[0];
           allCells[0] = allCells[allCells.length-1];
           allCells[allCells.length-1] = tempCellRow;
-
-          // println("t: " + tempCellRow);
-          // println("f: " + firstCellRow);
         }
       }
       
@@ -197,7 +181,7 @@
   void keyPressed() {
     switch (Character.toLowerCase(key)) {
       case '/':
-        playNotes = !playNotes;
+        isInColor = !isInColor;
       break;
       case ' ': 
         paused = !paused;
@@ -302,8 +286,8 @@
       case 'j':
         horScroll = horScroll < 100 ? vertScroll+1 : 100; 
       break;
-      case 'g':
-        isInColor = !isInColor;
+      case 'f':
+        fadeToggle = !fadeToggle;
       break;
 
 
@@ -372,71 +356,71 @@
   
   }
   
-  // void autoDynamics (){
+  void autoDynamics (){
 
-  //     if (frames % 30 == 0 && random(1) > .5) {
-  //       if (random(1) > .5) {
-  //         surroundCalcType = !surroundCalcType;
-  //       } else {
-  //         scrollCells = !scrollCells;
-  //         scrollCellsUni = !scrollCellsUni;
-  //       }
-  //     }
+      if (frames % 30 == 0 && random(1) > .5) {
+        if (random(1) > .5) {
+          surroundCalcType = !surroundCalcType;
+        } else {
+          scrollCells = !scrollCells;
+          scrollCellsUni = !scrollCellsUni;
+        }
+      }
 
-  //     if (frames % 30 == 0 && !scrollCellsUni && random(1) > .5) {
-  //       scrollCellsUni = !scrollCellsUni;
-  //     }
+      if (frames % 30 == 0 && !scrollCellsUni && random(1) > .5) {
+        scrollCellsUni = !scrollCellsUni;
+      }
 
-  //     if (frames % (20 - (autoResetCounter < 10 ? autoResetCounter : 10))  == 0 && random(1) > .3){
+      if (frames % (20 - (autoResetCounter < 10 ? autoResetCounter : 10))  == 0 && random(1) > .3){
 
-  //       boolean trailToggleSwitch = random(1) > .5;
-  //       if (trailToggleSwitch != trailToggle) {
-  //         lightOffset = random(-60, 20);
-  //         trailToggle = trailToggleSwitch;
-  //       }
-  //       scrollCellsUni = scrollCellsUni ? random(1) < .9 : false;
+        boolean trailToggleSwitch = random(1) > .5;
+        if (trailToggleSwitch != trailToggle) {
+          lightOffset = random(-60, 20);
+          trailToggle = trailToggleSwitch;
+        }
+        scrollCellsUni = scrollCellsUni ? random(1) < .9 : false;
         
-  //       // frameRate += (random(1) > frameRate/120 ? 1 : -1) * Math.ceil(random(1) * 5);
-  //       // println("FPS: " + frameRate);
+        // frameRate += (random(1) > frameRate/120 ? 1 : -1) * Math.ceil(random(1) * 5);
+        // println("FPS: " + frameRate);
 
-  //       // println(horScroll + "\nVert:" + vertScroll);
-  //       horScroll += random(1) > .75 ? 1 : -1;
-  //       vertScroll += random(1) > .75 ? 1 : -1;
+        // println(horScroll + "\nVert:" + vertScroll);
+        horScroll += random(1) > .75 ? 1 : -1;
+        vertScroll += random(1) > .75 ? 1 : -1;
 
 
 
-  //       if (random(1) > .2) {
+        if (random(1) > .2) {
           
-  //         float randomNum = random(1);
-  //         float randomTrigger1 = (abs(horScroll)+abs(vertScroll));
-  //         float randomTrigger2 = 40 + loopFrameCount / 100;//((loopFrameCount+10) / (1+autoResetCounter*loopFrameCount/50));
+          float randomNum = random(1);
+          float randomTrigger1 = (abs(horScroll)+abs(vertScroll));
+          float randomTrigger2 = 40 + loopFrameCount / 100;//((loopFrameCount+10) / (1+autoResetCounter*loopFrameCount/50));
           
-  //         println(randomNum + .1 + " > "  +  (randomTrigger1 /randomTrigger2)+ " = "+randomTrigger1 +" / " + randomTrigger2 );
+          println(randomNum + .1 + " > "  +  (randomTrigger1 /randomTrigger2)+ " = "+randomTrigger1 +" / " + randomTrigger2 );
 
-  //         if (randomNum + .1 > randomTrigger1 / randomTrigger2 ) {
+          if (randomNum + .1 > randomTrigger1 / randomTrigger2 ) {
           
-  //           horScroll*= random(1) > abs(horScroll)/150 ? 1.25 : .5;
-  //           vertScroll*= random(1) > abs(vertScroll)/150 ? 1.25 : .5;
-  //           // println(frames +") v: " + vertScroll + " h: " + horScroll );
-  //         } else {
-  //           println(frames + " / " + loopFrameCount + ": "+ "RESET");
-  //           loopFrameCount = 0;
-  //           scrollCellsUni = true;  
-  //           autoResetCounter++;
-  //           cellSize = ceil(random(3));
-  //           horScroll=0;
-  //           vertScroll=0;
-  //           trailToggle = random(1) > .5;
-  //           initalizeGame();
+            horScroll*= random(1) > abs(horScroll)/150 ? 1.25 : .5;
+            vertScroll*= random(1) > abs(vertScroll)/150 ? 1.25 : .5;
+            // println(frames +") v: " + vertScroll + " h: " + horScroll );
+          } else {
+            println(frames + " / " + loopFrameCount + ": "+ "RESET");
+            loopFrameCount = 0;
+            scrollCellsUni = true;  
+            autoResetCounter++;
+            cellSize = ceil(random(3));
+            horScroll=0;
+            vertScroll=0;
+            trailToggle = random(1) > .5;
+            initalizeGame();
 
 
-  //         }
-  //        }
-  //     }
+          }
+         }
+      }
 
     
     
-  // }
+  }
   
   void initalizeGame() {
     
