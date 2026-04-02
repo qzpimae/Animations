@@ -2,12 +2,12 @@
 
 <p>&nbsp<p>
 
-## Explore the many categories bellow and view gifs representive of Java & JavaScript animations in this repository.
+## Explore the many categories below and view gifs representative of the Java (Processing) & JavaScript animations in this repository.
 
 <p>&nbsp<p>
 
-## [Free Videos(Computer Renders)](https://github.com/qzpimae/Animations/tree/main/_downloadable_media/Videos#readme)
-## [Free Device Background Photos(Computer Renders)](https://github.com/qzpimae/Animations/tree/main/_downloadable_media/Photos#readme)
+## [Videos Renders](https://github.com/qzpimae/Animations/tree/main/_downloadable_media/Videos#readme)
+## [Downloadable Background Photos(Computer Renders)](https://github.com/qzpimae/Animations/tree/main/_downloadable_media/Photos#readme)
 
 <p>&nbsp<p>
 
@@ -34,7 +34,15 @@
 [Galatic-Trip](https://github.com/qzpimae/Animations/tree/main/_downloadable_media/GIFs/Galatic-Trip#readme)
 
 
+<p>&nbsp<p>
 
+![](_downloadable_media/Photos/sacred-geo-zoom-landscape.png)
+
+## a note from 2026
+
+### i created many of these animation works from early 2020 to 2023, since then i have been refining my works for the purpose of live visuals / projections used for musical/experimental preformances and events. if you are interested in following my current work check out my wip website
+
+https://sacred-web.vercel.app/pi
 
 <!-- My inspiration for many of these animations comes from natures itself. I am very facinated by the fractals that appear in the phenomonal world. These are all the animations I have created in my journey as a delevopler and digital artist.
 Notes -->
