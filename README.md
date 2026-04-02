@@ -1,4 +1,4 @@
-# Animation Porfolio
+# Hand-coded Animations 
 
 <p>&nbsp<p>
 
@@ -36,7 +36,7 @@
 
 
 
-<!-- My inspiration for many of these animations comes from natures itself. I am very facinates by the fractals that appear in the phenomonal world. These are all the animations I have created in my journey as a delevopler and digital artist.
+<!-- My inspiration for many of these animations comes from natures itself. I am very facinated by the fractals that appear in the phenomonal world. These are all the animations I have created in my journey as a delevopler and digital artist.
 Notes -->
 
 <!-- ```
