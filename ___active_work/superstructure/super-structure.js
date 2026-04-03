@@ -24,7 +24,7 @@ let canvas = document.createElement('canvas');
     
     lockPos = false,     //user can toggle if the object roates on its own or is locked to the mouse position
     
-    camMode = 5,    
+    camMode = 4,    
 
     camModeMax = 8,    
     
@@ -32,11 +32,13 @@ let canvas = document.createElement('canvas');
 
     cmplxSpd = 80,//user can control how quickly more points will be added to object, range(0-333)
 
-    rotationSpd = 1,
+    rotationSpd = 2,
 
-    SSindex = 0, //controls what structure is being displayed on the canvas
+    spinOn = false, 
 
-    colorMode = 0, //controls what variable determins the color of a given point
+    SSindex = 15, //controls what structure is being displayed on the canvas
+
+    colorMode = 5, //controls what variable determins the color of a given point
 
     colorModeMax = 3,
     
@@ -46,7 +48,7 @@ let canvas = document.createElement('canvas');
 
     saturation = 100,
 
-    randomizeSStructure = false, //controls if the structure is random or not
+    randomizeSStructure = 0, //controls if the structure is random or not (used a countdown clock)
 
     chaosMult = 0, //controls how chaotic the structure is
     chaosToggle = false, //controls if the structure is chaotic or not
@@ -214,8 +216,9 @@ let canvas = document.createElement('canvas');
 
         if (fadeScreen && frames % 2 == 0) fadeFullScreen()
 
-        if (randomizeSStructure) {
-            randomizeSuperStructure()
+        if (randomizeSStructure > 0) {
+            --randomizeSStructure
+            if (randomizeSStructure % 2 == 0) randomizeSuperStructure()
         }
 
         createSphere() //render the sphere
@@ -348,6 +351,8 @@ let canvas = document.createElement('canvas');
                     break;
                }
             } 
+
+            if (spinOn) xRotation += frames/1000
 
             //rotate the points about the origin to give the illusion of 3d
             rotateX(xRotation)
@@ -512,6 +517,13 @@ let canvas = document.createElement('canvas');
                 if (cmplxSpd > 1000) cmplxSpd = 1000
                 break;
 
+            case 'Digit7':
+                cmplxSpd = 1;
+                break;
+            case 'Digit8':
+                cmplxSpd = 500
+                break;
+
             case 'KeyM':
 
                 colorMode = colorMode < colorModeMax ? colorMode + 1: 0;
@@ -541,13 +553,13 @@ let canvas = document.createElement('canvas');
                 saturation = saturation > 0 ? saturation - 1 : 0;
                 break;
             case 'Digit2':
-                strokeWeight = strokeWeight < 3 ? strokeWeight + .1 : 3;
+                strokeWeight = strokeWeight < 3 ? strokeWeight + .025 : 3;
                 break;
             case 'Digit1':
-                strokeWeight = strokeWeight > .2 ? strokeWeight - .1 : .1;
+                strokeWeight = strokeWeight > .2 ? strokeWeight - .025 : .025;
                 break;
             case 'KeyT':
-                randomizeSStructure = !randomizeSStructure;
+                randomizeSStructure = 20
                 break;
             case 'KeyY':
                 chaosToggle = !chaosToggle;
@@ -561,7 +573,9 @@ let canvas = document.createElement('canvas');
             case 'KeyI':
                 chaosMult = chaosMult > -50 ? chaosMult - .1 : -50;
                 break;
-
+            case 'KeyS':
+                spinOn = !spinOn;
+                break;
 
         }
 
