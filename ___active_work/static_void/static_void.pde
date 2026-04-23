@@ -18,8 +18,8 @@
 
 // Movie movie;
 
-int W = 1920;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
-int H = 1080;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
+int W = 1440;//(8K) 7680// (4K) 3840//(UHD) 2560//(HD) 1920//(M0S) 1680//(Square HD) 1280//(SD) 1280//2560
+int H = 900;//(8K) 4320// (4K) 2160//(UHD) 1440//(HD) 1080//(M0S) 1050//(Square HD) 1024//(SD) 720 //1600
 
 PVector v;
 PVector p;
@@ -51,7 +51,7 @@ int noiseVar3 = 1;
 float globalMag = 1;
 // float globalMag = 97.85181;//1;
 
-int imgChoice = 4;
+int imgChoice = 0;
 int prevImgChoice = -1;
 
 int frames = 0;

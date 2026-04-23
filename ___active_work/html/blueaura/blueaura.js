@@ -66,7 +66,7 @@ let canvas = document.createElement('canvas');
     }, false)
 
 
-    document.body.style.backgroundColor = 'black';
+    document.body.style.backgroundColor = 'blue';
 
     document.body.appendChild(canvas);
 

@@ -13,11 +13,11 @@ let canvas = document.createElement('canvas');
 
     frames = 3000, //keep count of how many render cycles have occured
 
-    radius = height/3,
+    radius = 1,
 
     renderPaused = false,    //user can toggle animation paused/unpaused
 
-    grayScale = true,     //user can toggle grayscale
+    grayScale = false,     //user can toggle grayscale
 
     
     flipPos = false,   //user can see what will happen to a given structure if the logitude and latitude get flipped
@@ -41,6 +41,8 @@ let canvas = document.createElement('canvas');
     colorMode = 5, //controls what variable determins the color of a given point
 
     colorModeMax = 3,
+
+    colorOffset = 0,
     
     strokeWeight = .5
 
@@ -48,12 +50,13 @@ let canvas = document.createElement('canvas');
 
     saturation = 100,
 
+    randomizePeriod = 10, //frames to wait between each randomization
     randomizeSStructure = 0, //controls if the structure is random or not (used a countdown clock)
 
     chaosMult = 0, //controls how chaotic the structure is
     chaosToggle = false, //controls if the structure is chaotic or not
 
-    clearScreen = false,
+    clearScreen = true,
 
     fadeScreen = true,
     
@@ -210,7 +213,7 @@ let canvas = document.createElement('canvas');
 
       function render() {
 
-        // console.log(frames);
+        // console.log(frames, colorOffset);
 
         if (clearScreen) clearFullScreen() //clear the canvas of previous animation cycle
 
@@ -218,11 +221,11 @@ let canvas = document.createElement('canvas');
 
         if (randomizeSStructure > 0) {
             --randomizeSStructure
-            if (randomizeSStructure % 2 == 0) randomizeSuperStructure()
+            if (randomizeSStructure % randomizePeriod == 0) randomizeSuperStructure()
         }
 
-        createSphere() //render the sphere
-
+        createTeracono()
+        createSphere()
         //counts how many frames have occured
         frames++
 
@@ -238,6 +241,39 @@ let canvas = document.createElement('canvas');
     function mapNumber (number, min1, max1, min2, max2) {
         return ((number - min1) * (max2 - min2) / (max1 - min1) + min2);
     };
+
+    function createTeracono() {
+
+        // 4 
+        context.rotate(frames/1000/radius * rotationSpd)
+        context.save();
+
+
+        
+        for (let i = 0; i < 4; i++) {
+            
+            context.rotate(Math.PI/2 )
+            
+            for (let j = 0; j < 1; j++) {
+                    const hue = i % 2 == 0 ? 0 + colorOffset : 180 + colorOffset; 
+
+                    context.strokeStyle = `hsl(${hue}, 100%, 50%)`
+                    context.beginPath()
+                    context.moveTo(0,0)
+                    context.lineTo(0,radius)
+                    
+                    context.stroke()
+                    
+                }
+
+               
+                
+            }
+
+        context.restore();
+
+
+    }
 
     function createSphere() {
 
@@ -428,7 +464,7 @@ let canvas = document.createElement('canvas');
 
         context.save();
         context.setTransform(1, 0, 0, 1, 0, 0);
-        // context.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, canvas.width, canvas.height);
         context.fillStyle = "hsl(0, 0%, 0%)"
         context.fillRect(0, 0, canvas.width, canvas.height);
         context.restore();
@@ -547,10 +583,10 @@ let canvas = document.createElement('canvas');
                 rotationSpd = rotationSpd > .05 ? rotationSpd - .05 : .05;
                 break;
             case 'Digit4':
-                saturation = saturation < 100 ? saturation + 1 : 100;
+                colorOffset = colorOffset < 180 ? colorOffset + 1 : 180;
                 break;
             case 'Digit3':
-                saturation = saturation > 0 ? saturation - 1 : 0;
+                colorOffset = colorOffset > 0 ? colorOffset - 1 : 0;
                 break;
             case 'Digit2':
                 strokeWeight = strokeWeight < 3 ? strokeWeight + .025 : 3;
@@ -558,8 +594,15 @@ let canvas = document.createElement('canvas');
             case 'Digit1':
                 strokeWeight = strokeWeight > .2 ? strokeWeight - .025 : .025;
                 break;
+
+            case 'KeyW':
+                randomizePeriod = randomizePeriod - 5 > 0 ? randomizePeriod - 5 : 5
+                break;
+            case 'KeyQ':
+                randomizePeriod = randomizePeriod < 200 ? randomizePeriod + 10 : 200
+                break;
             case 'KeyT':
-                randomizeSStructure = 20
+                randomizeSStructure += randomizePeriod * 4;
                 break;
             case 'KeyY':
                 chaosToggle = !chaosToggle;
@@ -576,6 +619,7 @@ let canvas = document.createElement('canvas');
             case 'KeyS':
                 spinOn = !spinOn;
                 break;
+            
 
         }
 
@@ -619,12 +663,9 @@ let canvas = document.createElement('canvas');
     }
     //mouse wheel
     function mouseWheelMoved(evn) {
-
-        // console.log(radius);n 
-        
         
         let move = evn.deltaY * -7;
 
-        radius = radius + move > 50 && radius + move < 10000 ? radius + move : radius;
+        radius = radius + move > 5 && radius + move < 10000 ? radius + move : radius;
         
     }

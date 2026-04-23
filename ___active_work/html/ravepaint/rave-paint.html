@@ -43,7 +43,7 @@
                     /paint?mode=penandpaper colordrop
                 mode is parsed into an array. ['penandpaper', 'colordrop']
                 and setModes() will execute them in that order. so order will affect the output
-
+`
             []- alg modes 
                 add modes that make vertical line
 
@@ -106,7 +106,7 @@
         let fadeOn = isNaN(fadeParam) ? defaultFade : fadeParam;
         let clearOn = isNaN(clearParam) ? defaultFade : clearParam;
         let cellSize = Math.max(scaleParam, 3) || defaultCellSize;
-        let randomSelect = randomParam || 100;
+        let randomSelect = randomParam || 0;
         let ranCycle = ranwaitParam || 100;
         let frameBuffer = Math.min(Math.max(buffParam, 1), 50) || defaultBuff;
         let lightMode = isNaN(lightModeParam) ? defaultLight : lightModeParam;
@@ -218,9 +218,11 @@
             
             if (mouseIsPressed || (touches.length > 0)) {
                     if (cursorLine) {
-                        stroke(calColor(gameState[0][0], colorMode, true));
-                        strokeWeight(brushSize);
-                        line(mouseX, mouseY, pmouseX, pmouseY);
+                        
+                        // stroke(calColor(gameState[0][0], colorMode, true));
+                        // strokeWeight(brushSize);
+                        // line(mouseX, mouseY, pmouseX, pmouseY);
+                        
                     }
 
                     activateCell(mouseX,mouseY)
@@ -663,6 +665,11 @@
                 break;
                 case 'l':
                     lightMode = 1;
+                case 'u':
+                    cellSize+=1;
+                break;
+                case 'i':
+                    cellSize = cellSize <= 1 ? 1 : cellSize - 1;
                 break;
                 case 'q':
                     cursorLine = !cursorLine;
