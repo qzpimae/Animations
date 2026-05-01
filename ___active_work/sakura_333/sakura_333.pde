@@ -20,7 +20,7 @@ boolean switched = true;
 int colorMode = 3;
 int colorModeMax = 3;
 
-final float fps = 24;
+final float fps = 60;
 float renderSpeed = 1;
 float moveSpeed = .1;
 // boolean renderFullSpeed = true;
