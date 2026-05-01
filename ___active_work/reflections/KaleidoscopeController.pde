@@ -4,7 +4,7 @@ class KaleidoscopeController {
     boolean canSave;
 
     /** control the amount 'r' and 'R' change the rotation speed */
-    static final float ROTATE_INCREMENT = 0.005;
+    static final float ROTATE_INCREMENT = 0.05;
 
     /** factor to scale kaleidoscope to save high resolution */
     int scalefactor = 1; // > 1 won't work in full screen mode

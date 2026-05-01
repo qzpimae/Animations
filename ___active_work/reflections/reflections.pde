@@ -8,9 +8,9 @@ int radius = H;//(int)(H*1.02);
 KaleidoscopeController controller;
 
 float frames = 0;
-float renderSpeed = 1;
-int imgChoice = 13;
-int IMAGE_NUM_MAX = 367;
+float renderSpeed = .1;
+int imgChoice = 4;
+int IMAGE_NUM_MAX = 5;
 int starterSegments = 12;
 int dragType = 1;
 int DRAG_TYPE_MAX = 3;
@@ -31,7 +31,7 @@ void settings (){
    fullScreen();
 }
 void setup() {
-    frameRate(10);
+    frameRate(60);
     noCursor();
 
     controller = new KaleidoscopeController(starterSegments, radius, 1, false);
@@ -104,10 +104,10 @@ void keyTyped() {
                 controller.changeKaleidoscope();
                 break;
             case 'a':
-                renderSpeed = renderSpeed > -10 ? renderSpeed-.1 : -10;
+                renderSpeed = renderSpeed > -10 ? renderSpeed-.05 : -10;
                 break;
             case 's':
-                renderSpeed = renderSpeed < 10 ? renderSpeed+.1 : 10;
+                renderSpeed = renderSpeed < 10 ? renderSpeed+.05 : 10;
                 break;
             case ' ':
                 isPaused = !isPaused;
@@ -128,4 +128,58 @@ void keyTyped() {
             //     break;
 
         }
+}
+
+/**
+
+    I want to have the screen fade to black/white (control option)
+    when it is at peak black/white it will then switch the image and fade back in
+    this will create a seemless transition
+
+    if the imageChoice is changed while less than halfway, it should continue as is. 
+    if the imageChoice is changed while fading back to clear the fade should seemlessly move back to opaque
+
+    transition time should be adustable by hardcoded value (maybe a control in the future)
+
+
+    HOW TO ACHEIVE 
+        fadeTimer - gets set to 100 and increments down as the transistion goes
+            100 - start (transparent)
+            50 - tranistion frame (image changes, opaque)
+            0 - finish (transparent again, now with new image)
+
+        ?tempImageChoice - temporarily held image choice 
+    LOGIC
+
+        imageChoice can be modified before timer get to or is equal to 50
+
+        if timer is less than 50 and imageChoice is updated, timer should equal (100 - fadeTimer), 
+        this will set it to the same opacity but put it on track to transition again
+
+    TRIGGERS
+        any time imageChoice is modiffied by keyboard input or autochanger, setFadeTimer should be called
+
+        fadeTranistion is called every frame, returns immedietly if fadeTimer is 0 or fade is turned off
+
+    FUNCTIONS & VARS
+
+        fadeTimer (used for timing)
+        setFadeTimer() (timing logic)
+        fadeTranistion() (render)
+
+        future: 
+            isAutoChanged - boolean to toggle autoChange
+            autoChangeDelay - how many frames to wait before auto switching
+            autoChange() -  timebased randmoized image switcher called every "autoChangeDelay" frames
+
+ */
+
+void fadeTransition() {
+
+    // if (fadeTimer !== 0) {
+
+
+    //     --fadeTimer;
+    // }
+
 }

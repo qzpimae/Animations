@@ -8,6 +8,8 @@ class Kaleidoscope {
     /** rotation step for the segments, based on the number of segments */
     float angle;
 
+    float angleBuff = 0;
+
     /** the buffer for getBuffer, in the right size for current bufferheight */
     PGraphics buffer;
     /** mask image to apply to the buffer to get a slice of pie */
@@ -23,7 +25,7 @@ class Kaleidoscope {
         this.segments = segments;
         this.radius = radius;
         angle = TWO_PI/segments;
-        bufferheight = Math.round(sin(angle+0.02)*radius)+1;
+        bufferheight = Math.round(sin(angle+angleBuff)*radius)+1;
         buffer = createGraphics(radius,bufferheight);
         // println(buffer.background());
         triangle_mask = createGraphics(radius,bufferheight);
@@ -31,7 +33,7 @@ class Kaleidoscope {
     //  triangle_mask.color(255); //processing refuses to compile this line. luckily, white seems to be default color
         triangle_mask.stroke(255);
         triangle_mask.beginDraw();
-        triangle_mask.arc(0,0,radius*2,radius*2,0,angle+0.02); //ellipse with center 0,0 and width and height of 2*radius. part angle of that, with an additional 0.02 to avoid black gaps
+        triangle_mask.arc(0,0,radius*2,radius*2,0,angle+angleBuff); //ellipse with center 0,0 and width and height of 2*radius. part angle of that, with an additional angleBuff to avoid black gaps
         triangle_mask.endDraw();
     }
 
