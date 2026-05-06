@@ -6,10 +6,9 @@
 
 ### Download as many or as little as you'd like!
 ### I only ask that if you enjoy these you share them with a friend or the internet
-
+#### and dont pass it off as your own work lol
 
 # [Noise Space Photos](https://github.com/qzpimae/Animations/tree/main/_downloadable_media/Photos/noiseproject#readme)
-### ^ I recommend taking a look at these 
 #
 ![](yybg.jpg)
 #
@@ -24,5 +23,3 @@
 <!-- ![](whole-world.jpg) -->
 <!-- # -->
 ![](space-migration-4k-alt.jpg)
-#
-![](space-migration-4k.jpg)
