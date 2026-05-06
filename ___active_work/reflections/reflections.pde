@@ -53,7 +53,8 @@ void draw() {
 
     if (!isPaused) {
         controller.draw();
-        fader.renderFade(W,H);
+        boolean switchImg = fader.renderFade(W,H);
+        if (switchImg) controller.changeImg(imgChoice);
         // saveFrame("../../../../renderScreenShot/kaleidoscopeRender22222/render22222_######.png");
     }
     
@@ -94,11 +95,11 @@ void keyTyped() {
                 break;
             case 'q':
                 imgChoice = imgChoice > 1 ? imgChoice-1 : 1;
-                fader.setFadeTimer();
+                fader.calculateFadeTimer();
                 break;
             case 'w':
                 imgChoice = imgChoice < IMAGE_NUM_MAX ? imgChoice+1 : IMAGE_NUM_MAX;
-                fader.setFadeTimer();
+                fader.calculateFadeTimer();
                 break;
             case 'e':
                 fader.decreaseSpeed();

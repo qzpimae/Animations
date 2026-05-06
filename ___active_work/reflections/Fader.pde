@@ -5,8 +5,15 @@ class Fader {
 
     int speedSelect = 2; 
 
+    boolean isFadeBlack = true;
+
     public Fader () {
 
+    }
+
+    public Fader (int speedSelect, boolean isFadeBlack) {
+        this.speedSelect = speedSelect;
+        this.isFadeBlack = isFadeBlack;
     }
 
     public void increaseSpeed() {
@@ -21,32 +28,39 @@ class Fader {
         }
     }
 
-    public void renderFade(float width, float height) {
+    public boolean renderFade(float width, float height) {
     
-        if (fadeTimer == 0) return;
+        if (fadeTimer == 0) return false;
+
+        if (fadeTimer < 0 ) fadeTimer = 0;
         
         fadeTimer -= speeds[speedSelect];
         
-        if (fadeTimer == 50) {
-            controller.changeImg(imgChoice);
-        } 
-
         //fadeScreen
         float alpha = (cos(Math.abs(fadeTimer-50)/50)-.5)*2;
-        // println(fadeTimer + " - " + alpha);
-        fill(0, alpha);
-
+        float fillLightness = isFadeBlack ? 0 : 100;
+        // println(fillLightness);
+        fill(fillLightness, alpha);
         rect(0,0,width,height);
 
+        // return true to indicate that the middle point (full black or full white) is currently active
+        // this is the point where the other part of the program can trigger a change without it being seen
+        if (fadeTimer == 50) return true;
+        else return false;
+
     }
 
-    public void setFadeTimer() {
+    public void calculateFadeTimer() {
 
-    if (fadeTimer == 0) {
-        fadeTimer = 100;
-        return; 
-    } else if (fadeTimer < 50) {
-        fadeTimer = 100 - fadeTimer;
+        if (fadeTimer == 0) {
+            fadeTimer = 100;
+            return; 
+        } else if (fadeTimer < 50) {
+            fadeTimer = 100 - fadeTimer;
+        }
     }
-}
+
+    public void setIsFadeBlack (boolean isBlack) {
+        isFadeBlack = isBlack;
+    }
 }
