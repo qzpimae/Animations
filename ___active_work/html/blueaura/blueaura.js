@@ -10,6 +10,8 @@ let canvas = document.createElement('canvas');
     originHeight = height/2,
     originWidth = 0,
     frames = 0, //keep count of how many render cycles have occured
+    framesUp = true,
+    MAX_FRAMES = 700,
     time = 0,
     renderPaused = false, //user can toggle animation
     colorMode = false,
@@ -90,8 +92,15 @@ let canvas = document.createElement('canvas');
         // console.log(frames);
 
         //counts how many frames have occured
-        frames = frames < 2000 ? frames+1 : 0;
-
+        if (framesUp && frames < MAX_FRAMES) {
+            frames+=1
+        } else if (framesUp && frames >= MAX_FRAMES) {
+            framesUp = false;
+        } if (!framesUp && frames > 0) {
+            frames-=2
+        } else {
+            framesUp = true;
+        }
         time++
 
         originHeight = height - frames * (moveVer);
@@ -101,7 +110,7 @@ let canvas = document.createElement('canvas');
 
         renderStars()
 
-        console.log(originWidth +""+ originHeight);
+        // console.log(originWidth +""+ originHeight);
         context.beginPath()
         context.rect(0,(originHeight)+2,width,height)
         context.fill()
