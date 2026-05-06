@@ -50,7 +50,7 @@ class Fader {
 
     }
 
-    public void calculateFadeTimer() {
+    public void starFadeTimer() {
 
         if (fadeTimer == 0) {
             fadeTimer = 100;
@@ -62,5 +62,13 @@ class Fader {
 
     public void setIsFadeBlack (boolean isBlack) {
         isFadeBlack = isBlack;
+    }
+
+    public void setSpeedSelect (int newSpeed) {
+        if (newSpeed < 0 || newSpeed > speeds.length-1) {
+            return;
+        } else {
+            this.speedSelect = newSpeed;
+        }
     }
 }

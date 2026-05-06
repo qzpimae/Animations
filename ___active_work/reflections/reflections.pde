@@ -94,12 +94,12 @@ void keyTyped() {
                 controller.rotateKal -= controller.ROTATE_INCREMENT;
                 break;
             case 'q':
-                imgChoice = imgChoice > 1 ? imgChoice-1 : 1;
-                fader.calculateFadeTimer();
+                imgChoice = imgChoice > 1 ? imgChoice-1 : IMAGE_NUM_MAX;
+                fader.starFadeTimer();
                 break;
             case 'w':
-                imgChoice = imgChoice < IMAGE_NUM_MAX ? imgChoice+1 : IMAGE_NUM_MAX;
-                fader.calculateFadeTimer();
+                imgChoice = imgChoice < IMAGE_NUM_MAX ? imgChoice+1 : 1;
+                fader.starFadeTimer();
                 break;
             case 'e':
                 fader.decreaseSpeed();
