@@ -87,7 +87,7 @@ class KaleidoscopeController {
 
 
 
-        frames+=renderSpeed;
+        time+=renderSpeed;
 
         calculateDrag();
         
@@ -159,25 +159,25 @@ public void calculateDrag () {
             switch (dragType) {
                 case 1: 
                 //perfect circle 1
-                    drag.y = (cos(frames/500) * dragRadius) - H/2;
-                    drag.x = (sin(frames/500) * dragRadius) - W/2;
+                    drag.y = (cos(time/500) * dragRadius) - H/2;
+                    drag.x = (sin(time/500) * dragRadius) - W/2;
                 break;
                 case 2:
                 //ran sin wav 2
-                    drag.y = (cos(frames/250) * dragRadius) - H/2;
-                    drag.x = (sin(frames/500) * dragRadius) - W/2;
+                    drag.y = (cos(time/250) * dragRadius) - H/2;
+                    drag.x = (sin(time/500) * dragRadius) - W/2;
                 break;
                 case 3: 
                 //ran sine wav 1
-                    drag.y = -10 + ((sin(frames/222) * dragRadius/3) - dragRadius/3) * .95;
-                    drag.x = -10 + ((-cos(frames/666) * dragRadius/2) - dragRadius/2) * .95;
+                    drag.y = -10 + ((sin(time/222) * dragRadius/3) - dragRadius/3) * .95;
+                    drag.x = -10 + ((-cos(time/666) * dragRadius/2) - dragRadius/2) * .95;
                 break;
             }
 
             
         }
 
-        // println("Frames: " + frames + " - dragX: " +  drag.x + " - dragY: " + drag.y + " - dragY/X: " + (drag.y/drag.x) + " - dragx/y: " + (drag.x/drag.y));
+        // println("time: " + time + " - dragX: " +  drag.x + " - dragY: " + drag.y + " - dragY/X: " + (drag.y/drag.x) + " - dragx/y: " + (drag.x/drag.y));
 
         if (refresh || drag.x != lastDrag.x || drag.y != lastDrag.y || drag.z != lastDrag.z) {
             updateGraph(graph, img, 1);

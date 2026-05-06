@@ -8,10 +8,13 @@ int radius = H;//(int)(H*1.02);
 KaleidoscopeController controller;
 Fader fader;
 
-float frames = 0;
+float time = 0;
+int frames = 0;
 float renderSpeed = .1;
 int imgChoice = 4;
 int IMAGE_NUM_MAX = 5;
+boolean isAutoChanged = false;
+int autoChangeDelay = 5000; 
 float fadeTimer = 0;
 int starterSegments = 12;
 int dragType = 1;
@@ -48,14 +51,16 @@ void setup() {
  * main draw loop: forward to KaleidoscopeController
  */
 void draw() {
-    
     // println(renderSpeed);
-
     if (!isPaused) {
         controller.draw();
         boolean switchImg = fader.renderFade(W,H);
         if (switchImg) controller.changeImg(imgChoice);
+        if (isAutoChanged && frames % autoChangeDelay == 0) {
+            autoChange();
+        }
         // saveFrame("../../../../renderScreenShot/kaleidoscopeRender22222/render22222_######.png");
+        frames++;
     }
     
 }
@@ -65,6 +70,16 @@ void draw() {
  */
 void mouseDragged() {
     controller.mouseDragged();
+}
+
+void autoChange() {
+    int ranImage = (int) Math.ceil(Math.random() * IMAGE_NUM_MAX);
+    if (imgChoice == ranImage) { //so that it's always a new images being changed to
+        autoChange();
+        return;
+    }
+    imgChoice = ranImage;
+    fader.starFadeTimer();
 }
 
 /**
@@ -124,6 +139,9 @@ void keyTyped() {
             case ' ':
                 isPaused = !isPaused;
                 break;
+            case 'u':
+                isAutoChanged = !isAutoChanged;
+                break;
             case '\'':
                 autoMoveDrag = !autoMoveDrag;
                 break;
@@ -150,8 +168,8 @@ void keyTyped() {
 
         future feature (auto image changer): 
             isAutoChanged - boolean to toggle autoChange
-            autoChangeDelay - how many frames to wait before auto switching
-            autoChange() -  timebased randmoized image switcher called every "autoChangeDelay" frames
+            autoChangeDelay - how many time to wait before auto switching
+            autoChange() -  timebased randmoized image switcher called every "autoChangeDelay" time
 
  */
 
