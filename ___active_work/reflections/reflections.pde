@@ -160,18 +160,3 @@ void keyTyped() {
         }
 }
 
-/**
-
-        TODO: 
-         only start fade if image is changing OR have image choice loop 
-
-
-        future feature (auto image changer): 
-            isAutoChanged - boolean to toggle autoChange
-            autoChangeDelay - how many time to wait before auto switching
-            autoChange() -  timebased randmoized image switcher called every "autoChangeDelay" time
-
- */
-
-
-
