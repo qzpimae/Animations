@@ -172,6 +172,13 @@ public void calculateDrag () {
                     drag.y = -10 + ((sin(time/222) * dragRadius/3) - dragRadius/3) * .95;
                     drag.x = -10 + ((-cos(time/666) * dragRadius/2) - dragRadius/2) * .95;
                 break;
+                case 4: 
+                //perfect circle 1
+                    drag.y = ((cos(time/100) * dragRadius/10) - H/4);
+                    drag.x = ((sin(time/100) * dragRadius/10) - W + dragRadius) ;
+                    // println(drag.x + " : " + drag.y + " - " + dragRadius);
+
+                break;
             }
 
             
@@ -200,6 +207,9 @@ public void calculateDrag () {
             lastd.y = dy * 0.1 + lastd.y * 0.9;
             drag.x += lastd.x;
             drag.y += lastd.y;
+
+            println(dx + " - " + dy);
+            println(drag.x + " : " + drag.y);
             if (drag.x > graph.width) drag.x = graph.width;
             if (drag.x < -img.width) drag.x = -img.width;
             if (drag.y > graph.height) drag.y = graph.height;
