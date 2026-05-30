@@ -9,7 +9,7 @@ class SpaceFlower {
   float spaceFlowerColorNoiseSeed = 3143.42;
   float spaceFlowerColorNoiseVal;
   int sFscalingLimit = 100;
-  float resolution = .1;
+  float resolution = .03;
 
   float beginingOrder = 2;
  
@@ -20,14 +20,14 @@ class SpaceFlower {
     rotateZ(PI/2);
     
     if (autoRotate) {
-      float rotate = PI*2 * (float)noise.noise2( (float)frames/722*renderSpeed + 333, (float)frames/1777*renderSpeed + 1000 );
+      float rotate = PI*2 * (float)noise.noise2( (float)frames/777*renderSpeed + 333, (float)frames/1777*renderSpeed + 1000 );
       rotateX( rotate/4 );
       rotateY( rotate/2 );
       rotateZ( rotate/4 );
       
     }
     if (beginingOrder>0) beginingOrder-=.01;
-    spaceFlowerScale = 1;//calcspaceFlowerScale(); 
+    spaceFlowerScale = .5;//calcspaceFlowerScale(); 
     // noFill();
     float strokeRadiusMap = map(radius, 500, 0, 2, .1);
     strokeWeight(map(radius, 0, 1400, 2, 4.5-beginingOrder) / (1+strokeRadiusMap) * lineWidthDiv);

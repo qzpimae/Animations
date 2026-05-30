@@ -23,15 +23,14 @@ int colorModeMax = 3;
 final float fps = 60;
 float renderSpeed = 1;
 float moveSpeed = .1;
-// boolean renderFullSpeed = true;
 boolean clearScreen = false;
-boolean whiteSakuraLines = false;
-boolean sakuraFill = true;
+boolean whiteSakuraLines = true;
+boolean sakuraFill = false;
 boolean autoRotate = false;
-float lineWidthDiv = 1;
+float lineWidthDiv = 0.1;
 
 boolean showStars = false;
-boolean showGalaxy = true;
+boolean showGalaxy = false;
 boolean showNebula = false;
 boolean showFlower = true;
 boolean showLife = false;
@@ -42,14 +41,14 @@ boolean showSphere = false;
 // -1: zoom out ___ 0: still ___ 1: zoom in
 int zoomIn = 0;
 
-int lightOffset = -10;
+int lightOffset = -40;
 
 
 
 //tracker for how many frames have elapsed
 boolean isPaused = false;
-float frames;
-int time; //kindof like frames but frames will always increase by one. Time by increase at a slower or quicker rate for 
+float frames = 0;
+int time = 0; //
 int count;
 
 //width and height of canvas 
@@ -98,7 +97,7 @@ void setup() {
 
 
   spaceRender.starGenesis();
-  lifeRender.lifeGenesis(2);
+  lifeRender.lifeGenesis(1);
   //nebulaCtrl.birthNebula();
   spaceDebris.spawnGalaxies();
   spaceDebris.spawnDust();
@@ -135,9 +134,14 @@ void draw() {
   if (!isPaused) {
     //println(frames);
     frames+=renderSpeed;
-    time=(int)frames;
+    time++;
     // saveFrame("../../../sakura314/img_######.png");
   }
+
+
+  // if (time % 1 == 0) { 
+  //   sakuraFill = !sakuraFill;
+  // }
 
   renderScene();
 
@@ -259,7 +263,7 @@ void keyPressed() {
       lineWidthDiv = lineWidthDiv < 20 ? lineWidthDiv+0.05 : 20;
       break;
     case 'o':
-      cameraFocal = cameraFocal > .1 ? cameraFocal-0.1 : .1;
+      cameraFocal = cameraFocal > .01 ? cameraFocal-0.01 : .01;
       // println("cameraFocal: " + cameraFocal);
 
       break;
@@ -289,7 +293,7 @@ void keyPressed() {
       zoomIn = zoomIn == 1 ? 0 : 1;
       break;
     case '0':
-        cameraFocal = .1;
+        cameraFocal = .01;
       break;
     case '9':
         cameraFocal = 9.38;

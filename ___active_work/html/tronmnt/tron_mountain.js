@@ -31,7 +31,7 @@ let canvas = document.createElement('canvas');
     landscapePoints = [], // array to contain sphere points before they are rendered
 
     Stars = []; //array to contain star positions
-    MAX_STARS = 500;
+    MAX_STARS = 300;
     //set styling 
 
     document.body.style = 'margin: 0px;';
@@ -62,9 +62,9 @@ let canvas = document.createElement('canvas');
     context.translate(width/2,height/1.2)
 
     context.strokeStyle = 'deeppink';
-    context.fillStyle = `indigo`;
+    context.fillStyle = Math.random() > .5 ? `indigo` : `coral`;
 
-    context.lineWidth = .5;
+    context.lineWidth = .5; //only applies to terrain lines
 
     let time = 0;
    
@@ -84,8 +84,7 @@ let canvas = document.createElement('canvas');
 
         renderStars()
 
-        // moveStars(1)
-        moveStars((frames/1000))
+        moveStars(frames/1000)
 
 
         renderLandscape() //render lines and shapes based on positions
@@ -152,10 +151,10 @@ let canvas = document.createElement('canvas');
     function renderLandscape() {
 
         context.beginPath()
-        context.moveTo(0, -20*frames/1000)
-        context.lineTo(42*frames/1000, 42*frames/1000)
-        context.lineTo(-42*frames/1000, 42*frames/1000)
-        context.lineTo(0, -20*frames/1000)
+        context.moveTo(0, -20*frames/4000)
+        context.lineTo(42*frames/4000, 42*frames/4000)
+        context.lineTo(-42*frames/4000, 42*frames/4000)
+        context.lineTo(0, -20*frames/4000)
         context.fill()
         context.lineTo(0, 0)
         context.stroke()
@@ -273,13 +272,14 @@ let canvas = document.createElement('canvas');
         adjustedLightness = lightness - 10;
 
         //set up gradient
-        grad.addColorStop(1, `hsl(0, 100%, ${adjustedLightness}%)`);
-        grad.addColorStop(6/7, `hsl(45, 100%, ${adjustedLightness}%)`);
-        grad.addColorStop(5/7, `hsl(90, 100%, ${adjustedLightness}%)`);
-        grad.addColorStop(4/7, `hsl(135, 100%, ${adjustedLightness}%)`);
-        grad.addColorStop(3/7, `hsl(180, 100%, ${adjustedLightness}%)`);
-        grad.addColorStop(2/7, `hsl(245, 100%, ${adjustedLightness}%)`);
-        grad.addColorStop(1/7, `hsl(305, 100%, ${adjustedLightness}%)`);
+        grad.addColorStop(1, `hsl(180, 100%, ${adjustedLightness}%)`);
+        grad.addColorStop(6/7, `hsl(245, 100%, ${adjustedLightness}%)`);
+        grad.addColorStop(5/7, `hsl(305, 100%, ${adjustedLightness}%)`);
+        grad.addColorStop(4/7, `hsl(350, 100%, ${adjustedLightness}%)`);
+        grad.addColorStop(3/7, `hsl(45, 100%, ${adjustedLightness}%)`);
+        grad.addColorStop(2/7, `hsl(90, 100%, ${adjustedLightness}%)`);
+        grad.addColorStop(1/7, `hsl(135, 100%, ${adjustedLightness}%)`);
+        grad.addColorStop(0, `hsl(305, 100%, ${adjustedLightness}%)`);
         
         context.strokeStyle = grad;
         
@@ -288,7 +288,7 @@ let canvas = document.createElement('canvas');
         context.moveTo(x1,y1);
         context.lineTo(x2,y2);
 
-        context.lineWidth = (lightness/100) + .5;
+        context.lineWidth = (lightness/100) + .1;
        
         context.stroke();
 
@@ -300,7 +300,7 @@ let canvas = document.createElement('canvas');
 
         context.save()
 
-        context.translate(0, height/8-frames/4);
+        context.translate(0, height/8-frames/8);
         // context.translate(0, -height/2-height/3-frames/10);
 
         // console.log(Stars);
@@ -315,35 +315,6 @@ let canvas = document.createElement('canvas');
         context.restore()
 
     }
-    // function moveStars(speed) {
-
-    //     for (let i = 0; i < Stars.length; i++) {
-
-    //         let NewX = Stars[i].x * (.979 + speed/4700 + Stars[i].lightness/1700),
-    //             NewY = Stars[i].y * (.979 + speed/4700 + Stars[i].lightness/1700);
-
-
-    //         if (NewX > width || NewX < -width || NewY > width/.5 || NewY < -width/.5) {
-
-    //             Stars.splice(i, 1); //if it goes off screen, delete it from the stars to be rendered
-
-    //             addStar() // then add a new one to replace it
-
-    //             i--
-
-    //         } else {
-
-    //             Stars[i].x = NewX;
-    //             Stars[i].y = NewY;
-
-    //             Stars[i].lightness = Stars[i].lightness <= 77 ? Stars[i].lightness * 1.02 : 77;
-
-    //         }
-           
-    //     }
-        
-    // }
-
 
     function moveStars(speed) {
 
@@ -379,8 +350,8 @@ let canvas = document.createElement('canvas');
         //     y = (height * Math.random())-height/2,
 
 
-        let x = (width*1.2 * Math.random())-width/1.42 ,
-            y = (height/1.5 * Math.random())-height/4,
+        let x = ((width*1.2 * (1 + frames/MAX_FRAMES)) * Math.random())-width/1.42 ,
+            y = ((height/1.5 * (1 + frames/MAX_FRAMES)) * Math.random())-height/4,
 
         lightness = 10;
 

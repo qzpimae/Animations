@@ -4,7 +4,7 @@
   float cameraFocal = .5;
   float targetCameraFocal = .5;
   int position = 0;
-  float radius = 333;
+  float radius = 75;
   float cameraSpeed = renderSpeed;
   boolean rotateHorizontal = false;
   float camZoomSpeed = 1;

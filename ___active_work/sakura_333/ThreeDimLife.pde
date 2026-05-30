@@ -2,7 +2,7 @@
 
 float cellSize = .1;
 float gameSize = 2.5;
-float gameDimensions = gameSize / cellSize;
+float gameDimensions = gameSize / cellSize; //needs to be a whole number
 
 float gameGenNoiseSeedX = 2233.23423;
 float gameGenNoiseSeedY = 3443.23423;
@@ -133,6 +133,7 @@ class ThreeDimLife {
                   
                   if ( aliveN > 6 && aliveN < 18) {
                     newCells[x][y][z] = 1;
+
                   } else {
                     newCells[x][y][z] = 0;
                   }
@@ -151,8 +152,10 @@ class ThreeDimLife {
             
                   if (newCells[x][y][z] == 1) {
                     cells[x][y][z].alive = true;
+                    cells[x][y][z].age += 1;
                   } else {
                     cells[x][y][z].alive = false;
+                    cells[x][y][z].age = 0;
                   
                   }
                   
